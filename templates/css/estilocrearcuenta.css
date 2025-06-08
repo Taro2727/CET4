@@ -17,7 +17,6 @@ body {
   height: 80px;
   justify-content: space-between;
   background-color: #5757c2;
-  height: 30px;
   align-items: center;
   padding: 10px;
 
@@ -37,8 +36,10 @@ body {
 /* fondo del formulario */
 .formulario {
     background-color: #172f50;
-    padding: 50px;
-    left: 30px;
+    padding: 60px;
+    position: relative;
+    /* cuando voy a mover una caja la pongo con position relative y dps a el left  o el right y eso lol */
+    left: 700px;
     margin-top: 200px;
     border-radius: 15px;
     color: #fff;
