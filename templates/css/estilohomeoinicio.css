@@ -6,8 +6,12 @@
 body{
     background-color: #082c54;
 }
+::placeholder{
+    color: #fff;
+}
 .buscador{
-    width: 75vh;
+    background-color:  #54647c ;
+    width: 95vh;
     height: 35px;
     margin-top: 20px;
     border-radius: 20px;  /*Esto hace que el borde este mas redondeado */
@@ -18,7 +22,7 @@ body{
     width: 10%;
     height: 100vh;
     background-color:  #080c34 ;
-    float: left;
+    float: left; /*Esto hace que el costado se quede a la izquierda sin afectar el resto del contenido*/
 }
 .buscador-logo{
     display: flex;
@@ -29,15 +33,55 @@ body{
 }
 .buscador-logo2{
     position: relative;
-    width: 500px;
+    width: 700px;
 
 }
 .logo{
     position: absolute;
-    top: 50%;
+    top: 67%;
     left: 10px;
     transform: translateY(-50%);
     height: 20px;
     width: 20px;
     pointer-events: none; /* para que no bloquee clics */
 }
+
+/* Inicio de la barra del costado */
+.usuario{
+    width: 75px;
+    height: 75px;
+    margin-top: 50px;
+}
+.casa1{
+    width: 50px;
+    height: 50px;
+    margin-top: 50px;
+
+}
+.campana2{
+    width: 50px;
+    height: 50px;
+    margin-top: 50px;
+}
+.soporte3{
+    width: 50px;
+    height: 50px;
+    margin-top: 50px;
+}
+.grupo4{
+    width: 50px;
+    height: 50px;
+    margin-top: 50px;
+}
+.opcion5{
+    width: 50px;
+    height: 50px;
+    margin-top: 50px;
+    
+}
+.ordenado{
+    display: flex; 
+    flex-direction: column; /*Esta hermosa linea de codigo hace que los elemntos se alineen verticalmente*/
+    align-items: center; /*Estp hace que se alieen al centro*/
+}
+/* Fin de la barra del costado */
