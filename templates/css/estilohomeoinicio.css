@@ -47,11 +47,41 @@ body{
 }
 
 /* Inicio de la barra del costado */
-
+.usuario{
+    width: 75px;
+    height: 75px;
+    margin-top: 50px;
+}
 .casa1{
     width: 50px;
     height: 50px;
+    margin-top: 50px;
 
 }
-
+.campana2{
+    width: 50px;
+    height: 50px;
+    margin-top: 50px;
+}
+.soporte3{
+    width: 50px;
+    height: 50px;
+    margin-top: 50px;
+}
+.grupo4{
+    width: 50px;
+    height: 50px;
+    margin-top: 50px;
+}
+.opcion5{
+    width: 50px;
+    height: 50px;
+    margin-top: 50px;
+    
+}
+.ordenado{
+    display: flex; 
+    flex-direction: column; /*Esta hermosa linea de codigo hace que los elemntos se alineen verticalmente*/
+    align-items: center; /*Estp hace que se alieen al centro*/
+}
 /* Fin de la barra del costado */
