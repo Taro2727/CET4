@@ -3,41 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>cet4 inicio sesion </title>
-    <link rel="stylesheet" href="/templates/css/estilocrearcuenta.css">
-    
+    <title>crear cuenta cet4</title>
+    <link rel="stylesheet" href="/CET4/templates/css/estilocrearcuenta.css">
 </head>
 <body>
+    <main class="contenedor">
+  <!-- Columna izquierda: Mascota -->
+  <section class="presentacion">
+    <figure class="cota">
+      <figcaption class="globo">¡Hola camarada! Me presento, yo soy Zettino</figcaption>
+      <img class="masimg" src="/CET4/utils/img/zettino_sinfondo.png" alt="Mascota Zettino">
+    </figure>
+  </section>
 
+  <!-- Columna derecha: Formulario -->
+  <section class="formulario">
     <header>
-        
-    <div class="logo"> <img src="/utils/img/logo2.png" alt="imagen de el logo"> </div>
-
+      <h1>¡Bienvenido!</h1>
     </header>
-    <div id="iniciar la sesion">
-    <div class="formulario"> 
- <h1> inicio de sesion </h1>
- <form method="post">
-    <div class="username">
-        <input type="text">
-        <label>nombre de usuario </label>
-    </div>
-    <div class="contraseña">
-        <input type="password" required>
-        <label>contraseña</label>
-    </div>
-    <div class="recordar">¿olvidaste tu contraseña?</div>
-    <input type="submit"value=iniciar>
-    </div>
-      <div id="zettnino"> 
-        <!-- lo puse afuera de el otro div pq sino me lo toma como parte de el formulario -->
-        <img src="/utils/img/zettino_crearcuenta.png" alt="foto de la mascota">
-    </div>
- </form>
-    </div>
-    </div>
+    <form>
+      <div class="input-group">
+        <label for="email">Correo electrónico</label>
+        <input type="email" id="email" name="email" required>
+      </div>
+      <div class="input-group">
+        <label for="password">Contraseña</label>
+        <input type="password" id="password" name="password" required>
+      </div>
+      <div class="input-group">
+        <label for="confirm">Confirmar contraseña</label>
+        <input type="password" id="confirm" name="confirm" required>
+      </div>
+      <button type="submit">REGISTRARSE</button>
+    </form>
+    <p class="recuperar">¿Olvidó su contraseña? <a href="#">RECUPERAR</a></p>
+  </section>
+</main>
 
-
-    
 </body>
 </html>

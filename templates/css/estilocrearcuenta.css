@@ -1,124 +1,141 @@
- /* el coso para que se ajuste a los disp*/
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
+/* General */
 body {
-    background-color: #0d0d2b;
-    font-family: Arial, sans-serif;
-    min-height: 10vh;
-    display: flex;
-    padding: 40px;
-}
- .header {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: #0d0d2b;
+  height: 100vh;
   display: flex;
-  height: 80px;
-  justify-content: space-between;
-  background-color: #5757c2;
+  justify-content: center;
   align-items: center;
-  padding: 10px;
-
 }
 
-.logo {
+/* Contenedor principal */
+.contenedor {
   display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 60px;
+  max-width: 1200px;
+  width: 100%;
+  padding: 40px;
 }
 
-.logo img{
-  height: 60px;
-  width: 60px;
-  border-radius: 4rem;
-
+/* Mascota */
+.presentacion {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-/* fondo del formulario */
+.cota {
+  position: relative;
+  text-align: center;
+}
+
+.masimg {
+  width: 300px;
+}
+
+.globo {
+  background: #fff;
+  padding: 12px 20px;
+  border-radius: 20px;
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-weight: bold;
+}
+
+.globo::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 10px;
+  border-style: solid;
+  border-color: white transparent transparent transparent;
+}
+
+/* Formulario */
 .formulario {
-    background-color: #172f50;
-    padding: 60px;
-    position: relative;
-    /* cuando voy a mover una caja la pongo con position relative y dps a el left  o el right y eso lol */
-    left: 700px;
-    margin-top: 200px;
-    border-radius: 15px;
-    color: #fff;
-    width: 100%;
-    max-width: 500px; /* Más grandeeeeeee */
-    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+  flex: 1;
+  background-color: #172f50;
+  padding: 40px;
+  border-radius: 60px;
+  color: white;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
 }
 
-/* iniciar sesion grande  */
 .formulario h1 {
-    text-align: center;
-    margin-bottom: 40px;
-    font-size: 26px;
-    border-bottom: 1px solid #444;
-    padding-bottom: 15px;
-}
-
-/* Campos */
-.formulario form {
-    display: flex;
-    flex-direction: column;
-    gap: 3s0px;  /* Más espacio entre los inputs de nombre de usuario  y el otro  */
+  text-align: center;
+  margin-bottom: 30px;
 }
 
 .input-group {
-    display: flex;
-    flex-direction: column;
+  margin-bottom: 20px;
 }
 
 .input-group label {
-    margin-bottom: 10px;
-    font-size: 16px;
-    color: #ccc;
+  display: block;
+  margin-bottom: 8px;
 }
 
 .input-group input {
-    padding: 14px;
-    font-size: 16px;
-    border-radius: 6px;
-    border: none;
-    outline: none;
+  width: 100%;
+  padding: 12px;
+  border-radius: 30px;
+  border: none;
+  background-color: #1b2a4a;
+  color: white;
 }
 
-/* Botón */
 button {
-    padding: 14px;
-    background-color: #1e90ff;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 18px;
-    cursor: pointer;
-    transition: background 0.3s ease;
+  width: 100%;
+  padding: 14px;
+  background-color: #3a5eff;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 button:hover {
-    background-color: #0b75d3;
+  background-color: #1f4ed8;
+}
+
+.recuperar {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.recuperar a {
+  color: #76baff;
+  text-decoration: none;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-    body {
-        justify-content: center; /* Centrado en pantallas pequeñas */
-        padding: 20px;
-    }
+  .contenedor {
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
 
-    .formulario {
-        width: 100%;
-        max-width: 90%;
-        padding: 30px 20px;
-    }
+  .globo {
+    position: static;
+    transform: none;
+    margin-bottom: 20px;
+  }
 
-    .formulario h1 {
-        font-size: 22px;
-    }
+  .globo::after {
+    display: none;
+  }
 }
-
-
-
- 
-
-
