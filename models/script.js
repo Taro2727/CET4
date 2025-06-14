@@ -9,3 +9,4 @@ regi.addEventListener('submit',async function (event){
     const contra = document.getElementById('password').value;
     const confirmcontra = document.getElementById('confirm').value;
 })
+fetch ('\n')
