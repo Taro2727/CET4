@@ -15,7 +15,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
   const resultado = await respuesta.json();
 
   if (resultado.exito) {
-    window.location.href = "url('https://www.youtube.com/')";
+    window.location.href = "/bienvenida";
   } else {
     document.getElementById("mensaje").textContent = "Usuario o contraseña incorrectos.";
   }

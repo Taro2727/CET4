@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Inicio de Sesión - CETA</title>
-  <link rel="stylesheet" href="/CET4/templates/css/estiloiniciarsesion.css"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/estiloiniciarsesion.css') }}"/>
 </head>
 <body>
   <main class="main-wrapper">
@@ -12,7 +12,7 @@
     <section class="login-container" aria-labelledby="login-title">
       <h1 id="login-title">¡BIENVENIDO DE VUELTA!</h1>
 
-      <form>
+      <form id="loginForm">
         <label for="email" class="sr-only">Correo electrónico</label>
         <input type="email" id="email" placeholder="INGRESE SU CORREO ELECTRONICO" required />
 

@@ -1,13 +1,10 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for
-import mysql.connector
+
 app = Flask(__name__)
-#conectar con mySQL
-db=mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="",
-    database="cet4"
-)
+
+# Datos falsos para login
+emailcorrecto = "admin@gmail.com"
+contracorrecta = "1234"
 
 @app.route('/')
 def login():
@@ -19,20 +16,14 @@ def verificar():
     usuario = datos['email']
     contrasena = datos['password']
 
-    cursor = db.cursor(dictionary=True)
-    consulta = "SELECT * FROM usuarios WHERE usuario = %s AND contrasena = %s"
-    cursor.execute(consulta, (usuario, contrasena))
-    resultado = cursor.fetchone()
-    cursor.close()
-
-    if resultado:
+    if usuario == emailcorrecto and contrasena == contracorrecta:
         return jsonify({"exito": True})
     else:
         return jsonify({"exito": False})
 
 @app.route('/bienvenida')
 def bienvenida():
-    return render_template('index/bienvenida.html')
+    return render_template('index/indexhomeinicio.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
