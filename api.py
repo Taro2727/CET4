@@ -7,4 +7,4 @@ app = Flask(__name__)
 #y que esa funcion va a usar un nombre (una ruta)
 @app.route('/n')
 def inicio():
-    return render_template('index.html')
+    return render_template('index.html ')
