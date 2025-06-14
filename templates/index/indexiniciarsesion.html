@@ -23,11 +23,17 @@
           <a href="#">¿OLVIDÓ SU CONTRASEÑA? RECUPERAR</a>
         </div>
 
-        <button type="submit">INICIAR</button>
+        <button type="submit" id="init">INICIAR</button>
       </form>
+        <div id="mensaje" class="mensaje"></div>
 
       <div class="links">
         ¿NO TIENE UNA CUENTA? <a href="#">CREAR CUENTA</a>
+      </div>
+      <div id="mensaje" class="mensaje">
+        {% if mensaje %}
+          {{ mensaje }}
+        {% endif %}
       </div>
     </section>
 
@@ -37,5 +43,7 @@
     </aside>
 
   </main>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
 </body>
 </html>
