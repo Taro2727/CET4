@@ -27,24 +27,28 @@ def dataregistro():
    mail = datosdesdejs['email']
    contra = datosdesdejs['contra']
    confcontra = datosdesdejs['confcontra']
+   #no se usan () en el if de python
+   if contra != confcontra:
+       return "la contraseña y la confirmación no son iguales, intente nuevamente"
 
-    #pasar datos de py a la bd
-    #hay q usar el cursor bld (jaja me habia olvidado)
-    cursor = conexion.cursor()
-    #el cursor genera una variable q apunta a donde va a mandar el dato (corte catapulta)
-    #consulta = sql xd
-    sql = "INSERT INTO usuario(nom_usu, email, contraseña) VALUES (%s, %s, %s)"
-    #valores del %s los toma valores (los gaurda en orden)
-    #esos valores tienen q coinsidir con los q guardan el coso de js
-    valores = (mail,mail,contra)
-    #cursor manda los valores de sql (insert into) y los valores (valores ahr)
-    cursor.execute(sql, valores)
-    #guarda todo lo anterior en la bd (osea lo aplica)
-    conexion.commit()
-    cursor.close()
-    return "usuario registrado correctamente"
-
-
+   try:    
+        #pasar datos de py a la bd
+        #hay q usar el cursor bld (jaja me habia olvidado)
+        cursor = conexion.cursor()
+        #el cursor genera una variable q apunta a donde va a mandar el dato (corte catapulta)
+        #consulta = sql xd
+        sql = "INSERT INTO usuario(nom_usu, email, contraseña) VALUES (%s, %s, %s)"
+        #valores del %s los toma valores (los gaurda en orden)
+        #esos valores tienen q coinsidir con los q guardan el coso de js
+        valores = (mail,mail,contra)
+        #cursor manda los valores de sql (insert into) y los valores (valores ahr)
+        cursor.execute(sql, valores)
+        #guarda todo lo anterior en la bd (osea lo aplica)
+        conexion.commit()
+        cursor.close()
+        return "usuario registrado correctamente"
+   except Exception as e:    
+    return f"Error al registrar el usuario {e}"   
 #para ejecutar la mrd esa:
 if __name__ == '__main__':
     app.run(debug=True)
