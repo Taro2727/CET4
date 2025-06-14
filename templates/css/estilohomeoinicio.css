@@ -24,7 +24,6 @@ body{
     background-color:  #080c34 ;
     float: left; /*Esto hace que el costado se quede a la izquierda sin afectar el resto del contenido*/
     position: fixed;
-    left: -10%; /*Esto oculta la barra lateral */
     transition: left 0,3s ease; /*Esto hace que la barrra lateral se deslice suavemente al aparecer */ 
 }
 .buscador-logo{
@@ -87,7 +86,55 @@ body{
     flex-direction: column; /*Esta hermosa linea de codigo hace que los elemntos se alineen verticalmente*/
     align-items: center; /*Estp hace que se alieen al centro*/
 }
-/* Fin de la barra del costado */
+/* Fin de la barra lateral */
+
+.materia1{
+    width: 250px;
+    height: 150px;
+    margin-top: 60px;
+    margin-left: 55px;
+    border-radius: 20px;
+}
+.materia2{
+
+    width: 250px;
+    height: 150px;
+    margin-top: 60px;
+    margin-left: 55px;
+    border-radius: 20px;
+    
+
+}
+.cuerpo1{
+    display: flex; 
+    gap: 20px; 
+    justify-content: center; 
+    flex-wrap: wrap;
+
+}
+.bloque-superpuesto {
+    position: relative;
+    display: inline-block;
+}
+.bloque-superpuesto img {
+    display: block;
+    width: 250px;
+    height: 150px;
+    border-radius: 20px;
+}
+.texto-superpuesto {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-weight: bold;
+    font-size: 35px;
+    padding: 10px 15px;
+    border-radius: 10px;
+    text-align: center;
+    pointer-events: none; /* El texto no bloquea clics */
+}
 
 #toggle{
     color: white;
@@ -141,7 +188,7 @@ body{
     }
 }
 
-/* Para celulares chicos */
+/* Distintas resoluciones de pantalla*/
 @media (max-width: 600px) {
     .buscador-logo2 {
         width: 95%;
