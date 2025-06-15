@@ -107,39 +107,13 @@ body{
     
 
 }
-.cuerpo1 {
-    margin-left: 80px; /* espacio para la barra lateral */
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.cuerpo1{
+    display: flex; 
+    gap: 20px; 
+    justify-content: center; 
     flex-wrap: wrap;
-    gap: 40px; /* espacio entre los bloques */
-    min-height: 100vh; /* para centrar verticalmente */
-}
 
-.bloque-superpuesto {
-    position: relative;
 }
-
-.bloque-superpuesto img {
-    width: 500px; /* tamaño grande */
-    height: 250px;
-    border-radius: 20px;
-}
-
-.texto-superpuesto {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: white;
-    font-weight: bold;
-    font-size: 40px;
-    text-align: center;
-    pointer-events: none;
-}
-
 .bloque-superpuesto {
     position: relative;
     display: inline-block;
