@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Comentarios con Menú</title>
-  <link rel="stylesheet" href="/CET4/static/css/indexcajacomentario.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/indexcajacomentarios.css') }}">
 </head>
 <body>
   <div class="elcostado ordenado">
@@ -36,5 +36,6 @@
       </form>
     </section>
   </main>
+  <script src="{{ url_for('static', filename='js/comentarios.js') }}"></script>
 </body>
 </html>
