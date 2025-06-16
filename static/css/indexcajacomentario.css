@@ -1,0 +1,186 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #082c54;
+}
+
+::placeholder {
+  color: #fff;
+}
+
+.buscador {
+  background-color: #54647c;
+  width: 95vh;
+  height: 35px;
+  margin-top: 20px;
+  border-radius: 20px;
+  border: none;
+  padding: 5px 10px 5px 35px;
+}
+
+.buscador-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+}
+
+.buscador-logo2 {
+  position: relative;
+  width: 700px;
+}
+
+.logo {
+  position: absolute;
+  top: 67%;
+  left: 10px;
+  transform: translateY(-50%);
+  height: 20px;
+  width: 20px;
+  pointer-events: none;
+}
+
+.elcostado {
+  width: 10%;
+  height: 100vh;
+  background-color: #080c34;
+  float: left;
+  position: fixed;
+  transition: left 0.3s ease;
+}
+
+.ordenado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.usuario,
+.casa1,
+.campana2,
+.soporte3,
+.grupo4,
+.opcion5 {
+  width: 35px;
+  height: 35px;
+  margin-top: 50px;
+}
+
+.usuario {
+  width: 50px;
+  height: 50px;
+}
+
+/* Línea separadora vertical */
+.separador-lateral {
+  position: fixed;
+  left: 10%;
+  top: 0;
+  width: 1px;
+  height: 100vh;
+  background-color: #444;
+}
+
+/* Línea separadora horizontal opcional */
+.linea-separadora {
+  width: 100%;
+  max-width: 800px;
+  border-bottom: 1px solid #444;
+  margin: 20px 0;
+}
+
+.comentarios {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.comentarios-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.comentarios-header h1 {
+  background: rgb(193, 205, 216);
+  padding: 20px 10px;
+  border-radius: 4px;
+  font-size: 60px;
+}
+
+.flechas {
+  font-size: 30px;
+  color: #ccc;
+}
+
+.caja-comentario {
+  background-color: #0d2a52;
+  border: 1px solid #345678;
+  border-radius: 10px;
+  padding: 10px;
+  width: 100%;
+  max-width: 800px;
+}
+
+textarea {
+  width: 100%;
+  background-color: #123;
+  border: 1px solid #456;
+  border-radius: 5px;
+  padding: 10px;
+  color: #fff;
+  font-size: 14px;
+  min-height: 100px;
+  resize: vertical;
+}
+
+textarea::placeholder {
+  color: #aaa;
+}
+
+.boton-contenedor {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+button {
+  background: none;
+  border: 1px solid #6b6060;
+  color: #888;
+  padding: 6px 12px;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+button:hover {
+  color: #1e90ff;
+  border-color: #1e90ff;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+@media (max-width: 500px) {
+  .sidebar {
+    width: 40px;
+  }
+
+  .sidebar a {
+    font-size: 18px;
+  }
+}
