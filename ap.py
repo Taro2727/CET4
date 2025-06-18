@@ -19,9 +19,6 @@ db = mysql.connector.connect(
 def inicio():
     return render_template('index/indexprincipal.html')
 
-@app.route("/iniciarsesion")
-def iniciarsesion():
-    return render_template("index/iniciarsesion.html")
 #__________________________________
 #desde acá empieza el registro 
 @app.route('/crearcuenta')
@@ -63,7 +60,6 @@ def dataregistro():
 
 #hasta aca es lo de crear cuenta
 #________________________________
-    return render_template('index/indexprincipal.html')
 
 @app.route('/iniciarsesion') #ruta para la página de inicio
 def iniciarsesion():
