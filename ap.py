@@ -9,6 +9,7 @@ app.secret_key= 'mi_clave_secreta' #clave secreta para sesiones, cookies, etc.
 # Conexión con MySQL
 db = mysql.connector.connect(
     host="localhost",
+    port=3306,           # puerto por defecto de MySQL
     user="root",         # tu usuario (normalmente es 'root')
     password="",         # tu contraseña, si no tiene ponela vacía
     database="cet4"  # nombre exacto de la base de datos
@@ -16,8 +17,52 @@ db = mysql.connector.connect(
 
 @app.route('/') #ruta para la página de inicio
 def inicio():
-    return render_template('index/indexhomeoinicio.html')
+    return render_template('index/indexprincipal.html')
 
+@app.route("/iniciarsesion")
+def iniciarsesion():
+    return render_template("index/iniciarsesion.html")
+#__________________________________
+#desde acá empieza el registro 
+@app.route('/crearcuenta')
+def regi():
+    return render_template('index/indexcrearcuenta.html')
+#sin una / inicial antes del index/ pq ya stams en templates gracias al render_template
+@app.route('/crearcuenta/registrar',methods=['POST'])
+def dataregistro():
+   datosdesdejs = request.json
+   nombre = datosdesdejs['name']
+   mail = datosdesdejs['email']
+   contra = datosdesdejs['contra']
+   confcontra = datosdesdejs['confcontra']
+   #no se usan () en el if de python
+   if contra != confcontra:
+       return "la contraseña y la confirmación no son iguales, intente nuevamente",400
+
+   try:    
+        #pasar datos de py a la bd
+        #hay q usar el cursor bld (jaja me habia olvidado)
+        cursor = db.cursor()
+        #el cursor genera una variable q apunta a donde va a mandar el dato (corte catapulta)
+        #consulta = sql xd
+        sql = "INSERT INTO usuario(nom_usu, email, contraseña) VALUES (%s, %s, %s)"
+        #valores del %s los toma valores (los gaurda en orden)
+        #esos valores tienen q coinsidir con los q guardan el coso de js
+        valores = (nombre,mail,contra)
+        #cursor manda los valores de sql (insert into) y los valores (valores ahr)
+        cursor.execute(sql, valores)
+        #guarda todo lo anterior en la bd (osea lo aplica)
+        #Se cambió el conexion.commit por db.commit pq
+        #en mi archivo de py usé "conexion" para declarar la base de datos 
+        #pero en este python la bd está declarada como "db"  
+        db.commit()
+        cursor.close()
+        return "usuario registrado correctamente"
+   except Exception as e:    
+    return f"Error al registrar el usuario {e}",500  
+
+#hasta aca es lo de crear cuenta
+#________________________________
 @app.route('/programacion') #ruta para la página de programación
 def indexprogramacion():
     return render_template("index/dprogramacionindex.html")
