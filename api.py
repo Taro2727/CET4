@@ -5,6 +5,7 @@ import mysql.connector
 conexion = mysql.connector.connect(
     #va una coma c/vez q pones un datito (como en mysql)
     host ="localhost",
+    port = 3306,
     user ="root",
     password ="",
     database="cet4"
@@ -29,7 +30,7 @@ def dataregistro():
    confcontra = datosdesdejs['confcontra']
    #no se usan () en el if de python
    if contra != confcontra:
-       return "la contraseña y la confirmación no son iguales, intente nuevamente"
+       return "la contraseña y la confirmación no son iguales, intente nuevamente",400
 
    try:    
         #pasar datos de py a la bd
@@ -48,7 +49,7 @@ def dataregistro():
         cursor.close()
         return "usuario registrado correctamente"
    except Exception as e:    
-    return f"Error al registrar el usuario {e}"   
+    return f"Error al registrar el usuario {e}",500  
 #para ejecutar la mrd esa:
 if __name__ == '__main__':
     app.run(debug=True)

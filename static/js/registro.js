@@ -18,8 +18,13 @@ regi.addEventListener('submit',async function (event){
         },
         body: JSON.stringify(datos)
     })
-    .then(response => response.text())
-    .then(data => {
-        alert(data); 
+    .then(async response =>{
+        const text = await response.text();
+        if(!response.ok) {
+            alert("error " + text);
+        }else{
+            alert(text);
+        }
     });
-});
+    });
+//el 1er }); cierra el .then y el 2do cierra el eventlistener
