@@ -9,6 +9,7 @@ app.secret_key= 'mi_clave_secreta' #clave secreta para sesiones, cookies, etc.
 # Conexión con MySQL
 db = mysql.connector.connect(
     host="localhost",
+    port=3306,           # puerto por defecto de MySQL
     user="root",         # tu usuario (normalmente es 'root')
     password="",         # tu contraseña, si no tiene ponela vacía
     database="cet4"  # nombre exacto de la base de datos
@@ -16,6 +17,18 @@ db = mysql.connector.connect(
 
 @app.route('/') #ruta para la página de inicio
 def inicio():
+    return render_template('index/indexprincipal.html')
+
+@app.route('/iniciarsesion') #ruta para la página de inicio
+def iniciarsesion():
+    return render_template('index/indexiniciarsesion.html')
+
+@app.route('/registrarse') #ruta para la página de registro #cambiar nombre de la ruta
+def registrarse():
+    return render_template('index/indexcrearcuenta.html')
+
+@app.route('/indexhomeoinicio') #ruta para la página de inicio
+def home():
     return render_template('index/indexhomeoinicio.html')
 
 @app.route('/programacion') #ruta para la página de programación
@@ -49,6 +62,25 @@ def index7toprog():
 @app.before_request
 def cargar_usuario_de_prueba():
     session['usuario'] = 'UsuarioDePrueba'
+
+@app.route('/verificar', methods=['POST'])
+def verificar():
+    datos = request.get_json()
+    email = datos.get('email')
+    contraseña = datos.get('password')
+
+    print("Email recibido:", email)
+    print("Contraseña recibida:", contraseña)
+
+    cursor = db.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM usuario WHERE email=%s AND contraseña=%s", (email, contraseña))
+    usuario = cursor.fetchone()
+    cursor.close()
+
+    if usuario:
+        return jsonify({"exito": True})
+    else:
+        return jsonify({"exito": False})
 
 @app.route('/comentario', methods=['POST'])
 def comment():
