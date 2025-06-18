@@ -23,7 +23,7 @@ def inicio():
 @app.route('/crearcuenta/registrar',methods=['POST'])
 def dataregistro():
    datosdesdejs = request.json
-   #name = datosdesdejs['nombre']
+   nombre = datosdesdejs['name']
    mail = datosdesdejs['email']
    contra = datosdesdejs['contra']
    confcontra = datosdesdejs['confcontra']
@@ -40,7 +40,7 @@ def dataregistro():
         sql = "INSERT INTO usuario(nom_usu, email, contraseña) VALUES (%s, %s, %s)"
         #valores del %s los toma valores (los gaurda en orden)
         #esos valores tienen q coinsidir con los q guardan el coso de js
-        valores = (mail,mail,contra)
+        valores = (nombre,mail,contra)
         #cursor manda los valores de sql (insert into) y los valores (valores ahr)
         cursor.execute(sql, valores)
         #guarda todo lo anterior en la bd (osea lo aplica)
