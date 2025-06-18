@@ -1,10 +1,10 @@
 # archivo: app.py
-from flask import Flask, request, jsonify, render_template 
+from flask import Flask, request, jsonify, render_template, session, redirect, url_for
 #render_template se puede cambiar app = Flask(__name__, template_folder='mi_html')
 import mysql.connector #conectar a MySQL
-from flask import Blueprint 
 
 app = Flask(__name__)
+app.secret_key= 'mi_clave_secreta' #clave secreta para sesiones, cookies, etc.
 
 # Conexión con MySQL
 db = mysql.connector.connect(
@@ -14,35 +14,82 @@ db = mysql.connector.connect(
     database="cet4"  # nombre exacto de la base de datos
 )
 
-@app.route('/')
-def indexhomeinicio():
-    return render_template("indexhomeinicio.html")
+@app.route('/') #ruta para la página de inicio
+def inicio():
+    return render_template('index/indexhomeoinicio.html')
 
-@app.route('/comment', methods=['POST'])
+@app.route('/programacion') #ruta para la página de programación
+def indexprogramacion():
+    return render_template("index/dprogramacionindex.html")
+
+@app.route('/informatica') #ruta para la página de informática
+def indexinformatica():
+    return render_template("index/dinformaticaindex.html")
+
+@app.route('/comentario') #ruta para la página de comentarios
+def indexcomentario():
+    return render_template("index/indexcomentario.html")
+
+@app.route('/4toprogramacion') #ruta para la página de 4to de programación
+def index4toprog():
+    return render_template("index/indexdcuarto.html")
+
+@app.route('/5toprogramacion') #ruta para la página de 5to de programación
+def index5toprog():
+    return render_template("index/indexdquinto.html")
+
+@app.route('/6toprogramacion') #ruta para la página de 6to de programación
+def index6toprog():
+    return render_template("index/indexsexto.html")
+
+@app.route('/7toprogramacion') #ruta para la página de 7mo de programación
+def index7toprog():
+    return render_template("index/indexdseptimo.html")
+
+@app.before_request
+def cargar_usuario_de_prueba():
+    session['usuario'] = 'UsuarioDePrueba'
+
+@app.route('/comentario', methods=['POST'])
 def comment():
     try:
-        data = request.get_json() #get agarra los datos de js y los json los traduce
+        data = request.get_json()
         comment = data['comment']
-        cursor = db.cursor() #cursor para ejecutar consultas
-        query = "INSERT INTO comentarios (mensaje) VALUES (%s)" # consulta SQL para insertar datos (query es una variable)
+        cursor = db.cursor()
+        query = "INSERT INTO preg (cont, titulo) VALUES (%s)"
         cursor.execute(query, (comment,))
-        db.commit() #guarda los cambios en la base de datos permanentemente
-        cursor.close()#cierra consulta
-
-        return jsonify({"success": True})# devuelve un JSON con el éxito de la operación
-    except Exception as e:
-        return jsonify({"success": False, "error": str(e)}), 500 # devuelve un JSON con el error en caso de que falle, 500 es un error interno del servidor
-
-@app.route('/get_comments')#pide todos los comentarios guardados
-def get_comments():
-    try:
-        cursor = db.cursor(dictionary=True)# cursor con diccionario para que los resultados se devuelvan como diccionarios
-        cursor.execute("SELECT mensaje, fecha FROM comentarios ORDER BY fecha DESC") # consulta SQL para obtener todos los comentarios ordenados por fecha descendente
-        comentarios = cursor.fetchall()#trae los resultados de la consulta
+        db.commit()
         cursor.close()
-        return jsonify(comentarios)#devuelve los comentarios en formato JSON para que js los pueda mostrar
+        return jsonify({"success": True})
     except Exception as e:
+        print("Error al guardar comentario:", e)  # Esto mostrará el error en la consola de Flask
         return jsonify({"success": False, "error": str(e)}), 500
 
-if __name__ == '__main__':
+@app.route('/get_comentario')
+def get_comentario():
+    try:
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("SELECT cont, fecha FROM preg ORDER BY fecha DESC")
+        comentarios = cursor.fetchall()
+        cursor.close()
+        return jsonify(comentarios)
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+    
+@app.route('/responder', methods=['POST'])
+def responder():
+    data = request.get_json()
+    id_comentario = data['id_comentario']
+    respuesta = data['respuesta']
+    usuario = session.get('usuario', 'Anónimo')  # si aún no tenés login funcional, usa 'Anónimo'
+
+    cursor = db.cursor()
+    query = "INSERT INTO respuestas (id_comentario, usuario, mensaje) VALUES (%s, %s, %s)"
+    cursor.execute(query, (id_comentario, usuario, respuesta))
+    db.commit()
+    cursor.close()
+    return jsonify({"success": True})
+
+
+if __name__ == "__main__":
     app.run(debug=True)

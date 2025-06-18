@@ -135,7 +135,7 @@ body{
     padding: 10px 15px;
     border-radius: 10px;
     text-align: center;
-    pointer-events: none; /* El texto no bloquea clics */
+    /*pointer-events: none;  El texto no bloquea clics */
 }
 
 #toggle{
