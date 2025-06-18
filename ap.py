@@ -16,7 +16,7 @@ db = mysql.connector.connect(
 
 @app.route('/')
 def indexhomeinicio():
-    return render_template("indexhomeinicio.html")
+    return render_template("index/indexhomeoinicio.html")
 
 @app.route('/comment', methods=['POST'])
 def comment():

@@ -4,7 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Inicio de Sesión - CETA</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/estiloiniciarsesion.css') }}"/>
+  <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/estiloiniciarsesion.css') }}"/> -->
+  <link rel="stylesheet" href="/static/css/estiloiniciarsesion.css">
 </head>
 <body>
   <main class="main-wrapper">
@@ -28,7 +29,7 @@
         <div id="mensaje" class="mensaje"></div>
 
       <div class="links">
-        ¿NO TIENE UNA CUENTA? <a href="#">CREAR CUENTA</a>
+        ¿NO TIENE UNA CUENTA? <a href="/crearcuenta">CREAR CUENTA</a>
       </div>
       <div id="mensaje" class="mensaje">
         {% if mensaje %}
@@ -39,7 +40,7 @@
 
     <aside class="mascota-wrapper" aria-label="Asistente virtual">
       <div class="burbuja" role="note">¿Listo para estudiar cámara?</div>
-      <img src="/CET4/utils/img/zettino_sinfondo.png" alt="Mascota CETA saludando" class="mascota" />
+      <img src="static/utils/img/zettino_sinfondo.png" alt="Mascota CETA saludando" class="mascota" />
     </aside>
 
   </main>

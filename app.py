@@ -10,6 +10,10 @@ contracorrecta = "1234"
 def login():
     return render_template('index/indexiniciarsesion.html')
 
+@app.route('/crearcuenta')
+def regi():
+    return render_template('index/indexcrearcuenta.html')
+
 @app.route('/verificar', methods=['POST'])
 def verificar():
     datos = request.get_json()
