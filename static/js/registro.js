@@ -16,7 +16,7 @@ regi.addEventListener('submit',async function (event){
     };
     //OBLIGATORIO QUE EL FETCH ESTÉ ADENTRO DEL EVENT LISTENER
     //para mandar un json a py:
-fetch ('/registrar',{
+fetch ('/crearcuenta/registrar',{
     method: 'POST',
     headers: {
         'Content-Type': 'aplication/json'
