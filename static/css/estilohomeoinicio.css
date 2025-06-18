@@ -1,85 +1,105 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
-body{
-    background-color: #082c54;
+
+body {
+  background-color: #082c54;
 }
-::placeholder{
-    color: #fff;
+
+/* empieza la bARra de busqueda  */
+::placeholder {
+  color: #fff;
 }
-.buscador{
-    background-color:  #54647c ;
-    width: 95vh;
-    height: 35px;
-    margin-top: 20px;
-    border-radius: 20px;  /*Esto hace que el borde este mas redondeado */
-    border:none; /*Esto quita el borde*/
-    padding: 5px 10px 5px 35px;
+
+.buscador {
+  background-color: #54647c;
+  width: 95vh;
+  height: 35px;
+  margin-top: 2px;
+  border-radius: 20px;
+  border: none;
+  padding: 5px 10px 5px 35px;
 }
+
+.buscador-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+}
+
+.buscador-logo2 {
+  position: relative;
+  width: 700px;
+}
+
+.logo {
+  position: absolute;
+  top: 67%;
+  left: 10px;
+  transform: translateY(-50%);
+  height: 20px;
+  width: 20px;
+  pointer-events: none;
+}
+
+/* termina */
+/* empieza costado  */
 .elcostado {
     width: 10%;
     height: 100vh;
-    background-color:  #080c34 ;
-    float: left; /*Esto hace que el costado se quede a la izquierda sin afectar el resto del contenido*/
+    background-color: #080c34;
     position: fixed;
-    transition: left 0,3s ease; /*Esto hace que la barrra lateral se deslice suavemente al aparecer */ 
-}
-.buscador-logo{
+    top: 0;  /* Asegura que la barra lateral comience desde el tope */
+    left: 0;
+    transition: left 0.3s ease;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 10px;
-    justify-content: center;
-
-}
-.buscador-logo2{
-    position: relative;
-    width: 700px;
-
-}
-.logo{
-    position: absolute;
-    top: 67%;
-    left: 10px;
-    transform: translateY(-50%);
-    height: 20px;
-    width: 20px;
-    pointer-events: none; /* para que no bloquee clics */
+    padding-top: 10px;  /* Pequeño espacio opcional para separar el botón */
 }
 
-/* Inicio de la barra del costado */
-.usuario{
-    width: 50px;
-    height: 50px;
-    margin-top: 50px;
+#out {
+    margin-top: 0; /* Elimina margen superior */
+    margin-bottom: 20px;
+    font-size: 28px;  /* Tamaño adecuado para el icono del menú */
+    color: #fff;
+    cursor: pointer;
 }
-.casa1{
-    width: 35px;
-    height: 35px;
-    margin-top: 50px;
 
+
+.ordenado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-.campana2{
-    width: 35px;
-    height: 35px;
-    margin-top: 50px;
+
+.usuario,
+.casa1,
+.campana2,
+.soporte3,
+.grupo4,
+.opcion5 {
+  width: 35px;
+  height: 35px;
+  margin-top: 50px;
 }
-.soporte3{
-    width: 35px;
-    height: 35px;
-    margin-top: 50px;
+
+.usuario {
+  width: 50px;
+  height: 50px;
 }
-.grupo4{
-    width: 35px;
-    height: 35px;
-    margin-top: 50px;
-}
-.opcion5{
-    width: 35px;
-    height: 35px;
-    margin-top: 50px;
-    
+
+/* Línea separadora vertical */
+.separador-lateral {
+  position: fixed;
+  left: 10%;
+  top: 0;
+  width: 1px;
+  height: 100vh;
+  background-color: #444;
 }
 .ordenado{
     display: flex; 
@@ -88,44 +108,30 @@ body{
 }
 /* Fin de la barra lateral */
 
-.materia1{
-    width: 250px;
-    height: 150px;
-    margin-top: 80px;
-    margin-left: 85px;
-    border-radius: 20px;
-    text-align: center;
-}
-.materia2{
-
-    width: 250px;
-    height: 150px;
-    margin-top: 60px;
-    margin-left: 55px;
-    border-radius: 20px;
-    text-align: center;
-    
-
-}
+/* comienza los bloques de las materias */
 .cuerpo1 {
-    margin-left: 80px; /* espacio para la barra lateral */
-    padding: 20px;
+    margin-left: 88px;  /* Mantiene margen para que no pise el sidebar */
+    padding: 10%;/*en este  caso lo uso para separarlo de la barra de busqueda*/
     display: flex;
-    justify-content: center;
+    justify-content: center; /* Centra horizontalmente */
     align-items: center;
-    flex-wrap: wrap;
-    gap: 40px; /* espacio entre los bloques */
-    min-height: 100vh; /* para centrar verticalmente */
+    flex-wrap: wrap;  /* Permite que bajen en pantallas chicas */
+    gap: 50px;  /* Separación entre los bloques */
 }
 
 .bloque-superpuesto {
     position: relative;
+    width: 400px;  /* Tamaño más grande */
+    height: 200px;
+    border-radius: 15px;
+    overflow: hidden;
 }
 
 .bloque-superpuesto img {
-    width: 500px; /* tamaño grande */
-    height: 250px;
-    border-radius: 20px;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;  /* Imagen cubre sin deformarse */
+    border-radius: 15px;
 }
 
 .texto-superpuesto {
@@ -133,119 +139,25 @@ body{
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    color: white;
+    color: #fff;
     font-weight: bold;
-    font-size: 40px;
+    font-size: clamp(18px, 3vw, 32px);  /* Tamaño de texto responsivo */
+    background: rgba(0, 0, 0, 0.4);  /* Fondo para que el texto se vea mejor */
+    padding: 5px 10px;
+    border-radius: 8px;
     text-align: center;
-    pointer-events: none;
+    white-space: nowrap;
 }
 
-.bloque-superpuesto {
-    position: relative;
-    display: inline-block;
-}
-.bloque-superpuesto img {
-    display: block;
-    width: 250px;
-    height: 150px;
-    border-radius: 20px;
-}
-.texto-superpuesto {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: white;
-    font-weight: bold;
-    font-size: 35px;
-    padding: 10px 15px;
-    border-radius: 10px;
-    text-align: center;
-    pointer-events: none; /* El texto no bloquea clics */
-}
-
-#toggle{
-    color: white;
-    float: left;
-    font-size: 45px;
-    margin-top: 15;
-    margin-left: 15px;
-}
-#out{
-    color:white;
-    float: left;
-    margin-top: 15px;
-    margin-right: 15px;
-    margin-left: 100px;
-}
-
-@media (max-width: 1024px) {
-    .buscador-logo2 {
-        width: 90%; /* Más flexible */
+/* Responsivo solo para los bloques */
+@media (max-width: 768px) {
+    .bloque-superpuesto {
+        width: 80%;  /* Que ocupe más ancho en pantallas chicas */
+        height: auto;
+        aspect-ratio: 16/9;  /* Mantiene forma de rectángulo */
     }
 
-    .buscador {
-        width: 100%;
-    }
-
-    .elcostado {
-        width: 60%;
-        left: -60%;
-    }
-
-    #toggle {
-        font-size: 26px;
-        margin-top: 10px;
-        margin-left: 10px;
-    }
-
-    #out {
-        margin-left: auto;
-        margin-right: 10px;
-    }
-
-    .usuario,
-    .casa1,
-    .campana2,
-    .soporte3,
-    .grupo4,
-    .opcion5 {
-        width: 40px;
-        height: 40px;
-        margin-top: 30px;
-    }
-}
-
-/* Distintas resoluciones de pantalla*/
-@media (max-width: 600px) {
-    .buscador-logo2 {
-        width: 95%;
-    }
-
-    .buscador {
-        height: 30px;
-        font-size: 14px;
-    }
-
-    .logo {
-        top: 50%;
-        height: 16px;
-        width: 16px;
-    }
-
-    .elcostado {
-        width: 80%;
-        left: -80%;
-    }
-
-    .usuario,
-    .casa1,
-    .campana2,
-    .soporte3,
-    .grupo4,
-    .opcion5 {
-        width: 30px;
-        height: 30px;
-        margin-top: 20px;
+    .texto-superpuesto {
+        font-size: clamp(16px, 5vw, 28px);
     }
 }
