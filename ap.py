@@ -15,6 +15,10 @@ db = mysql.connector.connect(
     database="cet4"  # nombre exacto de la base de datos
 )
 
+@app.route('/') #ruta para la página de inicio
+def inicio():
+    return render_template('index/indexprincipal.html')
+
 #__________________________________
 #desde acá empieza el registro 
 @app.route('/crearcuenta')
@@ -54,9 +58,8 @@ def dataregistro():
    except Exception as e:    
     return f"Error al registrar el usuario {e}",500  
 
-@app.route('/') #ruta para la página de inicio
-def inicio():
-    return render_template('index/indexprincipal.html')
+#hasta aca es lo de crear cuenta
+#________________________________
 
 @app.route("/iniciarsesion")
 def iniciarsesion():
