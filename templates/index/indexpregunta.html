@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>Haz tu pregunta</h2>
+<form id="commentForm">
+  <input type="text" id="titulo" name="titulo" placeholder="Título de la pregunta" required>
+  <textarea id="comentario" name="comentario" placeholder="Escribe tu pregunta..." required></textarea>
+  <input type="hidden" id="id_mat" name="id_mat" value="{{ id_mat }}">
+  <button type="submit">Enviar</button>
+</form>
+<script src="/static/js/comentarios.js"></script>
+</body>
+</html>

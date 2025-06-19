@@ -41,24 +41,20 @@ document.getElementById('commentForm').addEventListener('submit', async function
 
     const titulo = document.getElementById('titulo').value;
     const comment = document.getElementById('comentario').value;
-
+    const id_mat= document.getElementById('id_mat').value;
     const response = await fetch('/comentario', {
         method: 'POST', // método POST para enviar datos al servidor
         headers: {
             'Content-Type': 'application/json'// especifica que el cuerpo de la solicitud es JSON
         },
-        body: JSON.stringify({ titulo, comment }) // convierte el objeto a una cadena JSON
+        body: JSON.stringify({ titulo, comment, id_mat }) // convierte el objeto a una cadena JSON
     });
-
     const result = await response.json();
     if (result.success) {
-        // Mostrar el nuevo comentario sin recargar
-        const newComment = document.createElement('div');
-        newComment.classList.add('comment');
-        newComment.innerText = `${comment}`;
-        document.getElementById('commentsSection').prepend(newComment);// agrega el nuevo comentario al inicio de la sección de comentarios
-        document.getElementById('commentForm').reset();// resetea el formulario
+        alert("¡Pregunta enviada!");
+        document.getElementById('commentForm').reset();
     } else {
-        alert("Error al enviar el comentario");
+        alert("Error al enviar la pregunta");
     }
 });
+    

@@ -31,11 +31,13 @@
         <input id="titulo" name="titulo" placeholder="Título..." required>
         <label for="comentario" class="sr-only">Escribe tu comentario</label>
         <textarea id="comentario" name="comentario" placeholder="Escribe tu comentario..." required></textarea>
+        <input type="hidden" id="id_mat" name="id_mat" value="{{ id_mat }}">
         <div class="boton-contenedor">
           <button type="submit">Publicar</button>
         </div>
       </form>
     </section>
+<script src="/static/js/comentarios.js"></script>
     <!-- Mostrar los comentarios acá -->
     <section id="commentsSection" class="comentarios-anteriores"></section>
   </main>

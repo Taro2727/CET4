@@ -15,13 +15,6 @@ db = mysql.connector.connect(
     database="cet4"  # nombre exacto de la base de datos
 )
 
-@app.route('/') #ruta para la página de inicio
-def inicio():
-    return render_template('index/indexprincipal.html')
-
-@app.route("/iniciarsesion")
-def iniciarsesion():
-    return render_template("index/iniciarsesion.html")
 #__________________________________
 #desde acá empieza el registro 
 @app.route('/crearcuenta')
@@ -61,16 +54,16 @@ def dataregistro():
    except Exception as e:    
     return f"Error al registrar el usuario {e}",500  
 
-#hasta aca es lo de crear cuenta
-#________________________________
+@app.route('/') #ruta para la página de inicio
+def inicio():
     return render_template('index/indexprincipal.html')
 
-@app.route('/iniciarsesion') #ruta para la página de inicio
+@app.route("/iniciarsesion")
 def iniciarsesion():
-    return render_template('index/indexiniciarsesion.html')
+    return render_template("index/indexiniciarsesion.html")
 
-@app.route('/registrarse') #ruta para la página de registro #cambiar nombre de la ruta
-def registrarse():
+@app.route('/crearcuenta') #ruta para la página de registro #cambiar nombre de la ruta
+def crearcuenta():
     return render_template('index/indexcrearcuenta.html')
 
 @app.route('/indexhomeoinicio') #ruta para la página de inicio
@@ -105,9 +98,7 @@ def index6toprog():
 def index7toprog():
     return render_template("index/indexdseptimo.html")
 
-@app.before_request
-def cargar_usuario_de_prueba():
-    session['usuario'] = 'UsuarioDePrueba'
+#a partir de aca empieza el login/inicio de sesión
 
 @app.route('/verificar', methods=['POST'])
 def verificar():
@@ -124,18 +115,30 @@ def verificar():
     cursor.close()
 
     if usuario:
+        session['id_usu'] = usuario['id_usu']  # Guardar el id de usuario en la sesión
         return jsonify({"exito": True})
     else:
         return jsonify({"exito": False})
+
+@app.route('/comentario/materia/<int:id_mat>')
+def comentario_materia(id_mat):
+    return render_template('index/indexcomentario.html', id_mat=id_mat)
 
 @app.route('/comentario', methods=['POST'])
 def comment():
     try:
         data = request.get_json()
+        titulo = data['titulo']
         comment = data['comment']
+        id_mat=data['id_mat']
+        id_usu = session.get('id_usu')  # Obtener el id del usuario de la sesión
+
+        if not id_usu:
+            return jsonify({"success": False, "error": "Usuario no autenticado"}), 401
+        
         cursor = db.cursor()
-        query = "INSERT INTO preg (cont, titulo) VALUES (%s)"
-        cursor.execute(query, (comment,))
+        query = "INSERT INTO preg (titulo, cont, id_mat, id_usu) VALUES (%s, %s, %s, %s)"
+        cursor.execute(query, (titulo, comment, id_mat, id_usu))
         db.commit()
         cursor.close()
         return jsonify({"success": True})
@@ -145,15 +148,16 @@ def comment():
 
 @app.route('/get_comentario')
 def get_comentario():
-    try:
-        cursor = db.cursor(dictionary=True)
-        cursor.execute("SELECT cont, fecha FROM preg ORDER BY fecha DESC")
-        comentarios = cursor.fetchall()
-        cursor.close()
-        return jsonify(comentarios)
-    except Exception as e:
-        return jsonify({"success": False, "error": str(e)}), 500
-    
+    id_mat = request.args.get('id_mat')
+    cursor = db.cursor(dictionary=True)
+    if id_mat:
+        cursor.execute("SELECT * FROM preg WHERE id_mat=%s ORDER BY fecha DESC", (id_mat,))
+    else:
+        cursor.execute("SELECT * FROM preg ORDER BY fecha DESC")
+    comentarios = cursor.fetchall()
+    cursor.close()
+    return jsonify(comentarios)
+
 @app.route('/responder', methods=['POST'])
 def responder():
     data = request.get_json()
@@ -167,6 +171,20 @@ def responder():
     db.commit()
     cursor.close()
     return jsonify({"success": True})
+
+@app.route('/get_respuestas/<int:id_preg>')
+def get_respuestas(id_preg):
+    cursor = db.cursor(dictionary=True)
+    cursor.execute("""
+        SELECT r.mensaje, r.usuario
+        FROM respuestas r
+        WHERE r.id_comentario = %s
+        ORDER BY r.id_respuesta ASC
+    """, (id_preg,))
+    respuestas = cursor.fetchall()
+    cursor.close()
+    return jsonify(respuestas)
+
 
 
 if __name__ == "__main__":
