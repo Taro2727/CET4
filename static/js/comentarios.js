@@ -47,6 +47,7 @@ async function mostrarRespuestas(id_post) {
     const res = await fetch('/get_respuestas/' + id_post);
     const respuestas = await res.json();
     const div = document.getElementById('respuestas-' + id_post);
+    div.classList.add('respuestasparaestilaruwu')
     div.innerHTML = respuestas.length
         ? respuestas.map(r => `<div class="respuesta"><b>${r.usuario || "Anónimo"}:</b> ${r.cont}</div>`).join('')
         : '<div class="respuesta">No hay respuestas aún.</div>';
