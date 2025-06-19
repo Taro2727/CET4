@@ -1,4 +1,5 @@
 window.onload = async function () {
+    // Se mantiene la carga inicial de comentarios
     await cargarComentarios();
 };
 
@@ -6,59 +7,89 @@ async function cargarComentarios() {
     const response = await fetch('/get_comentario');
     const comentarios = await response.json();
     const section = document.getElementById('commentsSection');
-    section.innerHTML = '';
+    section.innerHTML = ''; // Limpia la sección antes de recargar
+
     comentarios.forEach(c => {
+        // Se mantiene la clase original del contenedor principal: "comment"
         const div = document.createElement('div');
         div.classList.add('comment');
+
+        // Se agrega la separación de divs pero sin cambiar la estructura visible inicial
         div.innerHTML = `
             <strong>${c.usuario || "Anónimo"}</strong>: <b>${c.titulo}</b><br>
             ${c.cont}
+            <br>
             <button onclick="responder('${c.id_post}', '${c.usuario || "Anónimo"}')">Responder</button>
             <button onclick="mostrarRespuestas('${c.id_post}')">Ver respuestas</button>
-            <div class="respuestas" id="respuestas-${c.id_post}"></div>
+
+            <div class="area-responder" id="area-responder-${c.id_post}"></div>
+
+            <div class="respuestas" id="respuestas-${c.id_post}" style="display: none;"></div>
         `;
         section.appendChild(div);
     });
 }
 
+// Se mantiene el nombre original de la función: "responder"
 function responder(id, usuario) {
-    const div = document.getElementById(`respuestas-${id}`);
-    div.innerHTML = `
-        <textarea id="respuesta-${id}" placeholder="Responder a ${usuario}..."></textarea>
-        <button onclick="enviarRespuesta('${id}')">Enviar</button>
+    const areaResponder = document.getElementById(`area-responder-${id}`);
+
+    // Si el formulario ya está ahí, lo quita. Si no, lo pone.
+    if (areaResponder.innerHTML !== '') {
+        areaResponder.innerHTML = '';
+        return;
+    }
+
+    // Se crea el formulario dentro de su propia caja para poder estilizarla
+    areaResponder.innerHTML = `
+        <div class="caja-responder">
+            <textarea id="texto-respuesta-${id}" placeholder="Responder a ${usuario}..."></textarea>
+            <button onclick="enviarRespuesta('${id}')">Enviar</button>
+        </div>
     `;
 }
 
+// Se mantiene el nombre original de la función: "enviarRespuesta"
 async function enviarRespuesta(id) {
-    const respuesta = document.getElementById(`respuesta-${id}`).value;
+    const respuesta = document.getElementById(`texto-respuesta-${id}`).value;
     const response = await fetch('/responder', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id_post: id, respuesta: respuesta }) // <-- nombre correcto
+        body: JSON.stringify({ id_post: id, respuesta: respuesta })
     });
     const result = await response.json();
     if (result.success) {
-        mostrarRespuestas(id); // Muestra las respuestas actualizadas
+        // Limpia el área del formulario y muestra la lista de respuestas actualizada
+        document.getElementById(`area-responder-${id}`).innerHTML = '';
+        await mostrarRespuestas(id, true); // forzarApertura = true
     }
 }
 
-async function mostrarRespuestas(id_post) {
-    if (!id_post)return;
-    const div = document.getElementById('respuestas-' + id_post);
-    if(div.style.display === 'block') {
-        div.style.display = 'none';
+// Se mantiene el nombre original de la función: "mostrarRespuestas"
+async function mostrarRespuestas(id_post, forzarApertura = false) {
+    if (!id_post) return;
+
+    // Apunta al contenedor de la lista de respuestas
+    const divRespuestas = document.getElementById('respuestas-' + id_post);
+
+    const estaVisible = divRespuestas.style.display === 'block';
+    if (estaVisible && !forzarApertura) {
+        divRespuestas.style.display = 'none';
         return;
     }
-    div.style.display = 'block';
+    divRespuestas.style.display = 'block';
+
     const res = await fetch('/get_respuestas/' + id_post);
     const respuestas = await res.json();
-    div.classList.add('respuestasparaestilaruwu')
-    div.innerHTML = respuestas.length
+    
+    // Se mantiene la clase original para cada respuesta individual: "respuesta"
+    divRespuestas.innerHTML = respuestas.length
         ? respuestas.map(r => `<div class="respuesta"><b>${r.usuario || "Anónimo"}:</b> ${r.cont}</div>`).join('')
         : '<div class="respuesta">No hay respuestas aún.</div>';
 }
 
-// Envío de nuevo comentario/pregunta
+
+// Se mantiene sin cambios el formulario de envío de preguntas
 document.getElementById('commentForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
@@ -74,9 +105,8 @@ document.getElementById('commentForm').addEventListener('submit', async function
     if (result.success) {
         alert("¡Pregunta enviada!");
         document.getElementById('commentForm').reset();
-        await cargarComentarios(); // Recarga la lista de comentarios
+        await cargarComentarios();
     } else {
         alert("Error al enviar la pregunta");
     }
 });
-    
