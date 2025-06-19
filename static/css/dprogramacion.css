@@ -148,8 +148,10 @@ body {
     padding: 12px 0;
     background: rgba(0, 0, 0, 0.5);
     text-align: center;
-    font-size: 1.1rem;
-    font-weight: bold;
+    /*pointer-events: none;  El texto no bloquea clics */
+}
+
+#toggle{
     color: white;
 }
 

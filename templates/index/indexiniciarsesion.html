@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Inicio de Sesión - CETA</title>
-  <link rel="stylesheet" href="/CET4/static/css/estiloiniciarsesion.css">
+  <link rel="stylesheet" href="/static/css/estiloiniciarsesion.css"/>
 </head>
 <body>
   <main class="main-wrapper">
@@ -24,26 +24,21 @@
         </div>
 
         <button type="submit" id="init">INICIAR</button>
-      </form>
         <div id="mensaje" class="mensaje"></div>
-
+      </form>
+      
       <div class="links">
         ¿NO TIENE UNA CUENTA? <a href="#">CREAR CUENTA</a>
-      </div>
-      <div id="mensaje" class="mensaje">
-        {% if mensaje %}
-          {{ mensaje }}
-        {% endif %}
       </div>
     </section>
 
     <aside class="mascota-wrapper" aria-label="Asistente virtual">
       <div class="burbuja" role="note">¿Listo para estudiar cámara?</div>
-      <img src="/CET4/utils/img/zettino_sinfondo.png" alt="Mascota CETA saludando" class="mascota" />
+      <img src="/static/utils/img/zettino_sinfondo.png" alt="Mascota CETA saludando" class="mascota" />
     </aside>
 
   </main>
-<script src="{{ url_for('static', filename='script.js') }}"></script>
+<script src="/static/js/iniciosesion.js"></script>
 
 </body>
 </html>
