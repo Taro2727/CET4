@@ -1,0 +1,100 @@
+/* Esto es el comienzo de la barra lateral */
+.elcostado {
+    width: 10%;
+    height: 100vh;
+    background-color: #080c34;
+    position: fixed;
+    top: 0;
+    left: -10%;
+    transition: all .4s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 1000;
+}
+
+.elcostado.active {
+    left: 0;
+}
+/*Esto hace que la funcion de la barra lateral se cierre y abra */
+#toggle {
+    color: white;
+    font-size: 45px;
+    margin: 15px;
+    cursor: pointer;
+    z-index: 1100;
+    float: left;
+}
+
+#out {
+    color: white;
+    margin: 15px auto 0 100px;
+    cursor: pointer;
+}
+/*Fin de la funcion de la barra Lateral */
+
+/* Fin de la barra Lateral */
+
+
+/* Esto es el comienzo de los iconos de la barra Lateral */
+
+.casa1{
+    margin-top: 50px;
+    width: 35px;
+    height: 35px;
+}
+.campana2{
+    margin-top: 50px;
+    width: 35px;
+    height: 35px;
+}
+.soporte3{
+    margin-top: 50px;
+    width: 35px;
+    height: 35px;
+}
+.grupo4{
+    margin-top: 50px;
+    width: 35px;
+    height: 35px;
+}
+.opcion5{
+    margin-top: 50px;
+    width: 35px;
+    height: 35px;
+}
+
+.usuario{
+    width: 75px;
+    height: 75px;
+    margin-top: 50px;
+}
+
+
+/* Fin de los iconos de la barra Lateral */
+
+/* Instrucciones para vincular la barra lateral a sus archivos HTML:
+"<link rel="stylesheet" href="static/css/barralateral.css">" dentro del head y 
+"<script src="/static/js/barralateral.js"></script>" al final de todo el codigo dentro de body.
+
+Y en su HTML, dentro del body, agregar lo siguiente: 
+
+
+<div id="toggle">
+        <span>&#9776;</span> <!--El simbolo de Tres barras-->
+    </div>
+
+<div class="elcostado ordenado">
+        <div id="out">
+            <span>&#9587;</span> <!--El simbolo de la X-->
+        </div>
+        <a href="/templates/index/indexusuario.html"><img src="/static/utils/img/usuario.png" alt="Perfil" class="usuario"></a>
+        <a href='/indexhomeoinicio'><img src="/static/utils/img/casa-img1.png" alt="Inicio" class="casa1"></a>
+        <a href="/templates/index/indexnotificaciones.html"><img src="/static/utils/img/campana-img2.png" alt="Notificaciones" class="campana2"></a>
+        <a href="/templates/index/indexcentralayuda.html"><img src="/static/utils/img/pregunta-img3.png" alt="Soporte" class="soporte3"></a>
+        <a href="#"><img src="/static/utils/img/grupo-img4.png" alt="" class="grupo4"></a>
+        <a href="#"><img src="/static/utils/img/opciones-img5.png" alt="Configuracion" class="opcion5"></a>
+    </div>
+
+*/
+
