@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Comentarios con Menú</title>
+  <link rel="stylesheet" href="/CET4/static/css/indexcajacomentario.css" />
+</head>
+<body>
+ <!--Todo la barra lateral-->
+    <div class="elcostado ordenado">
+        <div id="out">
+            <span>&#9587;</span> <!--El simbolo de la X-->
+        </div>
+        <a href="/CET4/templates/index/indexusuario.html"><img src="/CET4/static/utils/img/usuario.png" alt="Perfil" class="usuario"></a>
+        <a href="/CET4/templates/index/indexhomeoinicio.html"><img src="/CET4/static/utils/img/casa-img1.png" alt="Inicio" class="casa1"></a>
+        <a href="/CET4/templates/index/indexnotificaciones.html"><img src="/CET4/static/utils/img/campana-img2.png" alt="Notificaciones" class="campana2"></a>
+        <a href="/CET4/templates/index/indexcentralayuda.html"><img src="/CET4/static/utils/img/pregunta-img3.png" alt="Soporte" class="soporte3"></a>
+        <a href="#"><img src="/CET4/static/utils/img/grupo-img4.png" alt="" class="grupo4"></a>
+        <a href="#"><img src="/CET4/static/utils/img/opciones-img5.png" alt="Configuracion" class="opcion5"></a>
+    </div>
+    <!--Fin de la barra lateral-->
+
+  <main class="comentarios">
+    <header class="comentarios-header">
+      <span class="flechas" aria-hidden="true">▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶</span>
+      <h1>lab de base de datos </h1>
+      <span class="flechas" aria-hidden="true">◀◀◀◀◀◀◀◀◀◀◀◀◀◀◀◀◀◀◀◀</span>
+    </header>
+
+    <section class="caja-comentario">
+      <form>
+        <label for="comentario" class="sr-only">Escribe tu comentario</label>
+        <textarea id="comentario" name="comentario" placeholder="Escribe tu comentario..." required></textarea>
+        <div>
