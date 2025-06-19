@@ -184,6 +184,7 @@ button:hover {
     font-size: 18px;
   }
 }
+
 .respuestasparaestilaruwu{
   margin-top: 3rem;
 
@@ -195,8 +196,15 @@ button:hover {
   margin-top: 0.5rem;
 
 }
-.comment{
+.responder {
+  border-radius: ;
   
 
+}
+
+
+
+.respuestas {
+    display: none;
 }
 
