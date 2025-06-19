@@ -1,19 +1,25 @@
-window.onload = async function () { // (window onload)Al cargar la página, traemos los comentarios guardados. 
- // async es para que podamos usar await dentro de la función
-    const response = await fetch('/get_comentario'); //respuesta espera a que fetch consulte la ruta '/get_comentario'
-    const comentarios = await response.json();// comentario espera a que  respuesta se convierta a JSON
+window.onload = async function () {
+    await cargarComentarios();
+};
 
-    comentarios.forEach(c => { //foreach agarra el array de comentarios y los llama "c", cada uno se compone por lo q esta dentro de {}
+async function cargarComentarios() {
+    const response = await fetch('/get_comentario');
+    const comentarios = await response.json();
+    const section = document.getElementById('commentsSection');
+    section.innerHTML = '';
+    comentarios.forEach(c => {
         const div = document.createElement('div');
-        div.classList.add('comment'); //a la division creada le damos la class 'comment' para ponerle style
-       div.innerHTML = `
-            <strong>${c.usuario || "Anónimo"}:</strong> ${c.cont}
+        div.classList.add('comment');
+        div.innerHTML = `
+            <strong>${c.usuario || "Anónimo"}</strong>: <b>${c.titulo}</b><br>
+            ${c.cont}
             <button onclick="responder('${c.id_post}', '${c.usuario || "Anónimo"}')">Responder</button>
+            <button onclick="mostrarRespuestas('${c.id_post}')">Ver respuestas</button>
             <div class="respuestas" id="respuestas-${c.id_post}"></div>
         `;
-        document.getElementById('commentsSection').appendChild(div);
+        section.appendChild(div);
     });
-};
+}
 
 function responder(id, usuario) {
     const div = document.getElementById(`respuestas-${id}`);
@@ -28,11 +34,11 @@ async function enviarRespuesta(id) {
     const response = await fetch('/responder', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id_comentario: id, respuesta: respuesta })
+        body: JSON.stringify({ id_post: id, respuesta: respuesta }) // <-- nombre correcto
     });
     const result = await response.json();
     if (result.success) {
-        location.reload(); // Recarga para ver la respuesta
+        mostrarRespuestas(id); // Muestra las respuestas actualizadas
     }
 }
 
@@ -40,28 +46,28 @@ async function mostrarRespuestas(id_post) {
     const res = await fetch('/get_respuestas/' + id_post);
     const respuestas = await res.json();
     const div = document.getElementById('respuestas-' + id_post);
-    div.classList.add('comment'); 
-    div.innerHTML = respuestas.map(r => `<div class="respuesta"><b>${r.usuario || "Anónimo"}:</b> ${r.cont}</div>`).join('');
+    div.innerHTML = respuestas.length
+        ? respuestas.map(r => `<div class="respuesta"><b>${r.usuario || "Anónimo"}:</b> ${r.cont}</div>`).join('')
+        : '<div class="respuesta">No hay respuestas aún.</div>';
 }
 
-// archivo: static/script.js
+// Envío de nuevo comentario/pregunta
 document.getElementById('commentForm').addEventListener('submit', async function(e) {
-    e.preventDefault(); // Evita recargar la página
+    e.preventDefault();
 
     const titulo = document.getElementById('titulo').value;
     const comment = document.getElementById('comentario').value;
-    const id_mat= document.getElementById('id_mat').value;
+    const id_mat = document.getElementById('id_mat').value;
     const response = await fetch('/comentario', {
-        method: 'POST', // método POST para enviar datos al servidor
-        headers: {
-            'Content-Type': 'application/json'// especifica que el cuerpo de la solicitud es JSON
-        },
-        body: JSON.stringify({ titulo, comment, id_mat }) // convierte el objeto a una cadena JSON
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ titulo, comment, id_mat })
     });
     const result = await response.json();
     if (result.success) {
         alert("¡Pregunta enviada!");
         document.getElementById('commentForm').reset();
+        await cargarComentarios(); // Recarga la lista de comentarios
     } else {
         alert("Error al enviar la pregunta");
     }
