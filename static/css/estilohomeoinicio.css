@@ -1,137 +1,152 @@
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-  background-color: #082c54;
+    background-color: #082c54;
+    font-family: sans-serif;
+    overflow-x: hidden;
 }
 
-/* empieza la bARra de busqueda  */
 ::placeholder {
-  color: #fff;
+    color: #fff;
 }
 
-.buscador {
-  background-color: #54647c;
-  width: 95vh;
-  height: 35px;
-  margin-top: 2px;
-  border-radius: 20px;
-  border: none;
-  padding: 5px 10px 5px 35px;
-}
-
-.buscador-logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  justify-content: center;
-}
-
-.buscador-logo2 {
-  position: relative;
-  width: 700px;
-}
-
-.logo {
-  position: absolute;
-  top: 67%;
-  left: 10px;
-  transform: translateY(-50%);
-  height: 20px;
-  width: 20px;
-  pointer-events: none;
-}
-
-/* termina */
-/* empieza costado  */
+/* ----- Barra lateral ----- */
 .elcostado {
     width: 10%;
     height: 100vh;
     background-color: #080c34;
     position: fixed;
-    top: 0;  /* Asegura que la barra lateral comience desde el tope */
-    left: 0;
-    transition: left 0.3s ease;
+    top: 0;
+    left: -10%;
+    transition: all .4s ease;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 10px;  /* Pequeño espacio opcional para separar el botón */
+    z-index: 1000;
+}
+
+.elcostado.active {
+    left: 0;
+}
+
+#toggle {
+    color: white;
+    font-size: 45px;
+    margin: 15px;
+    cursor: pointer;
+    z-index: 1100;
+    float: left;
 }
 
 #out {
-    margin-top: 0; /* Elimina margen superior */
-    margin-bottom: 20px;
-    font-size: 28px;  /* Tamaño adecuado para el icono del menú */
-    color: #fff;
+    color: white;
+    margin: 15px auto 0 100px;
     cursor: pointer;
 }
 
-
-.ordenado {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+/* Íconos de la barra lateral */
+.casa1{
+    margin-top: 50px;
+    width: 35px;
+    height: 35px;
+}
+.campana2{
+    margin-top: 50px;
+    width: 35px;
+    height: 35px;
+}
+.soporte3{
+    margin-top: 50px;
+    width: 35px;
+    height: 35px;
+}
+.grupo4{
+    margin-top: 50px;
+    width: 35px;
+    height: 35px;
+}
+.opcion5{
+    margin-top: 50px;
+    width: 35px;
+    height: 35px;
 }
 
-.usuario,
-.casa1,
-.campana2,
-.soporte3,
-.grupo4,
-.opcion5 {
-  width: 35px;
-  height: 35px;
-  margin-top: 50px;
+.usuario{
+    width: 75px;
+    height: 75px;
+    margin-top: 50px;
 }
 
-.usuario {
-  width: 50px;
-  height: 50px;
-}
-
-/* Línea separadora vertical */
-.separador-lateral {
-  position: fixed;
-  left: 10%;
-  top: 0;
-  width: 1px;
-  height: 100vh;
-  background-color: #444;
-}
-.ordenado{
-    display: flex; 
-    flex-direction: column; /*Esta hermosa linea de codigo hace que los elemntos se alineen verticalmente*/
-    align-items: center; /*Estp hace que se alieen al centro*/
-}
-/* Fin de la barra lateral */
-
-/* comienza los bloques de las materias */
-.cuerpo1 {
-    margin-left: 88px;  /* Mantiene margen para que no pise el sidebar */
-    padding: 10%;/*en este  caso lo uso para separarlo de la barra de busqueda*/
+/* ----- Buscador con logo ----- */
+.header {
+    width: 100%;
     display: flex;
-    justify-content: center; /* Centra horizontalmente */
-    align-items: center;
-    flex-wrap: wrap;  /* Permite que bajen en pantallas chicas */
-    gap: 50px;  /* Separación entre los bloques */
+    justify-content: center;
+    padding: 20px 0;
+    margin-left: 0;
+}
+
+.buscador-logo {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.buscador-logo2 {
+    position: relative;
+    width: 100%;
+    max-width: 700px;
+}
+
+.buscador {
+    width: 100%;
+    height: 35px;
+    background-color: #54647c;
+    border: none;
+    border-radius: 20px;
+    padding: 5px 10px 5px 35px;
+    color: white;
+}
+
+.logo {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    height: 20px;
+    width: 20px;
+    pointer-events: none;
+}
+
+/* ----- Contenido principal ----- */
+.cuerpo1 {
+    display: grid;
+    grid-template-columns: repeat(3, 250px); /* 3 columnas fijas */
+    justify-content: left; /* Centra el grid */
+    gap: 170px;
+    padding-top: 100px;
+    left: -10%;
+    position: relative;
+
+
 }
 
 .bloque-superpuesto {
     position: relative;
-    width: 400px;  /* Tamaño más grande */
+    width: 350px;
     height: 200px;
-    border-radius: 15px;
-    overflow: hidden;
 }
 
 .bloque-superpuesto img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;  /* Imagen cubre sin deformarse */
-    border-radius: 15px;
+    width: 350px;
+    height: 200px;
+    object-fit: cover;
+    margin-right: 50px;
+    border-radius: 20px;
 }
 
 .texto-superpuesto {
@@ -139,25 +154,74 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    color: #fff;
+    color: white;
     font-weight: bold;
-    font-size: clamp(18px, 3vw, 32px);  /* Tamaño de texto responsivo */
-    background: rgba(0, 0, 0, 0.4);  /* Fondo para que el texto se vea mejor */
-    padding: 5px 10px;
-    border-radius: 8px;
+    font-size: 30px;
     text-align: center;
-    white-space: nowrap;
+    pointer-events: none;
 }
 
-/* Responsivo solo para los bloques */
-@media (max-width: 768px) {
-    .bloque-superpuesto {
-        width: 80%;  /* Que ocupe más ancho en pantallas chicas */
-        height: auto;
-        aspect-ratio: 16/9;  /* Mantiene forma de rectángulo */
+/* ----- Footer vacío ----- */
+.footer {
+    height: 50px;
+}
+
+/* ----- Media Queries ----- */
+
+/* Tablets y laptops pequeñas */
+@media (max-width: 1024px) {
+    .elcostado {
+        width: 60%;
+        left: -60%;
+    }
+    .header, .cuerpo1 {
+        margin-left: 0;
+        
+    }
+    
+    .cuerpo1 {
+        grid-template-columns: repeat(2, 250px); /* 2 por fila en tablet */
+        margin-left: 0;
     }
 
+    .usuario, .ordenado img {
+        width: 40px;
+        height: 40px;
+        margin-top: 30px;
+    }
+    .logo {
+        width: 18px;
+        height: 18px;
+    }
     .texto-superpuesto {
-        font-size: clamp(16px, 5vw, 28px);
+        font-size: 28px;
+    }
+}
+@media (max-width: 600px) {
+    .elcostado {
+        width: 80%;
+        left: -80%;
+    }
+    .cuerpo1 {
+        grid-template-columns: 350px;
+    }
+    .buscador {
+        height: 30px;
+        font-size: 14px;
+    }
+    .logo {
+        width: 16px;
+        height: 16px;
+    }
+    .usuario, .ordenado img {
+        width: 30px;
+        height: 30px;
+        margin-top: 20px;
+    }
+    .texto-superpuesto {
+        font-size: 20px;
+    }
+    #toggle {
+        font-size: 26px;
     }
 }
