@@ -84,7 +84,7 @@ async function mostrarRespuestas(id_post, forzarApertura = false) {
     
     // Se mantiene la clase original para cada respuesta individual: "respuesta"
     divRespuestas.innerHTML = respuestas.length
-        ? respuestas.map(r => `<div class="respuesta"><b>${r.usuario || "Anónimo"}:</b> ${r.cont}</div>`).join('')
+        ? respuestas.map(r => `<div class="usuario"><b>${r.usuario || "Anónimo"}:</b> ${r.cont}</div>`).join('')
         : '<div class="respuesta">No hay respuestas aún.</div>';
 }
 
