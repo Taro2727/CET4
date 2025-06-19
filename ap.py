@@ -2,6 +2,8 @@
 from flask import Flask, request, jsonify, render_template, session, redirect, url_for
 #render_template se puede cambiar app = Flask(__name__, template_folder='mi_html')
 import mysql.connector #conectar a MySQL
+from werkzeug.security import generate_password_hash, check_password_hash
+#para hacer un hash
 
 app = Flask(__name__)
 app.secret_key= 'mi_clave_secreta' #clave secreta para sesiones, cookies, etc.
@@ -45,7 +47,10 @@ def dataregistro():
         sql = "INSERT INTO usuario(nom_usu, email, contraseña) VALUES (%s, %s, %s)"
         #valores del %s los toma valores (los gaurda en orden)
         #esos valores tienen q coinsidir con los q guardan el coso de js
-        valores = (nombre,mail,contra)
+        hash_contra= generate_password_hash(contra)
+        #en el hash_contra estamos diciendo que vamos a hacer -->
+        #un cod secreto (hash) de los datos de la "contra"
+        valores = (nombre,mail,hash_contra)
         #cursor manda los valores de sql (insert into) y los valores (valores ahr)
         cursor.execute(sql, valores)
         #guarda todo lo anterior en la bd (osea lo aplica)
@@ -146,12 +151,15 @@ def verificar():
     print("Email recibido:", email)
     print("Contraseña recibida:", contraseña)
 
+    if not email or not contraseña:
+        return jsonify({"exito": False, "error": "email y contraseña son requeridos"}), 400
+    
     cursor = db.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM usuario WHERE email=%s AND contraseña=%s", (email, contraseña))
+    cursor.execute("SELECT * FROM usuario WHERE email=%s", (email,))
     usuario = cursor.fetchone()
     cursor.close()
 
-    if usuario:
+    if usuario and check_password_hash (usuario['contraseña'], contraseña):
         session['id_usu'] = usuario['id_usu']  # Guardar el id de usuario en la sesión
         session['usuario'] = usuario['nom_usu']
         return jsonify({"exito": True})
