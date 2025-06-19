@@ -113,7 +113,6 @@ def index4tolabhardw():
 def index4toelectronica():
     return render_template("index/indexlbelectronica.html")
 
-
 #hasta aca son las materias de 4to programación
 
 @app.route('/programacion/5toprogramacion') #ruta para la página de 5to de programación
