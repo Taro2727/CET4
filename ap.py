@@ -70,7 +70,7 @@ def crearcuenta():
     return render_template('index/indexcrearcuenta.html')
 
 @app.route('/indexhomeoinicio') #ruta para la página de inicio
-def home():
+def indexhomeoinicio():
     return render_template('index/indexhomeoinicio.html')
 
 #desde aca se elige la modalidad
@@ -112,14 +112,21 @@ def index4tolabhardw():
 @app.route("/programacion/4toprogramacion/electronica")
 def index4toelectronica():
     return render_template("index/indexlbelectronica.html")
-
-
 #hasta aca son las materias de 4to programación
 
+#a partir de aca son las materias de 5to programación
 @app.route('/programacion/5toprogramacion') #ruta para la página de 5to de programación
 def index5toprog():
     return render_template("index/indexdquinto.html")
 
+@app.route('/programacion/5toprogramacion/labaplicaciones')
+def index5tolabaplicaciones():
+    return render_template("index/indexlbaaplicaciones.html")
+
+@app.route('/programacion/5toprogramacion/labprogramacion')
+def index5tolabprog():
+    id_mat = 5
+    return render_template("index/indexlbaprogramacion.html", id_mat=id_mat)
 @app.route('/programacion/6toprogramacion') #ruta para la página de 6to de programación
 def index6toprog():
     return render_template("index/indexsexto.html")
@@ -225,7 +232,7 @@ def get_respuestas(id_post):
         FROM rta r
         LEFT JOIN usuario u ON r.id_usu = u.id_usu
         WHERE r.id_post = %s
-        ORDER BY r.id_respuesta ASC
+        ORDER BY r.id_com ASC
     """, (id_post,))
     respuestas = cursor.fetchall()
     cursor.close()

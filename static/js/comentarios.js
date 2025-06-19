@@ -43,6 +43,7 @@ async function enviarRespuesta(id) {
 }
 
 async function mostrarRespuestas(id_post) {
+    if (!id_post)return;
     const res = await fetch('/get_respuestas/' + id_post);
     const respuestas = await res.json();
     const div = document.getElementById('respuestas-' + id_post);
