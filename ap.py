@@ -124,9 +124,9 @@ def index4toelectronica():
 def index5toprog():
     return render_template("index/indexdquinto.html")
 
-@app.route('/programacion/5toprogramacion/labaplicaciones')
-def index5tolabaplicaciones():
-    return render_template("index/indexlbaaplicaciones.html")
+@app.route('/programacion/5toprogramacion/labdiseñoweb')
+def index5tolabdiseñoweb():
+    return render_template("index/indexlbdiseñoweb.html")
 
 @app.route('/programacion/5toprogramacion/labprogramacion')
 def index5tolabprog():
