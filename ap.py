@@ -73,6 +73,7 @@ def crearcuenta():
 def home():
     return render_template('index/indexhomeoinicio.html')
 
+#desde aca se elige la modalidad
 @app.route('/programacion') #ruta para la página de programación
 def indexprogramacion():
     return render_template("index/dprogramacionindex.html")
@@ -80,24 +81,50 @@ def indexprogramacion():
 @app.route('/informatica') #ruta para la página de informática
 def indexinformatica():
     return render_template("index/dinformaticaindex.html")
+#hasta aca se elige la modalidad
 
 @app.route('/comentario') #ruta para la página de comentarios
 def indexcomentario():
     return render_template("index/indexcomentario.html")
 
-@app.route('/4toprogramacion') #ruta para la página de 4to de programación
+#a partir de aca son las materias de 4to programación
+@app.route('/programacion/4toprogramacion') #ruta para la página de 4to de programación
 def index4toprog():
     return render_template("index/indexdcuarto.html")
 
-@app.route('/5toprogramacion') #ruta para la página de 5to de programación
+@app.route('/programacion/4toprogramacion/labaplicaciones')
+def index4toaplicaciones():
+    return render_template("index/indexlbapli.html")
+
+@app.route('/programacion/4toprogramacion/labprogramacion')
+def index4tolabprog():
+    id_mat = 4  # ID de la materia de 4to programación
+    return render_template("index/indexlbprog.html", id_mat=id_mat)
+
+@app.route('/programacion/4toprogramacion/labsistemasoperativos')
+def index4tosistop():
+    return render_template("index/indexlbssop.html")
+
+@app.route("/programacion/4toprogramacion/labhardware")
+def index4tolabhardw(): 
+    return render_template("index/indexlbhardw.html")
+
+@app.route("/programacion/4toprogramacion/electronica")
+def index4toelectronica():
+    return render_template("index/indexlbelectronica.html")
+
+
+#hasta aca son las materias de 4to programación
+
+@app.route('/programacion/5toprogramacion') #ruta para la página de 5to de programación
 def index5toprog():
     return render_template("index/indexdquinto.html")
 
-@app.route('/6toprogramacion') #ruta para la página de 6to de programación
+@app.route('/programacion/6toprogramacion') #ruta para la página de 6to de programación
 def index6toprog():
     return render_template("index/indexsexto.html")
 
-@app.route('/7toprogramacion') #ruta para la página de 7mo de programación
+@app.route('/programacion/7toprogramacion') #ruta para la página de 7mo de programación
 def index7toprog():
     return render_template("index/indexdseptimo.html")
 
@@ -119,6 +146,7 @@ def verificar():
 
     if usuario:
         session['id_usu'] = usuario['id_usu']  # Guardar el id de usuario en la sesión
+        session['usuario'] = usuario['nom_usu']
         return jsonify({"exito": True})
     else:
         return jsonify({"exito": False})
@@ -154,9 +182,20 @@ def get_comentario():
     id_mat = request.args.get('id_mat')
     cursor = db.cursor(dictionary=True)
     if id_mat:
-        cursor.execute("SELECT * FROM preg WHERE id_mat=%s ORDER BY fecha DESC", (id_mat,))
+         cursor.execute("""
+            SELECT p.id_post, p.titulo, p.cont, p.fecha, u.nom_usu AS usuario
+            FROM preg p
+            LEFT JOIN usuario u ON p.id_usu = u.id_usu
+            WHERE p.id_mat=%s
+            ORDER BY p.fecha DESC
+        """, (id_mat,))
     else:
-        cursor.execute("SELECT * FROM preg ORDER BY fecha DESC")
+        cursor.execute("""
+            SELECT p.id_post, p.titulo, p.cont, p.fecha, u.nom_usu AS usuario
+            FROM preg p
+            LEFT JOIN usuario u ON p.id_usu = u.id_usu
+            ORDER BY p.fecha DESC
+        """)
     comentarios = cursor.fetchall()
     cursor.close()
     return jsonify(comentarios)
@@ -164,26 +203,30 @@ def get_comentario():
 @app.route('/responder', methods=['POST'])
 def responder():
     data = request.get_json()
-    id_comentario = data['id_comentario']
-    respuesta = data['respuesta']
-    usuario = session.get('usuario', 'Anónimo')  # si aún no tenés login funcional, usa 'Anónimo'
+    id_post = data['id_post']
+    cont = data['respuesta']
+    id_usu = session.get('id_usu')# si aún no tenés login funcional, usa 'Anónimo'
 
+    if not id_usu:
+        return jsonify({"success": False, "error": "Usuario no autenticado"}), 401
+    
     cursor = db.cursor()
-    query = "INSERT INTO respuestas (id_comentario, usuario, mensaje) VALUES (%s, %s, %s)"
-    cursor.execute(query, (id_comentario, usuario, respuesta))
+    query = "INSERT INTO rta (id_post, id_usu, cont) VALUES (%s, %s, %s)"
+    cursor.execute(query, (id_post, id_usu, cont))
     db.commit()
     cursor.close()
     return jsonify({"success": True})
 
-@app.route('/get_respuestas/<int:id_preg>')
-def get_respuestas(id_preg):
+@app.route('/get_respuestas/<int:id_post>')
+def get_respuestas(id_post):
     cursor = db.cursor(dictionary=True)
     cursor.execute("""
-        SELECT r.mensaje, r.usuario
-        FROM respuestas r
-        WHERE r.id_comentario = %s
+        SELECT r.cont, u.nom_usu AS usuario
+        FROM rta r
+        LEFT JOIN usuario u ON r.id_usu = u.id_usu
+        WHERE r.id_post = %s
         ORDER BY r.id_respuesta ASC
-    """, (id_preg,))
+    """, (id_post,))
     respuestas = cursor.fetchall()
     cursor.close()
     return jsonify(respuestas)
