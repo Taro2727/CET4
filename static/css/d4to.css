@@ -118,6 +118,7 @@ body {
     justify-content: center;
     gap: 20px;
     padding: 40px 20px;
+    padding-left: 90px ;
 }
 
 /* Bloques individuales */
@@ -146,16 +147,23 @@ body {
 
 /* Texto superpuesto */
 .texto-superpuesto {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    padding: 12px;
-    background: rgba(0, 0, 0, 0.6);
-    color: #fff;
-    text-align: center;
-    font-weight: bold;
-    font-size: 16px;
-    text-decoration: none;
+  position: absolute;   /*hace que el enlace se posicione encima del .bloque-superpuesto.*/
+  top: 0;/* el <a> ocupa toda el área de la imagen, convirtiéndola en clickeable.*/
+  left: 0;/* el <a> ocupa toda el área de la imagen, convirtiéndola en clickeable.*/
+  width: 100%;/* el <a> ocupa toda el área de la imagen, convirtiéndola en clickeable.*/
+  height: 100%; /* el <a> ocupa toda el área de la imagen, convirtiéndola en clickeable.*/
+  z-index: 2; /*  asegura que el texto esté encima de la imagen.*/
+  background-color: rgba(0, 0, 0, 0); /* fondo transparente */
+  color: white;
+  padding-top:25%;
+  font-size: 26px;
+  text-decoration: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
 
 }
 

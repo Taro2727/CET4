@@ -188,11 +188,23 @@ button:hover {
 
 
 #titulo{
-  margin-left: 35%;
+  margin-left: 1%;
+  width: 35%;
+  height: 5vh;
   margin-bottom: 1rem;
   margin-top: 0.5rem;
-
+  border-radius: 10px ;
 }
+
+::placeholder{
+  color: black;
+  text-align: center;
+  justify-content: center;
+ }
+
+ input{
+  text-align: center;
+ }
 #commentsSection {
   margin-top: 25px; /* o el valor que quieras */
 }
@@ -220,13 +232,44 @@ button:hover {
   background-color: #d3d3d3;
   border-radius: 10px;
   padding: 10px;
-  color: #000;
+  color: #fff6f6;
   max-width: 80%;
 }
 .comment {
-  background-color: #0d2d4b;  /* el fondo de el separador*/
+  background-color: #123;  /* el fondo de el separador*/
   border-radius: 15px;    /* lo redondea*/
   padding: 12px;         /* espaciado */
   margin-bottom: 20px;      /* el margen de elcoso*/
   border: 1px solid #446;   /* el borde fino /aca lo pueden ajustar lolooooooooool */ 
 }
+
+.usuario-comentario{
+  color:rgb(131, 164, 214);
+}
+
+
+.titulo-comentario{
+  font-size: 2em;
+  color: rgb(255, 255, 255);
+  margin-top: 15px;
+  margin-bottom: 15px;
+  margin-left: 1rem;
+}
+
+.texto-comentario{
+  color: white;
+  margin-left: 2rem;
+  margin-top: 0.5em;
+}
+#texto-respuesta-8{
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  background-color: #123	;
+  border-color: white;
+}
+#texto-respuesta-8::placeholder{
+  color:rgb(245, 245, 245);
+
+}
+
+

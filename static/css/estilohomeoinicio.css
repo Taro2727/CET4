@@ -85,22 +85,30 @@ body {
 .header {
     width: 100%;
     display: flex;
-    justify-content: center;
-    padding: 20px 0;
-    margin-left: 0;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px 20px;
+    background-color: #082c54; /* o el color que uses */
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    gap: 20px;
 }
 
+
 .buscador-logo {
+    flex: 1;
     display: flex;
     justify-content: center;
-    width: 100%;
-}
+ }
 
 .buscador-logo2 {
     position: relative;
     width: 100%;
     max-width: 700px;
-}
+ }
+
 
 .buscador {
     width: 100%;
@@ -125,20 +133,32 @@ body {
 /* ----- Contenido principal ----- */
 .cuerpo1 {
     display: grid;
-    grid-template-columns: repeat(3, 250px); /* 3 columnas fijas */
-    justify-content: left; /* Centra el grid */
-    gap: 170px;
-    padding-top: 100px;
-    left: 5%;
-    position: relative;
-
-
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    justify-content: center;
+    gap: 40px;
+    padding-top: 120px; /* suficiente para no chocar con el buscador */
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .bloque-superpuesto {
     position: relative;
     width: 350px;
     height: 200px;
+    margin-left: -50%;
+    margin-top: 30px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+    background-color: #111;
+    position: relative;
+    display: inline-block;
+
+}
+.bloque-superpuesto:hover {
+    transform: scale(1.05);
 }
 
 .bloque-superpuesto img {
@@ -147,18 +167,27 @@ body {
     object-fit: cover;
     margin-right: 50%;
     border-radius: 20px;
+    cursor: pointer;
 }
 
 .texto-superpuesto {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: white;
-    font-weight: bold;
-    font-size: 30px;
-    text-align: center;
+  position: absolute;   /*hace que el enlace se posicione encima del .bloque-superpuesto.*/
+  top: 0;/* el <a> ocupa toda el área de la imagen, convirtiéndola en clickeable.*/
+  left: 0;
+  width: 100%;/* el <a> ocupa toda el área de la imagen, convirtiéndola en clickeable.*/
+  height: 100%; /* el <a> ocupa toda el área de la imagen, convirtiéndola en clickeable.*/
+  z-index: 2; /*  asegura que el texto esté encima de la imagen.*/
+  background-color: rgba(0, 0, 0, 0); /* fondo transparente */
+  color: white;
+  font-size: 36px;
+  text-decoration: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
+
 
 /* ----- Footer vacío ----- */
 .footer {
