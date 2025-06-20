@@ -17,14 +17,14 @@ async function cargarComentarios() {
 
         // Se agrega la separación de divs pero sin cambiar la estructura visible inicial
         div.innerHTML = `
-            <strong>${c.usuario || "Anónimo"}</strong>: <b>${c.titulo}</b><br>
-            ${c.cont}
+            <span class="usuario-comentario"><strong>${c.usuario || "Anónimo"}</strong>:</span>
+            <span class="titulo-comentario"><b>${c.titulo}</b></span><br>
+            <span class="texto-comentario">${c.cont}</span>
             <br>
-            <button onclick="responder('${c.id_post}', '${c.usuario || "Anónimo"}')">Responder</button>
-            <button onclick="mostrarRespuestas('${c.id_post}')">Ver respuestas</button>
+            <button class="btn-responder" onclick="responder('${c.id_post}', '${c.usuario || "Anónimo"}')">Responder</button>
+            <button class="btn-ver-respuestas" onclick="mostrarRespuestas('${c.id_post}')">Ver respuestas</button>
 
             <div class="area-responder" id="area-responder-${c.id_post}"></div>
-
             <div class="respuestas" id="respuestas-${c.id_post}" style="display: none;"></div>
         `;
         section.appendChild(div);
