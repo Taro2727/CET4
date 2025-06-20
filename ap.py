@@ -88,6 +88,24 @@ def indexinformatica():
     return render_template("index/dinformaticaindex.html")
 #hasta aca se elige la modalidad
 
+#-A-C-A--E-M-P-I-E-Z-A--I-N-F-O-R-M-A-T-I-C-A--C-U-R-S-O-S
+@app.route('/informatica/4toinformatica')#el mio es el de nro (4to)
+def cuarto4():
+    return render_template("index/indexin4to.html")
+
+@app.route('/informatica/5toinformatica')#el mio es el de nro (5to)
+def quinto5():
+    return render_template("index/indexin5to.html")
+
+@app.route('/informatica/6toinformatica')#el mio es el de nro (6to)
+def sexto6():
+    return render_template("index/indexin6to.html")
+
+@app.route('/informatica/7moinformatica')#el mio es el de nro (7mo)
+def septimo7():
+    return render_template("index/indexin7mo.html")
+
+
 @app.route('/comentario') #ruta para la página de comentarios
 def indexcomentario():
     return render_template("index/indexcomentario.html")
