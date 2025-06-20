@@ -265,30 +265,30 @@ def index7moEmprProdDl():
     id_mat = 39
     return render_template("index/indexempr.html", id_mat=id_mat)
 
-@app.route('/programacion/7moprogramacion/EvalPytos')
-def index7moLabWebEstatica():
-    id_mat = 24
-    return render_template("index/indexwbestatc.html", id_mat=id_mat)
+@app.route('/programacion/7moprogramacion/EvalPytos')#no hay html de esta materia ni boton
+def index7moEvalPytos():
+    id_mat = 40
+    return render_template("index/index######.html", id_mat=id_mat)
 
-@app.route('/programacion/6toprogramacion/LabWebEstatica')
-def index6toLabWebEstatica():
-    id_mat = 24
-    return render_template("index/indexwbestatc.html", id_mat=id_mat)
+@app.route('/programacion/7moprogramacion/PytoSistWd')
+def index7moPytoSistWd():
+    id_mat = 41
+    return render_template("index/indexpsw.html", id_mat=id_mat)
 
-@app.route('/programacion/6toprogramacion/LabWebEstatica')
-def index6toLabWebEstatica():
-    id_mat = 24
-    return render_template("index/indexwbestatc.html", id_mat=id_mat)
+@app.route('/programacion/7moprogramacion/PdiSistComp')
+def index7moPdiSistComp():
+    id_mat = 42
+    return render_template("index/indexpsc.html", id_mat=id_mat)
 
-@app.route('/programacion/6toprogramacion/LabWebEstatica')
-def index6toLabWebEstatica():
-    id_mat = 24
-    return render_template("index/indexwbestatc.html", id_mat=id_mat)
+@app.route('/programacion/7moprogramacion/PdSoftPMov')
+def index7moPdSoftPMov():
+    id_mat = 43
+    return render_template("index/indexpdspm.html", id_mat=id_mat)
 
-@app.route('/programacion/6toprogramacion/LabWebEstatica')
-def index6toLabWebEstatica():
-    id_mat = 24
-    return render_template("index/indexwbestatc.html", id_mat=id_mat)
+@app.route('/programacion/7moprogramacion/PractProf') #no hay html de esta materia ni boton
+def index7moPractProf():
+    id_mat = 44
+    return render_template("index/indexpractprof.html", id_mat=id_mat)
 
 #a partir de aca empieza el login/inicio de sesión
 @app.route('/verificar', methods=['POST'])

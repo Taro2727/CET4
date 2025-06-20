@@ -27,8 +27,14 @@
       <span class="flechas" aria-hidden="true">◀◀◀◀◀◀◀◀◀◀◀◀◀◀◀◀◀◀◀◀</span>
     </header>
 
-    <section class="caja-comentario">
-      <form>
-        <label for="comentario" class="sr-only">Escribe tu comentario</label>
+   <section class="caja-comentario">
+      <form id="commentForm">
+        <input type="text" id="titulo" name="titulo" placeholder="Título de la pregunta" required>
         <textarea id="comentario" name="comentario" placeholder="Escribe tu comentario..." required></textarea>
-        <div>
+        <input type="hidden" id="id_mat" name="id_mat" value="{{ id_mat }}">
+        <button type="submit">Enviar</button>
+      </form>
+
+      <div id="commentsSection"></div>
+  </main>
+<script src="/static/js/comentarios.js"></script>
