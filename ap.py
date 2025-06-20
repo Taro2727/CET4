@@ -92,6 +92,33 @@ def indexinformatica():
 @app.route('/informatica/4toinformatica')#el mio es el de nro (4to)
 def cuarto4():
     return render_template("index/indexin4to.html")
+#materias de 4to:
+@app.route('/informatica/4toinformatica/labapps')
+def labapps():
+    id_mat=1
+    return render_template("index/labapps4inf.html",id_mat=id_mat)
+
+@app.route('/informatica/4toinformatica/labprog')
+def labprog():
+    id_mat=2
+    return render_template("index/labprog4inf.html",id_mat=id_mat)
+
+@app.route('/informatica/4toinformatica/labso')
+def labso():
+    id_mat=3
+    return render_template("index/labso4inf.html",id_mat=id_mat)
+
+@app.route('/informatica/4toinformatica/labhard')
+def labhard():
+    id_mat=4
+    return render_template("index/labhard4inf.html",id_mat=id_mat)
+
+@app.route('/informatica/4toinformatica/electronica')
+def electronica():
+    id_mat=5
+    return render_template("index/electronica4inf.html",id_mat=id_mat)
+
+
 
 @app.route('/informatica/5toinformatica')#el mio es el de nro (5to)
 def quinto5():
