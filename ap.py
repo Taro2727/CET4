@@ -169,6 +169,41 @@ def labapps5():
 def sexto6():
     return render_template("index/indexin6to.html")
 
+@app.route('/informatica/6toinformatica/labprog')
+def labprog6inf():
+    id_mat=30
+    return render_template("index/labprog6inf.html",id_mat=id_mat)
+
+@app.route('/informatica/6toinformatica/labapp')
+def labapp6inf():
+    id_mat=31
+    return render_template("index/labapp6inf.html",id_mat=id_mat)
+
+@app.route('/informatica/6toinformatica/sisdig')
+def sisdig6inf():
+    id_mat=32
+    return render_template("index/sisdig6inf.html",id_mat=id_mat)
+
+@app.route('/informatica/6toinformatica/invope')
+def invop6inf():
+    id_mat=33
+    return render_template("index/invope6inf.html",id_mat=id_mat)
+
+@app.route('/informatica/6toinformatica/labhard')
+def labhard6inf():
+    id_mat=34
+    return render_template("index/labhard6inf.html",id_mat=id_mat)
+
+@app.route('/informatica/6toinformatica/seginf')
+def seginf6inf():
+    id_mat=35
+    return render_template("index/seginf6inf.html",id_mat=id_mat)
+
+@app.route('/informatica/6toinformatica/labso')
+def labso6inf():
+    id_mat=36
+    return render_template("index/labso6inf.html",id_mat=id_mat)
+
 @app.route('/informatica/7moinformatica')#el mio es el de nro (7mo)
 def septimo7():
     return render_template("index/indexin7mo.html")
