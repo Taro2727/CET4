@@ -162,7 +162,7 @@ def labapps5():
     return render_template("index/labapps5inf.html",id_mat=id_mat)
 
 
-
+#empieza 6to de inf
 
 
 @app.route('/informatica/6toinformatica')#el mio es el de nro (6to)
@@ -204,9 +204,51 @@ def labso6inf():
     id_mat=36
     return render_template("index/labso6inf.html",id_mat=id_mat)
 
+#empieza 7mo informatica
+
 @app.route('/informatica/7moinformatica')#el mio es el de nro (7mo)
 def septimo7():
     return render_template("index/indexin7mo.html")
+
+@app.route('/informatica/7toinformatica/proysis')
+def prosis7inf():
+    id_mat=45
+    return render_template("index/proysis7inf.html",id_mat=id_mat)
+
+@app.route('/informatica/7toinformatica/imyrredes')
+def myredes7inf():
+    id_mat=46
+    return render_template("index/myrredes7inf.html",id_mat=id_mat)
+
+@app.route('/informatica/7toinformatica/modysis')
+def modysis7inf():
+    id_mat=47
+    return render_template("index/modysis7inf.html",id_mat=id_mat)
+
+@app.route('/informatica/7toinformatica/evalproy')
+def evalproy7inf():
+    id_mat=48
+    return render_template("index/evalproy7inf.html",id_mat=id_mat)
+
+@app.route('/informatica/7toinformatica/imyrsis')
+def myrsis7inf():
+    id_mat=49
+    return render_template("index/myrsis7inf.html",id_mat=id_mat)
+
+@app.route('/informatica/7toinformatica/basedatos')
+def bd7inf():
+    id_mat=50
+    return render_template("index/basdat7inf.html",id_mat=id_mat)
+
+@app.route('/informatica/7toinformatica/empproddl')
+def empproddl7inf():
+    id_mat=51
+    return render_template("index/empprodl7inf.html",id_mat=id_mat)
+
+@app.route('/informatica/7toinformatica/practprof')
+def practprof7inf():
+    id_mat=52
+    return render_template("index/practprof7inf.html",id_mat=id_mat)
 
 
 @app.route('/comentario') #ruta para la página de comentarios
