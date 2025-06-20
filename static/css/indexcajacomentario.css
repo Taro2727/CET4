@@ -196,15 +196,14 @@ button:hover {
   margin-top: 0.5rem;
 
 }
-.responder {
-  border-radius: ;
-  
-
-}
-
-
-
 .respuestas {
     display: none;
 }
 
+#comentario{
+  margin-bottom: 50px;
+}
+
+.area-responder{
+  margin-top: 25px;
+}
