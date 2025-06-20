@@ -4,7 +4,8 @@ window.onload = async function () {
 };
 
 async function cargarComentarios() {
-    const response = await fetch('/get_comentario');
+    const id_mat = document.getElementById('id_mat').value;
+    const response = await fetch('/get_comentario?id_mat='+encodeURIComponent(id_mat));
     const comentarios = await response.json();
     const section = document.getElementById('commentsSection');
     section.innerHTML = ''; // Limpia la sección antes de recargar
