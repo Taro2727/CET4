@@ -129,7 +129,7 @@ body {
     justify-content: left; /* Centra el grid */
     gap: 170px;
     padding-top: 100px;
-    left: -10%;
+    left: 5%;
     position: relative;
 
 
@@ -145,7 +145,7 @@ body {
     width: 350px;
     height: 200px;
     object-fit: cover;
-    margin-right: 50px;
+    margin-right: 50%;
     border-radius: 20px;
 }
 

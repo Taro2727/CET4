@@ -185,10 +185,7 @@ button:hover {
   }
 }
 
-.respuestasparaestilaruwu{
-  margin-top: 3rem;
 
-}
 
 #titulo{
   margin-left: 35%;
@@ -196,25 +193,40 @@ button:hover {
   margin-top: 0.5rem;
 
 }
-<<<<<<< HEAD
-.responder {
-  border-radius:4rem ;
-  
-
+#commentsSection {
+  margin-top: 25px; /* o el valor que quieras */
 }
 
-
-
-=======
->>>>>>> 663fa14b5bdd7fe30e83fe6de75c3dd550840085
+#commentForm button[type="submit"] {
+  margin-top: 10px;
+}
+.btn-responder,
+.btn-ver-respuestas {
+  margin-top: 8px;
+  margin-right: 5px;
+}
+.texto-comentario {
+  display: block;
+  margin-bottom: 12px;
+}
 .respuestas {
-    display: none;
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Espacio entre cada burbuja */
 }
 
-#comentario{
-  margin-bottom: 50px;
+.respuestas .respuesta-burbuja {       
+  background-color: #d3d3d3;
+  border-radius: 10px;
+  padding: 10px;
+  color: #000;
+  max-width: 80%;
 }
-
-.area-responder{
-  margin-top: 25px;
+.comment {
+  background-color: #0d2d4b;  /* el fondo de el separador*/
+  border-radius: 15px;    /* lo redondea*/
+  padding: 12px;         /* espaciado */
+  margin-bottom: 20px;      /* el margen de elcoso*/
+  border: 1px solid #446;   /* el borde fino /aca lo pueden ajustar lolooooooooool */ 
 }
