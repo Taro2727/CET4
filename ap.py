@@ -175,17 +175,95 @@ def index5tolabredes():
 def index5tomodysistemas():
     id_mat = 16
     return render_template("index/indexmodeloss.html", id_mat=id_mat)
+#hasta aca son las materias de 5to programación
 
+#a partir de aca son las materias de 6to programación
 @app.route('/programacion/6toprogramacion') #ruta para la página de 6to de programación
 def index6toprog():
     return render_template("index/indexsexto.html")
 
-@app.route('/programacion/7toprogramacion') #ruta para la página de 7mo de programación
-def index7toprog():
+@app.route('/programacion/6toprogramacion/LabSistemaGestion')
+def index6toLabSistemaGestion():
+    id_mat = 23
+    return render_template("index/indexssdgestion.html", id_mat=id_mat)
+
+@app.route('/programacion/6toprogramacion/LabWebDinamica')
+def index6toLabWebDinamica():
+    id_mat = 24
+    return render_template("index/web_dinamica.html", id_mat=id_mat)
+
+@app.route('/programacion/6toprogramacion/LabSistemasDigitales')
+def index6toLabSistemasDigitales():
+    id_mat = 25
+    return render_template("index/indexlbssdig.html", id_mat=id_mat)
+
+@app.route('/programacion/6toprogramacion/LabSeguridadInformática')
+def index6toLabSeguridadInformática():
+    id_mat = 26
+    return render_template("index/indexsegurinform.html", id_mat=id_mat)
+
+@app.route('/programacion/6toprogramacion/LabProgramacion')
+def index6toLabProgramacion():
+    id_mat = 27
+    return render_template("index/indexlbprog.html", id_mat=id_mat)
+
+@app.route('/programacion/6toprogramacion/LabProcesosIndustriales')
+def index6toLabProcesosIndustriales():
+    id_mat = 28
+    return render_template("index/indexlbproc.html", id_mat=id_mat)
+
+@app.route('/programacion/6toprogramacion/LabWebEstatica')
+def index6toLabWebEstatica():
+    id_mat = 24
+    return render_template("index/indexwbestatc.html", id_mat=id_mat)
+#hasta aca son las materias de 6to programación
+
+#a partir de aca son las materias de 7mo programación
+@app.route('/programacion/7moprogramacion') #ruta para la página de 7mo de programación
+def index7moprog():
     return render_template("index/indexdseptimo.html")
 
-#a partir de aca empieza el login/inicio de sesión
+@app.route('/programacion/7moprogramacion/OrgMetodos')
+def index7moOrgMetodos():
+    id_mat = 37
+    return render_template("index/indexorgm.html", id_mat=id_mat)
 
+@app.route('/programacion/7moprogramacion/ModSistemas')
+def index7moModSistemas():
+    id_mat = 38
+    return render_template("index/indexmodeloss.html", id_mat=id_mat)
+
+@app.route('/programacion/7moprogramacion/EmprProdDl')
+def index7moEmprProdDl():
+    id_mat = 39
+    return render_template("index/indexempr.html", id_mat=id_mat)
+
+@app.route('/programacion/7moprogramacion/EvalPytos')
+def index7moLabWebEstatica():
+    id_mat = 24
+    return render_template("index/indexwbestatc.html", id_mat=id_mat)
+
+@app.route('/programacion/6toprogramacion/LabWebEstatica')
+def index6toLabWebEstatica():
+    id_mat = 24
+    return render_template("index/indexwbestatc.html", id_mat=id_mat)
+
+@app.route('/programacion/6toprogramacion/LabWebEstatica')
+def index6toLabWebEstatica():
+    id_mat = 24
+    return render_template("index/indexwbestatc.html", id_mat=id_mat)
+
+@app.route('/programacion/6toprogramacion/LabWebEstatica')
+def index6toLabWebEstatica():
+    id_mat = 24
+    return render_template("index/indexwbestatc.html", id_mat=id_mat)
+
+@app.route('/programacion/6toprogramacion/LabWebEstatica')
+def index6toLabWebEstatica():
+    id_mat = 24
+    return render_template("index/indexwbestatc.html", id_mat=id_mat)
+
+#a partir de aca empieza el login/inicio de sesión
 @app.route('/verificar', methods=['POST'])
 def verificar():
     datos = request.get_json()
