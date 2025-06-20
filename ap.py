@@ -8,7 +8,15 @@ from werkzeug.security import generate_password_hash, check_password_hash
 app = Flask(__name__)
 app.secret_key= 'mi_clave_secreta' #clave secreta para sesiones, cookies, etc.
 
-# Conexión con MySQL
+# #     NO DARLE BOLAAAAAAAAAAAAAAAAAAAAAAAA
+# db = mysql.connector.connect(
+#     host="shinkansen.proxy.rlwy.net",
+#     port=28885,           # puerto por defecto de MySQL
+#     user="root",         # tu usuario (normalmente es 'root')
+#     password="NGkiyYzvDujRzDDTWilDYgVrrrPJzZVl",         # tu contraseña, si no tiene ponela vacía
+#     database="railway"  # nombre exacto de la base de datos
+#)
+# # # Conexión con MySQL
 db = mysql.connector.connect(
     host="localhost",
     port=3306,           # puerto por defecto de MySQL
@@ -118,11 +126,43 @@ def electronica():
     id_mat=5
     return render_template("index/electronica4inf.html",id_mat=id_mat)
 
-
-
 @app.route('/informatica/5toinformatica')#el mio es el de nro (5to)
 def quinto5():
     return render_template("index/indexin5to.html")
+#materias de 5to:
+@app.route('/informatica/5toinformatica/labso')
+def labso5():
+    id_mat=18
+    return render_template("index/labso5inf.html",id_mat=id_mat)
+
+@app.route('/informatica/5toinformatica/labhard')
+def labhard5():
+    id_mat=20
+    return render_template("index/labhard5inf.html",id_mat=id_mat)
+
+@app.route('/informatica/5toinformatica/labprog')
+def labprog5():
+    id_mat=21
+    return render_template("index/labprog5inf.html",id_mat=id_mat)
+
+@app.route('/informatica/5toinformatica/sistdig')
+def labsistdig5():
+    id_mat=19
+    return render_template("index/labsistdig5inf.html",id_mat=id_mat)
+
+@app.route('/informatica/5toinformatica/teleinf')
+def teleinf():
+    id_mat=17
+    return render_template("index/teleinf5inf.html",id_mat=id_mat)
+
+@app.route('/informatica/5toinformatica/labapss')
+def labapps5():
+    id_mat=22
+    return render_template("index/labapps5inf.html",id_mat=id_mat)
+
+
+
+
 
 @app.route('/informatica/6toinformatica')#el mio es el de nro (6to)
 def sexto6():
