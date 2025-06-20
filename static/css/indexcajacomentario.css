@@ -189,6 +189,7 @@ button:hover {
 
 #titulo{
   margin-left: 1%;
+  background-color:#123;
   width: 35%;
   height: 5vh;
   margin-bottom: 1rem;
@@ -197,14 +198,12 @@ button:hover {
 }
 
 ::placeholder{
-  color: black;
-  text-align: center;
-  justify-content: center;
+  color: rgb(246, 246, 246);
+  text-align: left;
+  justify-content: left;
  }
 
- input{
-  text-align: center;
- }
+
 #commentsSection {
   margin-top: 25px; /* o el valor que quieras */
 }
