@@ -66,6 +66,7 @@ def dataregistro():
 #hasta aca es lo de crear cuenta
 #________________________________
 
+#rutas para las páginas de inicio de sesión
 @app.route("/iniciarsesion")
 def iniciarsesion():
     return render_template("index/indexiniciarsesion.html")
@@ -88,10 +89,56 @@ def indexinformatica():
     return render_template("index/dinformaticaindex.html")
 #hasta aca se elige la modalidad
 
+#-A-C-A--E-M-P-I-E-Z-A--I-N-F-O-R-M-A-T-I-C-A--C-U-R-S-O-S
+@app.route('/informatica/4toinformatica')#el mio es el de nro (4to)
+def cuarto4():
+    return render_template("index/indexin4to.html")
+#materias de 4to:
+@app.route('/informatica/4toinformatica/labapps')
+def labapps():
+    id_mat=1
+    return render_template("index/labapps4inf.html",id_mat=id_mat)
+
+@app.route('/informatica/4toinformatica/labprog')
+def labprog():
+    id_mat=2
+    return render_template("index/labprog4inf.html",id_mat=id_mat)
+
+@app.route('/informatica/4toinformatica/labso')
+def labso():
+    id_mat=3
+    return render_template("index/labso4inf.html",id_mat=id_mat)
+
+@app.route('/informatica/4toinformatica/labhard')
+def labhard():
+    id_mat=4
+    return render_template("index/labhard4inf.html",id_mat=id_mat)
+
+@app.route('/informatica/4toinformatica/electronica')
+def electronica():
+    id_mat=5
+    return render_template("index/electronica4inf.html",id_mat=id_mat)
+
+
+
+@app.route('/informatica/5toinformatica')#el mio es el de nro (5to)
+def quinto5():
+    return render_template("index/indexin5to.html")
+
+@app.route('/informatica/6toinformatica')#el mio es el de nro (6to)
+def sexto6():
+    return render_template("index/indexin6to.html")
+
+@app.route('/informatica/7moinformatica')#el mio es el de nro (7mo)
+def septimo7():
+    return render_template("index/indexin7mo.html")
+
+
 @app.route('/comentario') #ruta para la página de comentarios
 def indexcomentario():
     return render_template("index/indexcomentario.html")
 
+#-A-C-A--E-M-P-I-E-Z-A--P-R-O-G-R-A-M-A-C-I-O-N--C-U-R-S-O-S
 #a partir de aca son las materias de 4to programación
 @app.route('/programacion/4toprogramacion') #ruta para la página de 4to de programación
 def index4toprog():
@@ -99,7 +146,8 @@ def index4toprog():
 
 @app.route('/programacion/4toprogramacion/labaplicaciones')
 def index4toaplicaciones():
-    return render_template("index/indexlbapli.html")
+    id_mat=1
+    return render_template("index/indexlbapli.html", id_mat=id_mat)
 
 @app.route('/programacion/4toprogramacion/labprogramacion')
 def index4tolabprog():
@@ -108,17 +156,20 @@ def index4tolabprog():
 
 @app.route('/programacion/4toprogramacion/labsistemasoperativos')
 def index4tosistop():
-    return render_template("index/indexlbssop.html")
+    id_mat = 2 
+    return render_template("index/indexlbssop.html", id_mat=id_mat)
 
 @app.route("/programacion/4toprogramacion/labhardware")
 def index4tolabhardw(): 
-    return render_template("index/indexlbhardw.html")
+    id_mat = 3
+    return render_template("index/indexlbhardw.html", id_mat=id_mat)
 
 @app.route("/programacion/4toprogramacion/electronica")
 def index4toelectronica():
-    return render_template("index/indexlbelectronica.html")
+    id_mat = 5
+    return render_template("index/indexlbelectronica.html", id_mat=id_mat)
 #hasta aca son las materias de 4to programación
-
+#-------------------------------------------------------
 #a partir de aca son las materias de 5to programación
 @app.route('/programacion/5toprogramacion') #ruta para la página de 5to de programación
 def index5toprog():
@@ -126,51 +177,153 @@ def index5toprog():
 
 @app.route('/programacion/5toprogramacion/labdiseñoweb')
 def index5tolabdiseñoweb():
-    return render_template("index/indexlbdiseñoweb.html")
+    id_mat = 12
+    return render_template("index/indexlbdiseñoweb.html", id_mat=id_mat) #todavia no está el html de diseño web
 
 @app.route('/programacion/5toprogramacion/labprogramacion')
 def index5tolabprog():
-    id_mat = 5
-    return render_template("index/indexlbaprogramacion.html", id_mat=id_mat)
+    id_mat = 11
+    return render_template("index/indexlbprog.html", id_mat=id_mat)
+
+@app.route('/programacion/5toprogramacion/sistemasdigitales')
+def index5tosistemasdigitales():
+    id_mat = 13
+    return render_template("index/indexlbssdig.html", id_mat=id_mat)
+
+@app.route('/programacion/5toprogramacion/labbasededatos')
+def index5tolabbasededatos():
+    id_mat = 14
+    return render_template("index/indexlbbd.html", id_mat=id_mat)
+
+@app.route('/programacion/5toprogramacion/labredes')
+def index5tolabredes():
+    id_mat = 15
+    return render_template("index/indexlbredes.html", id_mat=id_mat)
+
+@app.route('/programacion/5toprogramacion/modysistemas')
+def index5tomodysistemas():
+    id_mat = 16
+    return render_template("index/indexmodeloss.html", id_mat=id_mat)
+#hasta aca son las materias de 5to programación
+#-------------------------------------------------------
+#a partir de aca son las materias de 6to programación
 @app.route('/programacion/6toprogramacion') #ruta para la página de 6to de programación
 def index6toprog():
     return render_template("index/indexsexto.html")
 
-@app.route('/programacion/7toprogramacion') #ruta para la página de 7mo de programación
-def index7toprog():
+@app.route('/programacion/6toprogramacion/LabSistemaGestion')
+def index6toLabSistemaGestion():
+    id_mat = 23
+    return render_template("index/indexssdgestion.html", id_mat=id_mat)
+
+@app.route('/programacion/6toprogramacion/LabWebDinamica')
+def index6toLabWebDinamica():
+    id_mat = 24
+    return render_template("index/web_dinamica.html", id_mat=id_mat)
+
+@app.route('/programacion/6toprogramacion/LabSistemasDigitales')
+def index6toLabSistemasDigitales():
+    id_mat = 25
+    return render_template("index/indexlbssdig.html", id_mat=id_mat)
+
+@app.route('/programacion/6toprogramacion/LabSeguridadInformática')
+def index6toLabSeguridadInformática():
+    id_mat = 26
+    return render_template("index/indexsegurinform.html", id_mat=id_mat)
+
+@app.route('/programacion/6toprogramacion/LabProgramacion')
+def index6toLabProgramacion():
+    id_mat = 27
+    return render_template("index/indexlbprog.html", id_mat=id_mat)
+
+@app.route('/programacion/6toprogramacion/LabProcesosIndustriales')
+def index6toLabProcesosIndustriales():
+    id_mat = 28
+    return render_template("index/indexlbproc.html", id_mat=id_mat)
+
+@app.route('/programacion/6toprogramacion/LabWebEstatica')
+def index6toLabWebEstatica():
+    id_mat = 24
+    return render_template("index/indexwbestatc.html", id_mat=id_mat)
+#hasta aca son las materias de 6to programación
+#-------------------------------------------------------
+#a partir de aca son las materias de 7mo programación
+@app.route('/programacion/7moprogramacion') #ruta para la página de 7mo de programación
+def index7moprog():
     return render_template("index/indexdseptimo.html")
 
-#a partir de aca empieza el login/inicio de sesión
+@app.route('/programacion/7moprogramacion/OrgMetodos')
+def index7moOrgMetodos():
+    id_mat = 37
+    return render_template("index/indexorgm.html", id_mat=id_mat)
 
+@app.route('/programacion/7moprogramacion/ModSistemas')
+def index7moModSistemas():
+    id_mat = 38
+    return render_template("index/indexmodeloss.html", id_mat=id_mat)
+
+@app.route('/programacion/7moprogramacion/EmprProdDl')
+def index7moEmprProdDl():
+    id_mat = 39
+    return render_template("index/indexempr.html", id_mat=id_mat)
+
+@app.route('/programacion/7moprogramacion/EvalPytos')#no hay html de esta materia ni boton
+def index7moEvalPytos():
+    id_mat = 40
+    return render_template("index/index######.html", id_mat=id_mat)
+
+@app.route('/programacion/7moprogramacion/PytoSistWd')
+def index7moPytoSistWd():
+    id_mat = 41
+    return render_template("index/indexpsw.html", id_mat=id_mat)
+
+@app.route('/programacion/7moprogramacion/PdiSistComp')
+def index7moPdiSistComp():
+    id_mat = 42
+    return render_template("index/indexpsc.html", id_mat=id_mat)
+
+@app.route('/programacion/7moprogramacion/PdSoftPMov')
+def index7moPdSoftPMov():
+    id_mat = 43
+    return render_template("index/indexpdspm.html", id_mat=id_mat)
+
+@app.route('/programacion/7moprogramacion/PractProf') #no hay html de esta materia ni boton
+def index7moPractProf():
+    id_mat = 44
+    return render_template("index/indexpractprof.html", id_mat=id_mat)
+#hasta aca son las materias de 7mo programación
+#-------------------------------------------------------
+#a partir de aca empieza el login/inicio de sesión
 @app.route('/verificar', methods=['POST'])
 def verificar():
-    datos = request.get_json()
-    email = datos.get('email')
-    contraseña = datos.get('password')
+    datos = request.get_json() # Obtener los datos del JSON enviado desde el frontend
+    email = datos.get('email') # Obtener el email del JSON
+    contraseña = datos.get('password') # Obtener la contraseña del JSON
 
-    print("Email recibido:", email)
+    print("Email recibido:", email) 
     print("Contraseña recibida:", contraseña)
 
-    if not email or not contraseña:
-        return jsonify({"exito": False, "error": "email y contraseña son requeridos"}), 400
+    if not email or not contraseña: 
+        return jsonify({"exito": False, "error": "email y contraseña son requeridos"}), 400 
     
-    cursor = db.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM usuario WHERE email=%s", (email,))
-    usuario = cursor.fetchone()
+    cursor = db.cursor(dictionary=True) 
+    cursor.execute("SELECT * FROM usuario WHERE email=%s", (email,)) #pide el usuario por email
+    #el cursor ejecuta la consulta y devuelve un diccionario con los resultados
+    usuario = cursor.fetchone() # Obtiene el primer resultado de la consulta
     cursor.close()
 
-    if usuario and check_password_hash (usuario['contraseña'], contraseña):
+    if usuario and check_password_hash (usuario['contraseña'], contraseña): # Verifica si el usuario existe y si la contraseña es correcta
         session['id_usu'] = usuario['id_usu']  # Guardar el id de usuario en la sesión
         session['usuario'] = usuario['nom_usu']
-        return jsonify({"exito": True})
+        return jsonify({"exito": True}) 
     else:
         return jsonify({"exito": False})
 
-@app.route('/comentario/materia/<int:id_mat>')
+@app.route('/comentario/materia/<int:id_mat>') 
 def comentario_materia(id_mat):
     return render_template('index/indexcomentario.html', id_mat=id_mat)
 
-@app.route('/comentario', methods=['POST'])
+@app.route('/comentario', methods=['POST']) 
 def comment():
     try:
         data = request.get_json()
@@ -184,8 +337,8 @@ def comment():
         
         cursor = db.cursor()
         query = "INSERT INTO preg (titulo, cont, id_mat, id_usu) VALUES (%s, %s, %s, %s)"
-        cursor.execute(query, (titulo, comment, id_mat, id_usu))
-        db.commit()
+        cursor.execute(query, (titulo, comment, id_mat, id_usu)) # Guardar el comentario en la base de datos
+        db.commit() # Guardar los cambios en la base de datos
         cursor.close()
         return jsonify({"success": True})
     except Exception as e:
@@ -203,14 +356,15 @@ def get_comentario():
             LEFT JOIN usuario u ON p.id_usu = u.id_usu
             WHERE p.id_mat=%s
             ORDER BY p.fecha DESC
-        """, (id_mat,))
+        """, (id_mat,)) 
     else:
         cursor.execute("""
             SELECT p.id_post, p.titulo, p.cont, p.fecha, u.nom_usu AS usuario
             FROM preg p
             LEFT JOIN usuario u ON p.id_usu = u.id_usu
+            WHERE p.id_mat=%s
             ORDER BY p.fecha DESC
-        """)
+        """, (id_mat,))
     comentarios = cursor.fetchall()
     cursor.close()
     return jsonify(comentarios)

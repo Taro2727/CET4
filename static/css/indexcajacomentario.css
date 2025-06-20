@@ -196,6 +196,7 @@ button:hover {
   margin-top: 0.5rem;
 
 }
+<<<<<<< HEAD
 .responder {
   border-radius:4rem ;
   
@@ -204,7 +205,16 @@ button:hover {
 
 
 
+=======
+>>>>>>> 663fa14b5bdd7fe30e83fe6de75c3dd550840085
 .respuestas {
     display: none;
 }
 
+#comentario{
+  margin-bottom: 50px;
+}
+
+.area-responder{
+  margin-top: 25px;
+}
