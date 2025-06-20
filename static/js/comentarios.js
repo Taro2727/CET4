@@ -5,7 +5,7 @@ window.onload = async function () {
 
 async function cargarComentarios() {
     const id_mat = document.getElementById('id_mat').value;
-    const response = await fetch('/get_comentario?id_mat='+encodeURIComponent(id_mat));
+    const response = await fetch('/get_comentario?id_mat='+encodeURIComponent(id_mat)+ '&t=' + Date.now());
     const comentarios = await response.json();
     const section = document.getElementById('commentsSection');
     section.innerHTML = ''; // Limpia la sección antes de recargar
@@ -80,7 +80,7 @@ async function mostrarRespuestas(id_post, forzarApertura = false) {
     }
     divRespuestas.style.display = 'block';
 
-    const res = await fetch('/get_respuestas/' + id_post);
+    const res = await fetch('/get_respuestas/' + id_post + '?t=' + Date.now());
     const respuestas = await res.json();
     
     // Se mantiene la clase original para cada respuesta individual: "respuesta"
