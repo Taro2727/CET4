@@ -284,7 +284,7 @@ def index4tolabhardw():
 @app.route("/programacion/4toprogramacion/electronica")
 def index4toelectronica():
     id_mat = 5
-    return render_template("index/indexlbelectronica.html", id_mat=id_mat)
+    return render_template("index/indexelectronica.html", id_mat=id_mat)
 #hasta aca son las materias de 4to programación
 #-------------------------------------------------------
 #a partir de aca son las materias de 5to programación
