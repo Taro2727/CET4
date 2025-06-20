@@ -9,21 +9,21 @@ app = Flask(__name__)
 app.secret_key= 'mi_clave_secreta' #clave secreta para sesiones, cookies, etc.
 
 # #     NO DARLE BOLAAAAAAAAAAAAAAAAAAAAAAAA
-# db = mysql.connector.connect(
-#     host="shinkansen.proxy.rlwy.net",
-#     port=28885,           # puerto por defecto de MySQL
-#     user="root",         # tu usuario (normalmente es 'root')
-#     password="NGkiyYzvDujRzDDTWilDYgVrrrPJzZVl",         # tu contraseña, si no tiene ponela vacía
-#     database="railway"  # nombre exacto de la base de datos
-#)
-# # # Conexión con MySQL
 db = mysql.connector.connect(
-    host="localhost",
-    port=3306,           # puerto por defecto de MySQL
+    host="gondola.proxy.rlwy.net",
+    port=20050,           # puerto por defecto de MySQL
     user="root",         # tu usuario (normalmente es 'root')
-    password="",         # tu contraseña, si no tiene ponela vacía
-    database="cet4"  # nombre exacto de la base de datos
+    password="XGaKhmhcnmHScVRBFxukOaQkQdftuCzS",         # tu contraseña, si no tiene ponela vacía
+    database="railway"  # nombre exacto de la base de datos
 )
+# # # Conexión con MySQL
+# db = mysql.connector.connect(
+#     host="localhost",
+#     port=3306,           # puerto por defecto de MySQL
+#     user="root",         # tu usuario (normalmente es 'root')
+#     password="",         # tu contraseña, si no tiene ponela vacía
+#     database="cet4"  # nombre exacto de la base de datos
+# )
 
 @app.route('/') #ruta para la página de inicio
 def inicio():
