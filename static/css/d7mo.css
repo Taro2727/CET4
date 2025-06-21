@@ -174,35 +174,95 @@ body {
 
 
 
-
-/* Responsividad */
-@media screen and (max-width: 768px) {
+/* --- Pantallas grandes (desde 1025px) --- */
+@media screen and (min-width: 1025px) {
     .cuerpo1 {
+        padding-left: 100px; /* espacio para la barra lateral */
+    }
+
+    .separador-lateral {
+        display: block;
+    }
+
+    .ordenado {
         flex-direction: column;
-        align-items: center;
-        padding: 20px 10px;
     }
+}
 
-    .bloque-superpuesto {
+
+/* --- Tablets y pantallas medianas --- */
+@media screen and (max-width: 1024px) {
+    .buscador-logo2 {
         width: 90%;
-        max-width: 350px;
     }
 
-    .header {
-        margin-left: 0;
-        padding: 10px;
+    .cuerpo1 {
+        padding-left: 20px; /* reduce espacio al desaparecer barra */
     }
 
     .elcostado {
-        position: static;
         width: 100%;
+        height: auto;
         flex-direction: row;
-        justify-content: space-around;
+        justify-content: center;
+        align-items: center;
         padding: 10px 0;
+        position: relative;
     }
 
-    .elcostado a img {
-        margin: 0;
-        width: 25px;
+    .separador-lateral {
+        display: none;
+    }
+
+    .ordenado {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+        overflow-x: auto;
+        width: 100%;
+        padding: 10px;
+    }
+
+    .ordenado img {
+        width: 45px;
+        height: 45px;
+        margin-top: 0;
+    }
+}
+
+
+/* --- Celulares --- */
+@media screen and (max-width: 600px) {
+    .buscador-logo2 {
+        width: 95%;
+    }
+
+    .buscador {
+        width: 100%;
+    }
+
+    .bloque-superpuesto {
+        width: 95%;
+    }
+
+    .texto-superpuesto {
+        font-size: 20px;
+        padding-top: 30%;
+    }
+
+    .ordenado img {
+        width: 50px;
+        height: 50px;
+    }
+
+    .elcostado {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+    }
+
+    #out {
+        font-size: 22px;
+        margin: 10px;
     }
 }
