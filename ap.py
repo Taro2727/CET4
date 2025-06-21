@@ -295,7 +295,7 @@ def index5toprog():
 @app.route('/programacion/5toprogramacion/labdiseñoweb')
 def index5tolabdiseñoweb():
     id_mat = 12
-    return render_template("index/indexlbdiseñoweb.html", id_mat=id_mat) #todavia no está el html de diseño web
+    return render_template("index/labdis5prog.html", id_mat=id_mat) 
 
 @app.route('/programacion/5toprogramacion/labprogramacion')
 def index5tolabprog():
@@ -331,7 +331,7 @@ def index6toprog():
 @app.route('/programacion/6toprogramacion/LabSistemaGestion')
 def index6toLabSistemaGestion():
     id_mat = 23
-    return render_template("index/indexssdgestion.html", id_mat=id_mat)
+    return render_template("index/indexssdgestn.html", id_mat=id_mat)
 
 @app.route('/programacion/6toprogramacion/LabWebDinamica')
 def index6toLabWebDinamica():
@@ -384,10 +384,10 @@ def index7moEmprProdDl():
     id_mat = 39
     return render_template("index/indexempr.html", id_mat=id_mat)
 
-@app.route('/programacion/7moprogramacion/EvalPytos')#no hay html de esta materia ni boton
+@app.route('/programacion/7moprogramacion/EvalPytos')
 def index7moEvalPytos():
     id_mat = 40
-    return render_template("index/index######.html", id_mat=id_mat)
+    return render_template("index/indexevaproy.html", id_mat=id_mat)
 
 @app.route('/programacion/7moprogramacion/PytoSistWd')
 def index7moPytoSistWd():
@@ -404,7 +404,7 @@ def index7moPdSoftPMov():
     id_mat = 43
     return render_template("index/indexpdspm.html", id_mat=id_mat)
 
-@app.route('/programacion/7moprogramacion/PractProf') #no hay html de esta materia ni boton
+@app.route('/programacion/7moprogramacion/PractProf') 
 def index7moPractProf():
     id_mat = 44
     return render_template("index/indexpractprof.html", id_mat=id_mat)

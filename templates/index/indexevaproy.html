@@ -5,8 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Comentarios con Menú</title>
   <link rel="stylesheet" href="/static/css/indexcajacomentario.css" />
+  <link rel="stylesheet" href="/static/css/barralateral.css"/>
 </head>
 <body>
+  <div id="toggle">
+        <span>&#9776;</span> <!--El simbolo de Tres barras-->
+    </div>
    <!--Todo la barra lateral-->
     <div class="elcostado ordenado">
         <div id="out">
@@ -23,12 +27,21 @@
   <main class="comentarios">
     <header class="comentarios-header">
       <span class="flechas" aria-hidden="true">▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶</span>
-      <h1>teleinform </h1>
+      <h1>Evaluacion proyectos</h1>
       <span class="flechas" aria-hidden="true">◀◀◀◀◀◀◀◀◀◀◀◀◀◀◀◀◀◀◀◀</span>
     </header>
 
     <section class="caja-comentario">
-      <form>
-        <label for="comentario" class="sr-only">Escribe tu comentario</label>
+      <form id="commentForm">
+        <input type="text" id="titulo" name="titulo" placeholder="Título de la pregunta" required>
         <textarea id="comentario" name="comentario" placeholder="Escribe tu comentario..." required></textarea>
-        <div>
+        <input type="hidden" id="id_mat" name="id_mat" value="{{ id_mat }}">
+        <button type="submit">Enviar</button>
+      </form>
+
+      <div id="commentsSection"></div>
+  </main>
+<script src="/static/js/comentarios.js"></script>
+<script src="/static/js/barralateral.js"></script>
+</body>
+</html>
