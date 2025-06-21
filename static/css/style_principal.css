@@ -3,6 +3,7 @@ body {
   font-family: 'Segoe UI', sans-serif;
   background-color: #0d0d2b;
   color: #fff;
+  
 }
 
 .header {
@@ -101,4 +102,12 @@ body {
   background-color: white;
   color: #0d0d2b;
 }
+
+.invitado{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color:aqua;
+}
+
 /* el hover es para que cambir cuando el mouse toque el elemento sse usA con transition lol */
