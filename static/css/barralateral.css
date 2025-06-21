@@ -17,6 +17,8 @@
     left: 0;
 }
 /*Esto hace que la funcion de la barra lateral se cierre y abra */
+
+/*Fin de la funcion de la barra Lateral */
 #toggle {
     color: white;
     font-size: 45px;
@@ -28,16 +30,17 @@
 
 #out {
     color: white;
-    margin: 15px auto 0 100px;
+    font-size: 15px;
+    margin: 20px auto 0 100px;
     cursor: pointer;
 }
-/*Fin de la funcion de la barra Lateral */
 
 /* Fin de la barra Lateral */
 
 
 /* Esto es el comienzo de los iconos de la barra Lateral */
 
+/* Íconos de la barra lateral */
 .casa1{
     margin-top: 50px;
     width: 35px;
@@ -65,10 +68,47 @@
 }
 
 .usuario{
-    width: 75px;
-    height: 75px;
-    margin-top: 50px;
+    width: 50px;
+    height: 50px;
+    margin-top: 30px;
 }
+
+@media (max-width: 1024px) {
+    .elcostado {
+        width: 60%;
+        left: -60%;
+    }
+    .usuario, .ordenado img {
+        width: 40px;
+        height: 40px;
+        margin-top: 30px;
+    }
+    .logo {
+        width: 18px;
+        height: 18px;
+    }
+}
+@media (max-width: 600px) {
+    .elcostado {
+        width: 80%;
+        left: -80%;
+    }
+    .cuerpo1 {
+        grid-template-columns: 350px;
+    }
+    .usuario, .ordenado img {
+        width: 30px;
+        height: 30px;
+        margin-top: 20px;
+    }
+    .texto-superpuesto {
+        font-size: 20px;
+    }
+    #toggle {
+        font-size: 26px;
+    }
+}
+
 
 
 /* Fin de los iconos de la barra Lateral */
