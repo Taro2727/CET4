@@ -5,8 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title> C.E.T.4</title>
   <link rel="stylesheet" href="/static/css/style_principal.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='estilos.css') }}">
+
 </head>
 <body>
+   
     
   <header class="header"> 
     <!-- aca esta el coso de la pagina el coso de arriba ahhh no me acuerdo como se dice perdón :( -->
@@ -16,8 +19,15 @@
    
   </header>
 
-<!-- aca esta todo el texto de el contenedor blanco  -->
-  <main class="contenido-principal">
+    <div class="fondo">
+
+      <video autoplay loop muted class="video">
+      <source src="/static/utils/img/fondo.mp4" type="video/mp4">
+    </video>
+
+    
+      <!-- aca esta todo el texto de el contenedor blanco  -->
+     <main class="contenido-principal">
 
     <div class="coso-blanco">  
 <!-- puse tdo lo de el coso blanco  -->
@@ -28,12 +38,16 @@
       </p>
     </div>
      
-  </main>
+
   <!-- aca estan los botones ya conectados con sus correspondientes pagina les puse el target coso para que no te abra 
    otra pestaña que directamente te lo abra en la misma  -->
-<div class="botones">
+   <div class="botones">
         <a href='/crearcuenta' target="_parent" class="boton">CREAR CUENTA </a>
         <a href="/iniciarsesion" target="_parent" class="boton">INICIAR SESION </a>
-</body>
+      </div>
+      </main>
+      </div>
+
+   </body>
 </html>
 
