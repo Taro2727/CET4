@@ -1,37 +1,59 @@
-* {
-  box-sizing: border-box;
+   
+body {
+    margin: 0;
+   font-family: 'Roboto Mono', monospace;
+    background-color: #0b1443;
+   color: white;
+   min-height: 100vh;
+   position: relative;
+   overflow: hidden; /* Evita scroll si el video desborda */
 }
 
-body {
-  margin: 0;
-  font-family: 'Roboto Mono', monospace;
-  background-color: #0b1443;
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  padding: 20px;
+/* Fondo de video */
+#videoFondo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  z-index: -100;
+  opacity: 0.18;
+  pointer-events: none;
 }
 
 .main-wrapper {
   display: flex;
   flex-direction: row;
-  align-items: flex-end;
-  gap: 30px;
-  flex-wrap: wrap;
-  max-width: 900px;
-  width: 100%;
   justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 40px; /* separación entre el login y pennino */
+  max-width: 1100px;
+  width: 100%;
+  padding: 40px 20px;
+  min-height: 100vh;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  animation: fadeIn 0.6s ease both;
 }
 
+
 .login-container {
-  background-color: #11264d;
-  padding: 40px;
-  border-radius: 10px;
+  background: rgba(17, 38, 77, 0.55); /* fondo translucido tipo vidrio */
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  padding: 50px 40px;
   width: 100%;
-  max-width: 450px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.4);
+  max-width: 500px;
+  min-height: 540px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: all 0.3s ease;
 }
 
 .login-container h1 {
@@ -40,36 +62,47 @@ body {
   text-align: center;
 }
 
+/* Inputs suaves, con fondo oscuro translúcido */
 .login-container input {
   width: 100%;
   padding: 10px;
-  margin-bottom: 15px;
-  border: none;
+   margin-bottom: 15px;
   border-radius: 5px;
-  background-color: #0b1443;
+  background-color: rgba(11, 20, 67, 0.8);
+  border: 1px solid rgba(255,255,255,0.05);
   color: white;
 }
+
 
 .login-container button {
   width: 100%;
-  padding: 10px;
-  background-color: #1b305c;
+  padding: 12px;
+  background: linear-gradient(135deg, #1b305c, #284a82);
   border: none;
-  border-radius: 5px;
-  color: white;
+  border-radius: 6px;
   font-weight: bold;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
+.login-container #init{
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
 .login-container button:hover {
-  background-color: #284a82;
+  background-color: #3f66b1;
+  transform: translateY(-2px);
 }
 
+/* los enlaces  */
 .login-container .links {
   text-align: center;
-  margin-top: 10px;
-  font-size: 12px;
+   flex-wrap: wrap;
+  gap: 40px;
+  margin-top: 12px;
+  font-size: 13px;
 }
 
 .login-container .links a {
@@ -77,20 +110,27 @@ body {
   text-decoration: none;
 }
 
+/* zettino */
 .mascota-wrapper {
-  position: relative;
-  display: flex;
+   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  min-width: 240px;
+  padding: 20px 0;
 }
+
 
 .mascota {
   max-height: 240px;
   width: auto;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
 }
 
+/* la burbuja blanca  */
 .burbuja {
-  background-color: white;
+  background-color: rgba(255,255,255,0.75);
+  backdrop-filter: blur(6px); /* simula vidrio */
   color: black;
   padding: 10px 15px;
   border-radius: 15px;
@@ -99,32 +139,16 @@ body {
   text-align: center;
   margin-bottom: 10px;
   position: relative;
-  box-shadow: 0 0 5px rgba(0,0,0,0.2);
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
 }
 
-/* Piquito */
-.burbuja::after {
-  content: "";
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  border-width: 10px;
-  border-style: solid;
-  border-color: white transparent transparent transparent;
-}
 
-/* Accesibilidad (screen readers) */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+
+
+/* es la transision para poder hacer que se mueva ni bien entras */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(25px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* Responsive */
@@ -141,5 +165,9 @@ body {
 
   .mascota {
     max-height: 200px;
+  }
+
+  .login-container {
+    padding: 40px 25px;
   }
 }
