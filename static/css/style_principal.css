@@ -38,7 +38,7 @@ header {
   position: sticky;
   top: 0;
   z-index: 10;
-  background: linear-gradient(to right, #0b0b33, #23236f);
+  background-color:  #0b0b33;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -95,18 +95,16 @@ p {
 /* Botones */
 .botones {
   display: flex;
-<<<<<<< HEAD
   flex-direction: column;
   align-items: center;
   gap: 1rem;
-=======
+
  gap: 20px;
  justify-content: center;
  left: 30px;
  margin-top: -5px;
  margin-left: 30px;
  margin-bottom: 20px;
->>>>>>> 5464b0b9510310c3ca53b53ece06c2ed1fd4fadb
 }
 
 .boton {
@@ -116,17 +114,17 @@ p {
   font-weight: 600;
   border-radius: 8px;
   text-decoration: none;
-<<<<<<< HEAD
+
   color: white;
   background: #5865f2;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3); /*sombras*/
   transition:0.3s ease, transform 0.3s ease;
-=======
+
   font-weight: bold;
   border: 2px solid white;
   transition: all 0.3s ease;
   
->>>>>>> 5464b0b9510310c3ca53b53ece06c2ed1fd4fadb
+
 }
 
 .boton:hover {
