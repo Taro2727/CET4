@@ -29,6 +29,9 @@ db = mysql.connector.connect(
 def inicio():
     return render_template('index/indexprincipal.html')
 
+@app.route('/comunicatenosotros')
+def comnos():
+    return render_template('index/indexcentralayuda.html')
 #__________________________________
 #desde acá empieza el registro 
 @app.route('/crearcuenta')
