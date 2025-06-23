@@ -433,12 +433,13 @@ def verificar():
 
     if not email or not contraseña: 
         return jsonify({"exito": False, "error": "email y contraseña son requeridos"}), 400 
-    
-    cursor = db.cursor(dictionary=True) 
+
+    cursor = conn.cursor(dictionary=True) 
     cursor.execute("SELECT * FROM usuario WHERE email=%s", (email,)) #pide el usuario por email
     #el cursor ejecuta la consulta y devuelve un diccionario con los resultados
     usuario = cursor.fetchone() # Obtiene el primer resultado de la consulta
     cursor.close()
+    conn.close() 
 
     if usuario and check_password_hash (usuario['contraseña'], contraseña): # Verifica si el usuario existe y si la contraseña es correcta
         session['id_usu'] = usuario['id_usu']  # Guardar el id de usuario en la sesión
@@ -474,8 +475,9 @@ def comment():
         cursor = db.cursor()
         query = "INSERT INTO preg (titulo, cont, id_mat, id_usu) VALUES (%s, %s, %s, %s)"
         cursor.execute(query, (titulo, comment, id_mat, id_usu)) # Guardar el comentario en la base de datos
-        db.commit() # Guardar los cambios en la base de datos
+        conn.commit() # Guardar los cambios en la base de datos
         cursor.close()
+        conn.close() # Cerrar la conexión a la base de datos
         return jsonify({"success": True})
     except Exception as e:
         print("Error al guardar comentario:", e)  # Esto mostrará el error en la consola de Flask
@@ -492,7 +494,7 @@ def get_comentario():
         password="XGaKhmhcnmHScVRBFxukOaQkQdftuCzS",
         database="railway"
     ) 
-    cursor = db.cursor(dictionary=True)
+    cursor = conn.cursor(dictionary=True)
     if id_mat:
          cursor.execute("""
             SELECT p.id_post, p.titulo, p.cont, p.fecha, u.nom_usu AS usuario
@@ -511,6 +513,7 @@ def get_comentario():
         """, (id_mat,))
     comentarios = cursor.fetchall()
     cursor.close()
+    conn.close()
     return jsonify(comentarios)
 
 @app.route('/responder', methods=['POST'])
@@ -531,11 +534,12 @@ def responder():
     if not id_usu:
         return jsonify({"success": False, "error": "Usuario no autenticado"}), 401
     
-    cursor = db.cursor()
+    cursor = conn.cursor()
     query = "INSERT INTO rta (id_post, id_usu, cont) VALUES (%s, %s, %s)"
     cursor.execute(query, (id_post, id_usu, cont))
-    db.commit()
+    conn.commit()
     cursor.close()
+    conn.close()
     return jsonify({"success": True})
 
 @app.route('/get_respuestas/<int:id_post>')
@@ -548,7 +552,7 @@ def get_respuestas(id_post):
         password="XGaKhmhcnmHScVRBFxukOaQkQdftuCzS",
         database="railway"
     )
-    cursor = db.cursor(dictionary=True)
+    cursor = conn.cursor(dictionary=True)
     cursor.execute("""
         SELECT r.cont, u.nom_usu AS usuario
         FROM rta r
@@ -558,6 +562,7 @@ def get_respuestas(id_post):
     """, (id_post,))
     respuestas = cursor.fetchall()
     cursor.close()
+    conn.close()
     return jsonify(respuestas)
 
 
