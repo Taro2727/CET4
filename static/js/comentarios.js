@@ -76,9 +76,9 @@ async function mostrarRespuestas(id_post, forzarApertura = false) {
     const estaVisible = divRespuestas.style.display === 'block';
     if (estaVisible && !forzarApertura) {
         divRespuestas.style.display = 'none';
-    }else {
-        divRespuestas.style.display = 'block';
+        return;
     }
+    divRespuestas.style.display = 'block';
 
     const res = await fetch('/get_respuestas/' + id_post + '?t=' + Date.now());
     const respuestas = await res.json();
