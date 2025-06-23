@@ -105,15 +105,24 @@ body {
 .comentarios-header {
   text-align: center;
   margin-bottom: 20px;
-   flex-wrap: wrap;
+  flex-wrap: wrap;
   gap: 40px;
 }
 
 .comentarios-header h1 {
-  background: rgb(193, 205, 216);
+  background: url(/static/utils/img/materia.jpg);
   padding: 20px 10px;
-  border-radius: 4px;
   font-size: 80px;
+  width: 145vh;
+  height: 200px;
+  border-radius: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-size: cover;
+  background-position: center;
+  box-shadow: black 0px 0px 20px;
+  color: white;
 }
 
 .flechas {

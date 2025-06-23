@@ -63,14 +63,16 @@ async function enviarRespuesta(id) {
     if (result.success) {
         // Limpia el área del formulario y muestra la lista de respuestas actualizada
         document.getElementById(`area-responder-${id}`).innerHTML = '';
-        await mostrarRespuestas(id, true); // forzarApertura = true
+        await cargarComentarios(); // Recarga todos los comentarios para mostrar la nueva respuesta
+        setTimeout(() => {
+            mostrarRespuestas(id, true);
+        }, 300); // forzarApertura = true
     }
 }
 
 // Se mantiene el nombre original de la función: "mostrarRespuestas"
 async function mostrarRespuestas(id_post, forzarApertura = false) {
     if (!id_post) return;
-
     // Apunta al contenedor de la lista de respuestas
     const divRespuestas = document.getElementById('respuestas-' + id_post);
 
