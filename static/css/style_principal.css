@@ -1,85 +1,104 @@
+
 body {
-  margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background-color: #0d0d2b;
-  color: #fff;
-  
+  font-family: sans-serif; /*esta fuente me gusto por eso la deje */
+  margin: 0;   
+  padding: 0;
+  background: black;
+  color: #ffffff;
+  line-height: 1.6;  /*espaciado entre textos */
+  scroll-behavior: smooth; /*mueve ligeramente los botones para cuando los toques jij*/
+  overflow-x: hidden;
 }
 
-.header {
+/* Fondo con video */
+.fondo {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.fondo .video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  filter: brightness(0.5) contrast(1.1); /*reduce el brillo de el coso*/
+}
+
+/* Encabezado */
+header {
   display: flex;
-  height: 70px;
   justify-content: space-between;
-  background-color: #0d0d2b;
-  height: 70px;
   align-items: center;
-  padding: 10px;
-
+  padding: 1rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color:  #0b0b33;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.logo {
-  display: flex;
+.logo img {
+  height: 45px;
 }
-
-.logo img{
-  height: 60px;
-  width: 60px;
-  border-radius: 4rem;
-
-}
-
 
 .contacto {
-  color: #ffffff;
-  text-decoration:line;
-  font-size: 0.9em;
-  text-align: left 300px;
-
-  
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 0.9rem;
 }
 
+.contacto:hover {
+  text-decoration: underline;
+}
+
+/* Contenido principal tipo landing */
 .contenido-principal {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 60px 20px;
-}
-
-.coso-blanco {
-  background-color: white; 
+  height: 100vh;
   text-align: center;
-  border-radius: 30px;
-  padding: 100px;
-  max-width: 800px;
-  border-radius: 80px;
-   
+  padding: 0 1rem;
+  z-index: 1;
+  position: relative;
 }
 
-.coso-blanco h1 {
-  font-size: 2em;
-  margin-bottom: 10px;
-  color:#0d0d2b;
-  margin-top: 1 rem;
+h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: white;
 }
 
-.coso-blanco h2 {
-  font-size: 2 rem;
-  margin-bottom: 20px;
-  font-weight: normal;
-  color:#0d0d2b;
+h2 {
+  font-size: 2rem;
+  font-weight: 400;
+  color: #dddddd;
+  margin-bottom: 1.5rem;
 }
 
-.coso-blanco p {
-  font-size: 1em;
-  line-height: 1.5;
-  margin-bottom: 30px;
-  color:black;
-  font-size: 1rem;
-  
+p {
+  font-size: 1.5rem;
+  color: #e0e0e0;
+  max-width: 700px;
+  margin: 0 auto 2.5rem auto;
+  line-height: 1.8;
 }
 
+/* Botones */
 .botones {
   display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+
  gap: 20px;
  justify-content: center;
  left: 30px;
@@ -89,27 +108,48 @@ body {
 }
 
 .boton {
-  background-color: #0d0d2b;
-  color: white;
-  padding: 12px 24px;
-  border-radius: 25px;
+  width: 240px;
+  padding: 1rem 1.6rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
   text-decoration: none;
+
+  color: white;
+  background: #5865f2;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3); /*sombras*/
+  transition:0.3s ease, transform 0.3s ease;
+
   font-weight: bold;
   border: 2px solid white;
   transition: all 0.3s ease;
   
+<<<<<<< HEAD
+=======
+
+>>>>>>> 658e3344207a7005e6202393c50354a8eb564175
 }
 
 .boton:hover {
-  background-color: white;
-  color: #0d0d2b;
+  background: #4752c4;
+  transform: translateY(-3px);
 }
 
-.invitado{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color:aqua;
-}
+/* Responsive */
+@media (max-width: 600px) {
+  h1 {
+    font-size: 2.2rem;
+  }
 
-/* el hover es para que cambir cuando el mouse toque el elemento sse usA con transition lol */
+  h2 {
+    font-size: 1.2rem;
+  }
+
+  p {
+    font-size: 1rem;
+  }
+
+  .boton {
+    width: 90%;
+  }
+}

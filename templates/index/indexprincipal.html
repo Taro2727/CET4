@@ -5,35 +5,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title> C.E.T.4</title>
   <link rel="stylesheet" href="/static/css/style_principal.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='estilos.css') }}">
 </head>
 <body>
+   
     
   <header class="header"> 
     <!-- aca esta el coso de la pagina el coso de arriba ahhh no me acuerdo como se dice perdón :( -->
     <div class="logo"> <img src="/static/utils/img/logo2.png" alt="imagen de el logo"> </div>
 
-    <div class="contacto"> <a href="#" class="contacto">COMUNICATE CON NOSOTROS</a></div> 
+    <div class="contacto"> <a href="/comunicatenosotros" class="contacto">COMUNICATE CON NOSOTROS</a></div> 
    
   </header>
 
-<!-- aca esta todo el texto de el contenedor blanco  -->
-  <main class="contenido-principal">
+    <div class="fondo">
+
+      <video autoplay loop muted class="video">
+      <source src="/static/utils/img/fondo.mp4" type="video/mp4">
+    </video>
+
+    
+      <!-- aca esta todo el texto de el contenedor blanco  -->
+     <main class="contenido-principal">
 
     <div class="coso-blanco">  
 <!-- puse tdo lo de el coso blanco  -->
       <h1><strong>C.E.T.4</strong></h1>
-      <h2>Comunidad educativa técnica</h2>
+      <h2>Comunidad Educativa Técnica4</h2>
       <p>
         Creada por y para estudiantes técnicos, donde el objetivo principal es ayudarnos entre nosotros a resolver dudas, compartir conocimientos y superar juntos los desafíos de las materias de la escuela técnica.
       </p>
     </div>
      
-  </main>
+
   <!-- aca estan los botones ya conectados con sus correspondientes pagina les puse el target coso para que no te abra 
    otra pestaña que directamente te lo abra en la misma  -->
-<div class="botones">
+   <div class="botones">
         <a href='/crearcuenta' target="_parent" class="boton">CREAR CUENTA </a>
         <a href="/iniciarsesion" target="_parent" class="boton">INICIAR SESION </a>
-</body>
+      </div>
+      </main>
+      </div>
+
+   </body>
 </html>
 

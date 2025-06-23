@@ -19,14 +19,12 @@ async function cargarComentarios() {
         div.innerHTML = `
             <span class="usuario-comentario"><strong>${c.usuario || "Anónimo"}</strong>:</span>
             <br>
-            <span class="titulo-comentario"><b>${c.titulo}</b></span><br>
+            <span class="titulo-comentario"><b>${c.titulo}</b></span>
             <span class="texto-comentario">${c.cont}</span>
             <br>
             <button class="btn-responder" onclick="responder('${c.id_post}', '${c.usuario || "Anónimo"}')">Responder</button>
             <button class="btn-ver-respuestas" onclick="mostrarRespuestas('${c.id_post}')">Ver respuestas</button>
-            <br>
             <div  br class="area-responder" id="area-responder-${c.id_post}"></div>
-            <br>
             <div class="respuestas" id="respuestas-${c.id_post}" style="display: none;"></div>
         `  ;
         
@@ -65,22 +63,24 @@ async function enviarRespuesta(id) {
     if (result.success) {
         // Limpia el área del formulario y muestra la lista de respuestas actualizada
         document.getElementById(`area-responder-${id}`).innerHTML = '';
-        await mostrarRespuestas(id, true); // forzarApertura = true
+        await cargarComentarios(); // Recarga todos los comentarios para mostrar la nueva respuesta
+        setTimeout(() => {
+            mostrarRespuestas(id, true);
+        }, 200); // forzarApertura = true
     }
 }
 
 // Se mantiene el nombre original de la función: "mostrarRespuestas"
 async function mostrarRespuestas(id_post, forzarApertura = false) {
     if (!id_post) return;
-
     // Apunta al contenedor de la lista de respuestas
     const divRespuestas = document.getElementById('respuestas-' + id_post);
-
-    const estaVisible = divRespuestas.style.display === 'block';
-    if (estaVisible && !forzarApertura) {
+const estaVisible = divRespuestas.style.display === 'block';
+if (estaVisible && !forzarApertura) {
+        // Si ya está visible y no se fuerza la apertura, lo oculta
         divRespuestas.style.display = 'none';
         return;
-    }
+    }   
     divRespuestas.style.display = 'block';
 
     const res = await fetch('/get_respuestas/' + id_post + '?t=' + Date.now());
@@ -88,7 +88,7 @@ async function mostrarRespuestas(id_post, forzarApertura = false) {
     
     // Se mantiene la clase original para cada respuesta individual: "respuesta"
     divRespuestas.innerHTML = respuestas.length
-        ? respuestas.map(r => `<div class="usuario"><b>${r.usuario || "Anónimo"}:</b> ${r.cont}</div>`).join('')
+        ? respuestas.map(r => `<div class="respuesta-comentario"><p class="usuario-rta">${r.usuario || "Anónimo"}:</p> <p class="texto-rta">${r.cont}</p> </div>`).join('')
         : '<div class="respuesta">No hay respuestas aún.</div>';
 }
 
