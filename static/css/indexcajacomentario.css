@@ -282,7 +282,7 @@ input{
 }
 
 .texto-comentario,
-.respuesta-burbuja {
+.respuesta-comentario {
   word-break: break-word;           /* fuerza quiebre incluso dentro de palabras largas */
   white-space: pre-wrap;            /* conserva saltos de línea si los hubiera */
   line-height: 1.5;
