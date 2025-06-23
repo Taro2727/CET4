@@ -75,7 +75,12 @@ async function mostrarRespuestas(id_post, forzarApertura = false) {
     if (!id_post) return;
     // Apunta al contenedor de la lista de respuestas
     const divRespuestas = document.getElementById('respuestas-' + id_post);
-
+const estaVisible = divRespuestas.style.display === 'block';
+if (estaVisible && !forzarApertura) {
+        // Si ya está visible y no se fuerza la apertura, lo oculta
+        divRespuestas.style.display = 'none';
+        return;
+    }   
     divRespuestas.style.display = 'block';
 
     const res = await fetch('/get_respuestas/' + id_post + '?t=' + Date.now());
