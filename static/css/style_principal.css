@@ -78,14 +78,14 @@ h1 {
 }
 
 h2 {
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: 400;
   color: #dddddd;
   margin-bottom: 1.5rem;
 }
 
 p {
-  font-size: 1.1rem;
+  font-size: 1.5rem;
   color: #e0e0e0;
   max-width: 700px;
   margin: 0 auto 2.5rem auto;
@@ -95,7 +95,7 @@ p {
 /* Botones */
 .botones {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   gap: 1rem;
 

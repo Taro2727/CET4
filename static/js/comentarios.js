@@ -19,14 +19,12 @@ async function cargarComentarios() {
         div.innerHTML = `
             <span class="usuario-comentario"><strong>${c.usuario || "Anónimo"}</strong>:</span>
             <br>
-            <span class="titulo-comentario"><b>${c.titulo}</b></span><br>
+            <span class="titulo-comentario"><b>${c.titulo}</b></span>
             <span class="texto-comentario">${c.cont}</span>
             <br>
             <button class="btn-responder" onclick="responder('${c.id_post}', '${c.usuario || "Anónimo"}')">Responder</button>
             <button class="btn-ver-respuestas" onclick="mostrarRespuestas('${c.id_post}')">Ver respuestas</button>
-            <br>
             <div  br class="area-responder" id="area-responder-${c.id_post}"></div>
-            <br>
             <div class="respuestas" id="respuestas-${c.id_post}" style="display: none;"></div>
         `  ;
         
