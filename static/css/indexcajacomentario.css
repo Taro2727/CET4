@@ -91,6 +91,7 @@ body {
   max-width: 800px;
   border-bottom: 1px solid #444;
   margin: 20px 0;
+
 }
 
 .comentarios {
@@ -104,27 +105,33 @@ body {
 .comentarios-header {
   text-align: center;
   margin-bottom: 20px;
+   flex-wrap: wrap;
+  gap: 40px;
 }
 
 .comentarios-header h1 {
   background: rgb(193, 205, 216);
   padding: 20px 10px;
   border-radius: 4px;
-  font-size: 60px;
+  font-size: 80px;
 }
 
 .flechas {
   font-size: 30px;
   color: #ccc;
+  flex-wrap: wrap;
+  gap: 80px;
 }
 
 .caja-comentario {
   background-color: #0d2a52;
   border: 1px solid #345678;
   border-radius: 10px;
+  margin-top: 30px;
   padding: 10px;
   width: 100%;
-  max-width: 800px;
+  max-width: 80%;
+
 }
 
 textarea {
@@ -188,20 +195,24 @@ button:hover {
 
 
 #titulo{
-  margin-left: 1%;
+  margin-left: 0.5%;
   background-color:#123;
   width: 35%;
   height: 5vh;
   margin-bottom: 1rem;
-  margin-top: 0.5rem;
+  margin-top: 1rem;
   border-radius: 10px ;
 }
 
-::placeholder{
-  color: rgb(246, 246, 246);
+textarea::placeholder{
+  color: rgb(247, 239, 239);
   text-align: left;
   justify-content: left;
  }
+
+input{
+  color:white;
+}
 
 
 #commentsSection {
@@ -228,20 +239,19 @@ button:hover {
 }
 
 .respuestas .respuesta-burbuja {       
-  background-color: #d3d3d3;
-  border-radius: 10px;
-  padding: 10px;
-  color: #fff6f6;
+  width: fit-content;
   max-width: 80%;
+  padding: 10px;
+  color: #fff;
 }
 .comment {
   background-color: #123;  /* el fondo de el separador*/
   border-radius: 15px;    /* lo redondea*/
   padding: 12px;         /* espaciado */
-  margin-bottom: 20px;      /* el margen de elcoso*/
+  margin-bottom: 20px;          /* el margen de elcoso*/
   border: 1px solid #446;   /* el borde fino /aca lo pueden ajustar lolooooooooool */ 
 }
-
+   
 .usuario-comentario{
   color:rgb(131, 164, 214);
 }
@@ -270,6 +280,22 @@ button:hover {
   color:rgb(245, 245, 245);
 
 }
+
+.texto-comentario,
+.respuesta-burbuja {
+  word-break: break-word;           /* fuerza quiebre incluso dentro de palabras largas */
+  white-space: pre-wrap;            /* conserva saltos de línea si los hubiera */
+  line-height: 1.5;
+}
+
+.respuesta-burbuja {
+  width: fit-content;
+  max-width: 80%;
+  padding: 10px;
+  color: #fff;
+}
+
+
 
 @media (max-width: 500px) {
   /* Barra lateral más delgada y que se pueda ocultar o colapsar si querés */
