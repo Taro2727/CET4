@@ -82,7 +82,7 @@ body {
   top: 0;
   width: 1px;
   height: 100vh;
-  background-color: #444;
+  background-color: #131e2e;
 }
 
 /* Línea separadora horizontal opcional */
@@ -100,6 +100,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  color:#131e2e;
 }
 
 .comentarios-header {
@@ -237,6 +238,7 @@ input{
   display: flex;
   flex-direction: column;
   gap: 10px; /* Espacio entre cada burbuja */
+  color: white;
 }
 
 .respuestas .respuesta-burbuja {       
@@ -246,7 +248,7 @@ input{
   color: #fff;
 }
 .comment {
-  background-color: #123;  /* el fondo de el separador*/
+  background-color:   #123;  /* el fondo de el separador*/
   border-radius: 15px;    /* lo redondea*/
   padding: 12px;         /* espaciado */
   margin-bottom: 20px;          /* el margen de elcoso*/
@@ -255,6 +257,12 @@ input{
    
 .usuario-comentario{
   color:rgb(131, 164, 214);
+    font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 
@@ -271,6 +279,12 @@ input{
   margin-left: 2rem;
   margin-top: 0.5em;
 }
+
+.respuesta-comentario{
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
 #texto-respuesta-8{
   margin-top: 2rem;
   margin-bottom: 2rem;
@@ -296,7 +310,34 @@ input{
   padding: 10px;
   color: #fff;
 }
+.respuestas{
+ margin-bottom: 12px; /* separa cada burbuja de la siguiente */
+  padding: 12px 16px;
+  border-radius: 6px;
+  color: #d7dadc;
+  max-width: 90%;
+  word-break: break-word;
+  white-space: pre-wrap;
+  padding-left: 20px;
+  display:flex;
+  flex-direction: column;
+  gap: 12px;
+  border-left: 2px solid #3a3a3c; /*linea de costado tipo reditt*/
+  
 
+}
+
+.respuesta-burbuja{
+    margin: 0;
+  padding: 12px 16px;
+  background-color: #1d1f22;
+  border: 1px solid #2c2f33;
+  border-radius: 6px;
+  color: #d7dadc;
+  word-break: break-word;
+  white-space: pre-wrap;
+  font-size: 0.95rem;
+}
 
 
 @media (max-width: 500px) {
