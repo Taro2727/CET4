@@ -70,16 +70,15 @@ async function enviarRespuesta(id) {
 // Se mantiene el nombre original de la función: "mostrarRespuestas"
 async function mostrarRespuestas(id_post, forzarApertura = false) {
     if (!id_post) return;
-
     // Apunta al contenedor de la lista de respuestas
     const divRespuestas = document.getElementById('respuestas-' + id_post);
 
     const estaVisible = divRespuestas.style.display === 'block';
     if (estaVisible && !forzarApertura) {
         divRespuestas.style.display = 'none';
-        return;
+    }else {
+        divRespuestas.style.display = 'block';
     }
-    divRespuestas.style.display = 'block';
 
     const res = await fetch('/get_respuestas/' + id_post + '?t=' + Date.now());
     const respuestas = await res.json();
