@@ -105,24 +105,15 @@ body {
 .comentarios-header {
   text-align: center;
   margin-bottom: 20px;
-  flex-wrap: wrap;
+   flex-wrap: wrap;
   gap: 40px;
 }
 
 .comentarios-header h1 {
-  background: url(/static/utils/img/materia.jpg);
+  background: rgb(193, 205, 216);
   padding: 20px 10px;
+  border-radius: 4px;
   font-size: 80px;
-  width: 145vh;
-  height: 200px;
-  border-radius: 30px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-size: cover;
-  background-position: center;
-  box-shadow: black 0px 0px 20px;
-  color: white;
 }
 
 .flechas {
@@ -133,8 +124,8 @@ body {
 }
 
 .caja-comentario {
-  background-color: #1c4f96;
-  border: 1px solid #e4ecf5;
+  background-color: #0d2a52;
+  border: 1px solid #345678;
   border-radius: 10px;
   margin-top: 30px;
   padding: 10px;
@@ -254,48 +245,25 @@ input{
   padding: 10px;
   color: #fff;
 }
-
-/* Botón azul estilo Reddit */
-#commentForm button[type="submit"] {
-  background-color: #0079d3;
-  color: white;
-  border: none;
-  border-radius: 9999px;
-  font-weight: bold;
-  padding: 10px 20px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-#commentForm button[type="submit"]:hover {
-  background-color: #0060aa;
+.comment {
+  background-color: #123;  /* el fondo de el separador*/
+  border-radius: 15px;    /* lo redondea*/
+  padding: 12px;         /* espaciado */
+  margin-bottom: 20px;          /* el margen de elcoso*/
+  border: 1px solid #446;   /* el borde fino /aca lo pueden ajustar lolooooooooool */ 
 }
    
 .usuario-comentario{
-  margin-top: 20px;
-   font-size: 0.85rem;
   color:rgb(131, 164, 214);
 }
 
 
-
-.caja-comentario {
-  background-color: #101b2c;
-  border: 1px solid #04080e;
-}
-
-.comment {
-  background-color: #131e2e;
-  border: 1px solid #d0d6df;
-}
-
-
-
 .titulo-comentario{
-  font-size: 1rem;
-  color: #d7dadc;
-  white-space: pre-wrap;
-  word-break: break-word;
+  font-size: 2em;
+  color: rgb(255, 255, 255);
+  margin-top: 15px;
+  margin-bottom: 15px;
+  margin-left: 1rem;
 }
 
 .texto-comentario{
@@ -309,17 +277,12 @@ input{
   background-color: #123	;
   border-color: white;
 }
-
-
-
-
-
 #texto-respuesta-8::placeholder{
   color:rgb(245, 245, 245);
 
 }
 
-.texto-comentario,
+.texto-comentario
 .respuesta-comentario {
   word-break: break-word;           /* fuerza quiebre incluso dentro de palabras largas */
   white-space: pre-wrap;            /* conserva saltos de línea si los hubiera */
@@ -328,13 +291,10 @@ input{
 }
 
 .respuesta-burbuja {
-  background-color: #272729;
-  padding: 12px 16px;
-  border-radius: 6px;
-  border: 1px solid #3a3a3c;
-  margin-left: 20px;
-  max-width: 90%;
-  color: #d7dadc;
+  width: fit-content;
+  max-width: 80%;
+  padding: 10px;
+  color: #fff;
 }
 
 
