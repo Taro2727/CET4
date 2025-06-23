@@ -64,7 +64,9 @@ async function enviarRespuesta(id) {
         // Limpia el área del formulario y muestra la lista de respuestas actualizada
         document.getElementById(`area-responder-${id}`).innerHTML = '';
         await cargarComentarios(); // Recarga todos los comentarios para mostrar la nueva respuesta
-        setTimeout(() => mostrarRespuestas(id, true), 100); // forzarApertura = true
+        setTimeout(() => {
+            mostrarRespuestas(id, true);
+        }, 300); // forzarApertura = true
     }
 }
 
