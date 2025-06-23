@@ -88,7 +88,7 @@ if (estaVisible && !forzarApertura) {
     
     // Se mantiene la clase original para cada respuesta individual: "respuesta"
     divRespuestas.innerHTML = respuestas.length
-        ? respuestas.map(r => `<div class="respuesta-comentario"><b>${r.usuario || "Anónimo"}:</b> ${r.cont}</div>`).join('')
+        ? respuestas.map(r => `<div class="respuesta-comentario"><p class="usuario-rta">${r.usuario || "Anónimo"}:</p> <p class="texto-rta">${r.cont}</p> </div>`).join('')
         : '<div class="respuesta">No hay respuestas aún.</div>';
 }
 

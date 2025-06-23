@@ -104,17 +104,26 @@ body {
 }
 
 .comentarios-header {
+  margin-top: 20px;
   text-align: center;
   margin-bottom: 20px;
-   flex-wrap: wrap;
+  flex-wrap: wrap;
   gap: 40px;
 }
 
 .comentarios-header h1 {
-  background: rgb(193, 205, 216);
+  background: url(/static/utils/img/materia.jpg);
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+  width: 135vh;
+  height: 200px;
   padding: 20px 10px;
-  border-radius: 4px;
-  font-size: 80px;
+  border-radius: 20px;
+  font-size: 5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .flechas {
@@ -279,10 +288,22 @@ input{
   margin-left: 2rem;
   margin-top: 0.5em;
 }
+.texto-rta{
+  color:white;
+  margin-left: 2rem;
+}
+.usuario-rta{
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  color:rgb(131, 164, 214);
 
+
+}
 .respuesta-comentario{
   margin-top: 5px;
   margin-bottom: 5px;
+  font-size: 1,5rem;
+  
 }
 
 #texto-respuesta-8{
@@ -290,6 +311,7 @@ input{
   margin-bottom: 2rem;
   background-color: #123	;
   border-color: white;
+  margin-left: 2rem;
 }
 #texto-respuesta-8::placeholder{
   color:rgb(245, 245, 245);
