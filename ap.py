@@ -416,6 +416,14 @@ def index7moPractProf():
 #a partir de aca empieza el login/inicio de sesión
 @app.route('/verificar', methods=['POST'])
 def verificar():
+    import mysql.connector
+    conn = mysql.connector.connect(
+        host="gondola.proxy.rlwy.net",
+        port=20050,
+        user="root",
+        password="XGaKhmhcnmHScVRBFxukOaQkQdftuCzS",
+        database="railway"
+    )
     datos = request.get_json() # Obtener los datos del JSON enviado desde el frontend
     email = datos.get('email') # Obtener el email del JSON
     contraseña = datos.get('password') # Obtener la contraseña del JSON
@@ -445,6 +453,14 @@ def comentario_materia(id_mat):
 
 @app.route('/comentario', methods=['POST']) 
 def comment():
+    import mysql.connector
+    conn = mysql.connector.connect(
+        host="gondola.proxy.rlwy.net",
+        port=20050,
+        user="root",
+        password="XGaKhmhcnmHScVRBFxukOaQkQdftuCzS",
+        database="railway"
+    )
     try:
         data = request.get_json()
         titulo = data['titulo']
@@ -467,7 +483,15 @@ def comment():
 
 @app.route('/get_comentario')
 def get_comentario():
+    import mysql.connector
     id_mat = request.args.get('id_mat')
+    conn = mysql.connector.connect(
+        host="gondola.proxy.rlwy.net",
+        port=20050,
+        user="root",
+        password="XGaKhmhcnmHScVRBFxukOaQkQdftuCzS",
+        database="railway"
+    ) 
     cursor = db.cursor(dictionary=True)
     if id_mat:
          cursor.execute("""
@@ -491,6 +515,14 @@ def get_comentario():
 
 @app.route('/responder', methods=['POST'])
 def responder():
+    import mysql.connector
+    conn = mysql.connector.connect(
+        host="gondola.proxy.rlwy.net",
+        port=20050,
+        user="root",
+        password="XGaKhmhcnmHScVRBFxukOaQkQdftuCzS",
+        database="railway"
+    )
     data = request.get_json()
     id_post = data['id_post']
     cont = data['respuesta']
@@ -508,6 +540,14 @@ def responder():
 
 @app.route('/get_respuestas/<int:id_post>')
 def get_respuestas(id_post):
+    import mysql.connector
+    conn = mysql.connector.connect(
+        host="gondola.proxy.rlwy.net",
+        port=20050,
+        user="root",
+        password="XGaKhmhcnmHScVRBFxukOaQkQdftuCzS",
+        database="railway"
+    )
     cursor = db.cursor(dictionary=True)
     cursor.execute("""
         SELECT r.cont, u.nom_usu AS usuario
