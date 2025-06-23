@@ -63,6 +63,7 @@ async function enviarRespuesta(id) {
     if (result.success) {
         // Limpia el área del formulario y muestra la lista de respuestas actualizada
         document.getElementById(`area-responder-${id}`).innerHTML = '';
+        await cargarComentarios(); // Recarga todos los comentarios para mostrar la nueva respuesta
         await mostrarRespuestas(id, true); // forzarApertura = true
     }
 }
