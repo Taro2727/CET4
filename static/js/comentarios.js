@@ -66,7 +66,7 @@ async function enviarRespuesta(id) {
         await cargarComentarios(); // Recarga todos los comentarios para mostrar la nueva respuesta
         setTimeout(() => {
             mostrarRespuestas(id, true);
-        }, 300); // forzarApertura = true
+        }, 200); // forzarApertura = true
     }
 }
 
@@ -76,11 +76,6 @@ async function mostrarRespuestas(id_post, forzarApertura = false) {
     // Apunta al contenedor de la lista de respuestas
     const divRespuestas = document.getElementById('respuestas-' + id_post);
 
-    const estaVisible = divRespuestas.style.display === 'block';
-    if (estaVisible && !forzarApertura) {
-        divRespuestas.style.display = 'none';
-        return;
-    }
     divRespuestas.style.display = 'block';
 
     const res = await fetch('/get_respuestas/' + id_post + '?t=' + Date.now());
