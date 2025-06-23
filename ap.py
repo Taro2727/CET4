@@ -472,7 +472,7 @@ def comment():
         if not id_usu:
             return jsonify({"success": False, "error": "Usuario no autenticado"}), 401
         
-        cursor = db.cursor()
+        cursor = conn.cursor()
         query = "INSERT INTO preg (titulo, cont, id_mat, id_usu) VALUES (%s, %s, %s, %s)"
         cursor.execute(query, (titulo, comment, id_mat, id_usu)) # Guardar el comentario en la base de datos
         conn.commit() # Guardar los cambios en la base de datos
