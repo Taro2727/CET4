@@ -9,13 +9,13 @@ app = Flask(__name__)
 app.secret_key= 'mi_clave_secreta' #clave secreta para sesiones, cookies, etc.
 
 # #     NO DARLE BOLAAAAAAAAAAAAAAAAAAAAAAAA
-db = mysql.connector.connect(
-    host="gondola.proxy.rlwy.net",
-    port=20050,           # puerto por defecto de MySQL
-    user="root",         # tu usuario (normalmente es 'root')
-    password="XGaKhmhcnmHScVRBFxukOaQkQdftuCzS",         # tu contraseña, si no tiene ponela vacía
-    database="railway"  # nombre exacto de la base de datos
-)
+#db = mysql.connector.connect(
+#    host="gondola.proxy.rlwy.net",
+#    port=20050,           # puerto por defecto de MySQL
+#   user="root",         # tu usuario (normalmente es 'root')
+#    password="XGaKhmhcnmHScVRBFxukOaQkQdftuCzS",         # tu contraseña, si no tiene ponela vacía
+#    database="railway"  # nombre exacto de la base de datos
+#)
 # # # Conexión con MySQL
 # db = mysql.connector.connect(
 #     host="localhost",
@@ -50,9 +50,17 @@ def dataregistro():
        return "la contraseña y la confirmación no son iguales, intente nuevamente",400
 
    try:    
+        import mysql.connector
+        conn = mysql.connector.connect(
+            host="gondola.proxy.rlwy.net",
+            port=20050,
+            user="root",
+            password="XGaKhmhcnmHScVRBFxukOaQkQdftuCzS",
+            database="railway"
+        )
         #pasar datos de py a la bd
         #hay q usar el cursor bld (jaja me habia olvidado)
-        cursor = db.cursor()
+        cursor = conn.cursor()
         #el cursor genera una variable q apunta a donde va a mandar el dato (corte catapulta)
         #consulta = sql xd
         sql = "INSERT INTO usuario(nom_usu, email, contraseña) VALUES (%s, %s, %s)"
@@ -67,9 +75,10 @@ def dataregistro():
         #guarda todo lo anterior en la bd (osea lo aplica)
         #Se cambió el conexion.commit por db.commit pq
         #en mi archivo de py usé "conexion" para declarar la base de datos 
-        #pero en este python la bd está declarada como "db"  
-        db.commit()
+        #pero en este python la bd está declarada como "db"   #ahora la bd esta declaarada como "conn"
+        conn.commit()
         cursor.close()
+        conn.close() 
         return "usuario registrado correctamente"
    except Exception as e:    
     return f"Error al registrar el usuario {e}",500  
@@ -568,4 +577,5 @@ def get_respuestas(id_post):
 
 
 if __name__ == "__main__":
+    print("iniciando flask..")
     app.run(debug=True)
