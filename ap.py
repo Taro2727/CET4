@@ -9,13 +9,13 @@ app = Flask(__name__)
 app.secret_key= 'mi_clave_secreta' #clave secreta para sesiones, cookies, etc.
 
 # #     NO DARLE BOLAAAAAAAAAAAAAAAAAAAAAAAA
-db = mysql.connector.connect(
-    host="gondola.proxy.rlwy.net",
-    port=20050,           # puerto por defecto de MySQL
-    user="root",         # tu usuario (normalmente es 'root')
-    password="XGaKhmhcnmHScVRBFxukOaQkQdftuCzS",         # tu contraseña, si no tiene ponela vacía
-    database="railway"  # nombre exacto de la base de datos
-)
+#db = mysql.connector.connect(
+#    host="gondola.proxy.rlwy.net",
+#    port=20050,           # puerto por defecto de MySQL
+#   user="root",         # tu usuario (normalmente es 'root')
+#    password="XGaKhmhcnmHScVRBFxukOaQkQdftuCzS",         # tu contraseña, si no tiene ponela vacía
+#    database="railway"  # nombre exacto de la base de datos
+#)
 # # # Conexión con MySQL
 # db = mysql.connector.connect(
 #     host="localhost",
@@ -50,9 +50,17 @@ def dataregistro():
        return "la contraseña y la confirmación no son iguales, intente nuevamente",400
 
    try:    
+        import mysql.connector
+        conn = mysql.connector.connect(
+            host="gondola.proxy.rlwy.net",
+            port=20050,
+            user="root",
+            password="XGaKhmhcnmHScVRBFxukOaQkQdftuCzS",
+            database="railway"
+        )
         #pasar datos de py a la bd
         #hay q usar el cursor bld (jaja me habia olvidado)
-        cursor = db.cursor()
+        cursor = conn.cursor()
         #el cursor genera una variable q apunta a donde va a mandar el dato (corte catapulta)
         #consulta = sql xd
         sql = "INSERT INTO usuario(nom_usu, email, contraseña) VALUES (%s, %s, %s)"
@@ -67,9 +75,10 @@ def dataregistro():
         #guarda todo lo anterior en la bd (osea lo aplica)
         #Se cambió el conexion.commit por db.commit pq
         #en mi archivo de py usé "conexion" para declarar la base de datos 
-        #pero en este python la bd está declarada como "db"  
-        db.commit()
+        #pero en este python la bd está declarada como "db"   #ahora la bd esta declaarada como "conn"
+        conn.commit()
         cursor.close()
+        conn.close() 
         return "usuario registrado correctamente"
    except Exception as e:    
     return f"Error al registrar el usuario {e}",500  
@@ -416,6 +425,14 @@ def index7moPractProf():
 #a partir de aca empieza el login/inicio de sesión
 @app.route('/verificar', methods=['POST'])
 def verificar():
+    import mysql.connector
+    conn = mysql.connector.connect(
+        host="gondola.proxy.rlwy.net",
+        port=20050,
+        user="root",
+        password="XGaKhmhcnmHScVRBFxukOaQkQdftuCzS",
+        database="railway"
+    )
     datos = request.get_json() # Obtener los datos del JSON enviado desde el frontend
     email = datos.get('email') # Obtener el email del JSON
     contraseña = datos.get('password') # Obtener la contraseña del JSON
@@ -425,12 +442,13 @@ def verificar():
 
     if not email or not contraseña: 
         return jsonify({"exito": False, "error": "email y contraseña son requeridos"}), 400 
-    
-    cursor = db.cursor(dictionary=True) 
+
+    cursor = conn.cursor(dictionary=True) 
     cursor.execute("SELECT * FROM usuario WHERE email=%s", (email,)) #pide el usuario por email
     #el cursor ejecuta la consulta y devuelve un diccionario con los resultados
     usuario = cursor.fetchone() # Obtiene el primer resultado de la consulta
     cursor.close()
+    conn.close() 
 
     if usuario and check_password_hash (usuario['contraseña'], contraseña): # Verifica si el usuario existe y si la contraseña es correcta
         session['id_usu'] = usuario['id_usu']  # Guardar el id de usuario en la sesión
@@ -445,6 +463,14 @@ def comentario_materia(id_mat):
 
 @app.route('/comentario', methods=['POST']) 
 def comment():
+    import mysql.connector
+    conn = mysql.connector.connect(
+        host="gondola.proxy.rlwy.net",
+        port=20050,
+        user="root",
+        password="XGaKhmhcnmHScVRBFxukOaQkQdftuCzS",
+        database="railway"
+    )
     try:
         data = request.get_json()
         titulo = data['titulo']
@@ -455,11 +481,12 @@ def comment():
         if not id_usu:
             return jsonify({"success": False, "error": "Usuario no autenticado"}), 401
         
-        cursor = db.cursor()
+        cursor = conn.cursor()
         query = "INSERT INTO preg (titulo, cont, id_mat, id_usu) VALUES (%s, %s, %s, %s)"
         cursor.execute(query, (titulo, comment, id_mat, id_usu)) # Guardar el comentario en la base de datos
-        db.commit() # Guardar los cambios en la base de datos
+        conn.commit() # Guardar los cambios en la base de datos
         cursor.close()
+        conn.close() # Cerrar la conexión a la base de datos
         return jsonify({"success": True})
     except Exception as e:
         print("Error al guardar comentario:", e)  # Esto mostrará el error en la consola de Flask
@@ -467,8 +494,16 @@ def comment():
 
 @app.route('/get_comentario')
 def get_comentario():
+    import mysql.connector
     id_mat = request.args.get('id_mat')
-    cursor = db.cursor(dictionary=True)
+    conn = mysql.connector.connect(
+        host="gondola.proxy.rlwy.net",
+        port=20050,
+        user="root",
+        password="XGaKhmhcnmHScVRBFxukOaQkQdftuCzS",
+        database="railway"
+    ) 
+    cursor = conn.cursor(dictionary=True)
     if id_mat:
          cursor.execute("""
             SELECT p.id_post, p.titulo, p.cont, p.fecha, u.nom_usu AS usuario
@@ -487,10 +522,19 @@ def get_comentario():
         """, (id_mat,))
     comentarios = cursor.fetchall()
     cursor.close()
+    conn.close()
     return jsonify(comentarios)
 
 @app.route('/responder', methods=['POST'])
 def responder():
+    import mysql.connector
+    conn = mysql.connector.connect(
+        host="gondola.proxy.rlwy.net",
+        port=20050,
+        user="root",
+        password="XGaKhmhcnmHScVRBFxukOaQkQdftuCzS",
+        database="railway"
+    )
     data = request.get_json()
     id_post = data['id_post']
     cont = data['respuesta']
@@ -499,16 +543,25 @@ def responder():
     if not id_usu:
         return jsonify({"success": False, "error": "Usuario no autenticado"}), 401
     
-    cursor = db.cursor()
+    cursor = conn.cursor()
     query = "INSERT INTO rta (id_post, id_usu, cont) VALUES (%s, %s, %s)"
     cursor.execute(query, (id_post, id_usu, cont))
-    db.commit()
+    conn.commit()
     cursor.close()
+    conn.close()
     return jsonify({"success": True})
 
 @app.route('/get_respuestas/<int:id_post>')
 def get_respuestas(id_post):
-    cursor = db.cursor(dictionary=True)
+    import mysql.connector
+    conn = mysql.connector.connect(
+        host="gondola.proxy.rlwy.net",
+        port=20050,
+        user="root",
+        password="XGaKhmhcnmHScVRBFxukOaQkQdftuCzS",
+        database="railway"
+    )
+    cursor = conn.cursor(dictionary=True)
     cursor.execute("""
         SELECT r.cont, u.nom_usu AS usuario
         FROM rta r
@@ -518,9 +571,11 @@ def get_respuestas(id_post):
     """, (id_post,))
     respuestas = cursor.fetchall()
     cursor.close()
+    conn.close()
     return jsonify(respuestas)
 
 
 
 if __name__ == "__main__":
+    print("iniciando flask..")
     app.run(debug=True)
