@@ -7,6 +7,9 @@
 body {
   background-color: #082c54;
 }
+h1 {
+  font-family: Arial, Helvetica, sans-serif;
+}
 
 ::placeholder {
   color: #fff;
@@ -104,17 +107,26 @@ body {
 }
 
 .comentarios-header {
+  margin-top: 20px;
   text-align: center;
   margin-bottom: 20px;
-   flex-wrap: wrap;
+  flex-wrap: wrap;
   gap: 40px;
 }
 
 .comentarios-header h1 {
-  background: rgb(193, 205, 216);
+  background: url(/static/utils/img/materia.jpg);
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+  width: 135vh;
+  height: 200px;
   padding: 20px 10px;
-  border-radius: 4px;
-  font-size: 80px;
+  border-radius: 20px;
+  font-size: 5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .flechas {
@@ -279,10 +291,22 @@ input{
   margin-left: 2rem;
   margin-top: 0.5em;
 }
+.texto-rta{
+  color:white;
+  margin-left: 2rem;
+}
+.usuario-rta{
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  color:rgb(131, 164, 214);
 
+
+}
 .respuesta-comentario{
   margin-top: 5px;
   margin-bottom: 5px;
+  font-size: 1,5rem;
+  
 }
 
 #texto-respuesta-8{
@@ -290,10 +314,364 @@ input{
   margin-bottom: 2rem;
   background-color: #123	;
   border-color: white;
+  margin-left: 2rem;
 }
 #texto-respuesta-8::placeholder{
   color:rgb(245, 245, 245);
+}
 
+@media (max-width: 500px) {
+  /* Barra lateral más delgada y que se pueda ocultar o colapsar si querés */
+  .elcostado {
+    width: 60px;  /* más pequeño para móviles */
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #080c34;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 10px;
+    overflow-y: auto; /* para scroll si hay muchos íconos */
+    z-index: 1000;
+  }
+
+  .ordenado {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .usuario,
+  .casa1,
+  .campana2,
+  .soporte3,
+  .grupo4,
+  .opcion5 {
+    width: 30px;
+    height: 30px;
+    margin-top: 30px;
+  }
+
+  .usuario {
+    width: 40px;
+    height: 40px;
+    margin-top: 20px;
+  }
+
+  /* Ajuste de márgenes para evitar espacios grandes */
+  #titulo {
+    width: 90%;
+    margin-left: 5%;
+    font-size: 1.2rem;
+    height: auto;
+    padding: 10px;
+  }
+
+  .buscador {
+    width: 90vw;
+    height: 35px;
+    margin: 10px auto;
+    padding-left: 40px;
+    border-radius: 20px;
+  }
+
+  .buscador-logo2 {
+    width: 90vw;
+  }
+
+  /* Comentarios y cajas */
+  .comentarios, .caja-comentario {
+    width: 90vw;
+  }
+
+  textarea {
+    font-size: 13px;
+  }
+
+  /* Botones */
+  button {
+    font-size: 13px;
+    padding: 5px 10px;
+  }
+}
+
+/* Tablet (hasta 768px) */
+@media (max-width: 768px) and (min-width: 501px) {
+  .elcostado {
+    width: 80px;
+    height: 100vh;
+    overflow-y: auto;
+    padding-top: 15px;
+  }
+
+  .usuario,
+  .casa1,
+  .campana2,
+  .soporte3,
+  .grupo4,
+  .opcion5 {
+    width: 35px;
+    height: 35px;
+    margin-top: 40px;
+  }
+
+  .usuario {
+    width: 45px;
+    height: 45px;
+    margin-top: 30px;
+  }
+
+  #titulo {
+    width: 70%;
+    margin-left: 2%;
+    font-size: 1.5rem;
+  }
+
+  .buscador {
+    width: 90vw;
+    margin: 15px auto;
+  }
+
+  .buscador-logo2 {
+    width: 90vw;
+  }
+
+  .comentarios, .caja-comentario {
+    width: 90vw;
+  }
+
+  textarea {
+    font-size: 14px;
+  }
+
+  button {
+    font-size: 14px;
+    padding: 6px 12px;
+  }
+}
+
+/* Desktop pequeño (hasta 1024px) */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .elcostado {
+    width: 12%;
+    height: 100vh;
+  }
+
+  .usuario,
+  .casa1,
+  .campana2,
+  .soporte3,
+  .grupo4,
+  .opcion5 {
+    width: 40px;
+    height: 40px;
+    margin-top: 50px;
+  }
+
+  .usuario {
+    width: 55px;
+    height: 55px;
+  }
+
+  #titulo {
+    width: 40%;
+    margin-left: 1.5%;
+    font-size: 1.8rem;
+  }
+
+  .buscador {
+    width: 95vh;
+    margin-top: 5px;
+  }
+
+  .buscador-logo2 {
+    width: 700px;
+  }
+
+  .comentarios, .caja-comentario {
+    width: 700px;
+  }
+
+  textarea {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 500px) {
+  /* Barra lateral más delgada y que se pueda ocultar o colapsar si querés */
+  .elcostado {
+    width: 60px;  /* más pequeño para móviles */
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #080c34;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 10px;
+    overflow-y: auto; /* para scroll si hay muchos íconos */
+    z-index: 1000;
+  }
+
+  .ordenado {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .usuario,
+  .casa1,
+  .campana2,
+  .soporte3,
+  .grupo4,
+  .opcion5 {
+    width: 30px;
+    height: 30px;
+    margin-top: 30px;
+  }
+
+  .usuario {
+    width: 40px;
+    height: 40px;
+    margin-top: 20px;
+  }
+
+  /* Ajuste de márgenes para evitar espacios grandes */
+  #titulo {
+    width: 90%;
+    margin-left: 5%;
+    font-size: 1.2rem;
+    height: auto;
+    padding: 10px;
+  }
+
+  .buscador {
+    width: 90vw;
+    height: 35px;
+    margin: 10px auto;
+    padding-left: 40px;
+    border-radius: 20px;
+  }
+
+  .buscador-logo2 {
+    width: 90vw;
+  }
+
+  /* Comentarios y cajas */
+  .comentarios, .caja-comentario {
+    width: 90vw;
+  }
+
+  textarea {
+    font-size: 13px;
+  }
+
+  /* Botones */
+  button {
+    font-size: 13px;
+    padding: 5px 10px;
+  }
+}
+
+/* Tablet (hasta 768px) */
+@media (max-width: 768px) and (min-width: 501px) {
+  .elcostado {
+    width: 80px;
+    height: 100vh;
+    overflow-y: auto;
+    padding-top: 15px;
+  }
+
+  .usuario,
+  .casa1,
+  .campana2,
+  .soporte3,
+  .grupo4,
+  .opcion5 {
+    width: 35px;
+    height: 35px;
+    margin-top: 40px;
+  }
+
+  .usuario {
+    width: 45px;
+    height: 45px;
+    margin-top: 30px;
+  }
+
+  #titulo {
+    width: 70%;
+    margin-left: 2%;
+    font-size: 1.5rem;
+  }
+
+  .buscador {
+    width: 90vw;
+    margin: 15px auto;
+  }
+
+  .buscador-logo2 {
+    width: 90vw;
+  }
+
+  .comentarios, .caja-comentario {
+    width: 90vw;
+  }
+
+  textarea {
+    font-size: 14px;
+  }
+
+  button {
+    font-size: 14px;
+    padding: 6px 12px;
+  }
+}
+
+/* Desktop pequeño (hasta 1024px) */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .elcostado {
+    width: 12%;
+    height: 100vh;
+  }
+
+  .usuario,
+  .casa1,
+  .campana2,
+  .soporte3,
+  .grupo4,
+  .opcion5 {
+    width: 40px;
+    height: 40px;
+    margin-top: 50px;
+  }
+
+  .usuario {
+    width: 55px;
+    height: 55px;
+  }
+
+  #titulo {
+    width: 40%;
+    margin-left: 1.5%;
+    font-size: 1.8rem;
+  }
+
+  .buscador {
+    width: 95vh;
+    margin-top: 5px;
+  }
+
+  .buscador-logo2 {
+    width: 700px;
+  }
+
+  .comentarios, .caja-comentario {
+    width: 700px;
+  }
+
+  textarea {
+    font-size: 15px;
+  }
 }
 
 .texto-comentario

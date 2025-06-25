@@ -11,6 +11,9 @@ body {
     background-color: #0c1b32;
     color: white;
 }
+h1{
+  font-family: Arial, Helvetica, sans-serif;
+}
 
 /* empieza la bARra de busqueda  */
 ::placeholder {
