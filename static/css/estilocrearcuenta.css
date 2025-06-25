@@ -1,14 +1,48 @@
-/* General */
+
 body {
-  margin: 0;
+  font-family: 'Inter', sans-serif; /*esta fuente me gusto por eso la deje */
+  margin: 0;   
   padding: 0;
-  font-family: Arial, sans-serif;
-  background-color: #0d0d2b;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background: black;
+  color: #ffffff;
+  line-height: 1.6;  /*espaciado entre textos */
+  scroll-behavior: smooth; /*mueve ligeramente los botones para cuando los toques jij*/
+  overflow-x: hidden;
 }
+
+/* Fondo con video */
+.fondo {
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.fondo .video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  z-index: -1; /*lo hace que sea el fondo */
+  filter: brightness(0.8) contrast(1.05);/*reduce el brillo de el coso*/  
+  transition: all 0.3s ease;
+}
+
+.fondo::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to top, rgba(0,0,0,0.4), rgba(0,0,0,0.2));
+  z-index: 1;
+}
+
+
 
 /* Contenedor principal */
 .contenedor {
@@ -19,6 +53,7 @@ body {
   max-width: 1200px;
   width: 100%;
   padding: 40px;
+   z-index: 1;
 }
 
 /* Mascota */
@@ -27,6 +62,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+   z-index: 1;
 }
 
 .cota {
@@ -39,7 +75,9 @@ body {
 }
 
 .globo {
-  background: #fff;
+background: rgba(255,255,255,0.9);
+  color: #111;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
   padding: 12px 20px;
   border-radius: 20px;
   position: absolute;
@@ -63,7 +101,9 @@ body {
 /* Formulario */
 .formulario {
   flex: 1;
-  background-color: #172f50;
+    backdrop-filter: blur(10px);
+  background-color: rgba(23, 47, 80, 0.6); /* leve transparencia */
+  border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 40px;
   border-radius: 60px;
   color: white;
@@ -94,6 +134,11 @@ body {
   background-color: #1b2a4a;
   color: white;
 }
+.input-group input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #3a5eff88;
+}
+
 
 button {
   width: 100%;
@@ -109,6 +154,7 @@ button {
 
 button:hover {
   background-color: #1f4ed8;
+   transform: scale(1.02);
 }
 
 .recuperar {
