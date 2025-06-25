@@ -1,14 +1,18 @@
 
 body {
-  font-family: 'Inter', sans-serif; /*esta fuente me gusto por eso la deje */
-  margin: 0;   
+  font-family: 'Inter', sans-serif;
+  margin: 0;
   padding: 0;
+  min-height: 100vh; /* asegura que todo se estire si hace falta */
+  display: flex;
+  justify-content: center;
   background: black;
   color: #ffffff;
-  line-height: 1.6;  /*espaciado entre textos */
-  scroll-behavior: smooth; /*mueve ligeramente los botones para cuando los toques jij*/
+  line-height: 1.6;
+  scroll-behavior: smooth;
   overflow-x: hidden;
 }
+
 
 /* Fondo con video */
 .fondo {
@@ -42,49 +46,71 @@ body {
   z-index: 1;
 }
 
-
-
-/* Contenedor principal */
-.contenedor {
+ .contenedor {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
-  gap: 60px;
-  max-width: 1200px;
+  gap: 40px;
   width: 100%;
-  padding: 40px;
-   z-index: 1;
+  max-width: 500px;
+  padding: 80px 20px;
+  margin: auto;
+  position: relative;
+  z-index: 1;
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+html {
+  height: auto;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Mascota */
 .presentacion {
-  flex: 1;
+  width: 100%;
   display: flex;
   justify-content: center;
-  align-items: center;
-   z-index: 1;
+  align-items: flex-end; /* alinea mejor con el globo */
+  position: relative;
+  z-index: 1;
 }
 
 .cota {
   position: relative;
   text-align: center;
+  margin-bottom: 20px; /* da aire debajo del zorro */
 }
 
 .masimg {
-  width: 300px;
+  width: 240px;
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 10px;
 }
 
 .globo {
-background: rgba(255,255,255,0.9);
+  font-size: 0.9rem;
+  padding: 10px 16px;
+  background: rgba(255,255,255,0.9);
   color: #111;
   box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-  padding: 12px 20px;
   border-radius: 20px;
   position: absolute;
-  top: -40px;
+  top: -50px;
   left: 50%;
   transform: translateX(-50%);
   font-weight: bold;
+  max-width: 300px;
+  text-align: center;
+  z-index: 2;
 }
 
 .globo::after {
@@ -100,8 +126,10 @@ background: rgba(255,255,255,0.9);
 
 /* Formulario */
 .formulario {
+  justify-content: left;
+  align-items: center;
   flex: 1;
-    backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   background-color: rgba(23, 47, 80, 0.6); /* leve transparencia */
   border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 40px;
@@ -134,11 +162,11 @@ background: rgba(255,255,255,0.9);
   background-color: #1b2a4a;
   color: white;
 }
+
 .input-group input:focus {
   outline: none;
   box-shadow: 0 0 0 2px #3a5eff88;
 }
-
 
 button {
   width: 100%;
@@ -154,7 +182,7 @@ button {
 
 button:hover {
   background-color: #1f4ed8;
-   transform: scale(1.02);
+  transform: scale(1.02);
 }
 
 .recuperar {
@@ -170,9 +198,8 @@ button:hover {
 /* Responsive */
 @media (max-width: 768px) {
   .contenedor {
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
+    padding: 40px 20px;
+    gap: 30px;
   }
 
   .globo {
