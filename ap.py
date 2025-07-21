@@ -52,10 +52,10 @@ def dataregistro():
    try:    
         import mysql.connector
         conn = mysql.connector.connect(
-            host="gondola.proxy.rlwy.net",
-            port=20050,
+            host="yamabiko.proxy.rlwy.net",
+            port=36139,
             user="root",
-            password="XGaKhmhcnmHScVRBFxukOaQkQdftuCzS",
+            password="sASsCizBGUvIcNuNNknMJUgCnHKiuIgH",
             database="railway"
         )
         #pasar datos de py a la bd
@@ -427,10 +427,10 @@ def index7moPractProf():
 def verificar():
     import mysql.connector
     conn = mysql.connector.connect(
-        host="gondola.proxy.rlwy.net",
-        port=20050,
+        host="yamabiko.proxy.rlwy.net",
+        port=36139,
         user="root",
-        password="XGaKhmhcnmHScVRBFxukOaQkQdftuCzS",
+        password="sASsCizBGUvIcNuNNknMJUgCnHKiuIgH",
         database="railway"
     )
     datos = request.get_json() # Obtener los datos del JSON enviado desde el frontend
@@ -465,10 +465,10 @@ def comentario_materia(id_mat):
 def comment():
     import mysql.connector
     conn = mysql.connector.connect(
-        host="gondola.proxy.rlwy.net",
-        port=20050,
+        host="yamabiko.proxy.rlwy.net",
+        port=36139,
         user="root",
-        password="XGaKhmhcnmHScVRBFxukOaQkQdftuCzS",
+        password="sASsCizBGUvIcNuNNknMJUgCnHKiuIgH",
         database="railway"
     )
     try:
@@ -497,10 +497,10 @@ def get_comentario():
     import mysql.connector
     id_mat = request.args.get('id_mat')
     conn = mysql.connector.connect(
-        host="gondola.proxy.rlwy.net",
-        port=20050,
+        host="yamabiko.proxy.rlwy.net",
+        port=36139,
         user="root",
-        password="XGaKhmhcnmHScVRBFxukOaQkQdftuCzS",
+        password="sASsCizBGUvIcNuNNknMJUgCnHKiuIgH",
         database="railway"
     ) 
     cursor = conn.cursor(dictionary=True)
@@ -529,10 +529,10 @@ def get_comentario():
 def responder():
     import mysql.connector
     conn = mysql.connector.connect(
-        host="gondola.proxy.rlwy.net",
-        port=20050,
+        host="yamabiko.proxy.rlwy.net",
+        port=36139,
         user="root",
-        password="XGaKhmhcnmHScVRBFxukOaQkQdftuCzS",
+        password="sASsCizBGUvIcNuNNknMJUgCnHKiuIgH",
         database="railway"
     )
     data = request.get_json()
@@ -555,10 +555,10 @@ def responder():
 def get_respuestas(id_post):
     import mysql.connector
     conn = mysql.connector.connect(
-        host="gondola.proxy.rlwy.net",
-        port=20050,
+        host="yamabiko.proxy.rlwy.net",
+        port=36139,
         user="root",
-        password="XGaKhmhcnmHScVRBFxukOaQkQdftuCzS",
+        password="sASsCizBGUvIcNuNNknMJUgCnHKiuIgH",
         database="railway"
     )
     cursor = conn.cursor(dictionary=True)
