@@ -150,9 +150,6 @@ def septimo7():
 #-A-C-A--T-E-R-M-I-N-A--I-N-F-O-R-M-A-T-I-C-A--C-U-R-S-O-S
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-@app.route('/comentario') #ruta para la página de comentarios
-def indexcomentario():
-    return render_template("index/indexcomentario.html")
 #--------------------------------------------------------
 #-A-C-A--E-M-P-I-E-Z-A--P-R-O-G-R-A-M-A-C-I-O-N--C-U-R-S-O-S
 
@@ -229,7 +226,7 @@ def verificar():
 #_____________________________________________________________________________________
 #ACA ABAJO DE MI(? ESTABA LO DE /COMENTARIO/MATERIA/IDMAT Y /COMENTARIO METHOD=POST
 
-@app.route('/comentario/materia/<int:id_mat>')
+@app.route('/comentario/materias/<int:id_mat>')
 def comentario_materia(id_mat):
     import mysql.connector
     conn = mysql.connector.connect(
@@ -240,12 +237,36 @@ def comentario_materia(id_mat):
         database="railway"
     )
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT nom_mat FROM materia WHERE id_mat=%s", (id_mat,))
-    materia = cursor.fetchone()
+    cursor.execute("SELECT nom_mat FROM materias WHERE id_mat=%s", (id_mat,))
+    materias = cursor.fetchone()
     cursor.close()
     conn.close()
-    return render_template('index/ComentariosParaTodos.html', id_mat=id_mat, materia=materia)
+    return render_template('index/ComentariosParaTodos.html', id_mat=id_mat, materias=materias)
 
+@app.route('/comentario/materias', methods=['POST'])
+def agregar_comentario():
+    import mysql.connector
+    data = request.get_json()
+    titulo = data['titulo']
+    cont = data['comment']
+    id_mat = data['id_mat']
+    id_usu = session.get('id_usu') or None  # Si no hay login, pon None o 'Anónimo'
+    conn = mysql.connector.connect(
+        host="yamabiko.proxy.rlwy.net",
+        port=36139,
+        user="root",
+        password="sASsCizBGUvIcNuNNknMJUgCnHKiuIgH",
+        database="railway"
+    )
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT INTO preg (titulo, cont, id_mat, id_usu) VALUES (%s, %s, %s, %s)",
+        (titulo, cont, id_mat, id_usu)
+    )
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return jsonify({"success": True})
 #___________________________________________________________________________________
 #ACA ARRIBA DE MI(? ESTABA LO DE /COMENTARIO/MATERIA/IDMAT Y /COMENTARIO METHOD=POST
 @app.route('/get_comentario')

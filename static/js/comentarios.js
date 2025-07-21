@@ -100,7 +100,7 @@ document.getElementById('commentForm').addEventListener('submit', async function
     const titulo = document.getElementById('titulo').value;
     const comment = document.getElementById('comentario').value;
     const id_mat = document.getElementById('id_mat').value;
-    const response = await fetch('/comentario', {
+    const response = await fetch('/comentario/materias', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ titulo, comment, id_mat })
