@@ -86,13 +86,9 @@ def dataregistro():
 #hasta aca es lo de crear cuenta
 #________________________________
 
-#ACA RUTA DINAMICAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+#ACA RUTASSSSSS DINAMICAAAAAAAS
 
-
-
-
-
-
+#-----------------------------------------------
 
 
 #rutas para las páginas de inicio de sesión
@@ -227,13 +223,14 @@ def verificar():
         return jsonify({"exito": True}) 
     else:
         return jsonify({"exito": False})
+    
 
-@app.route('/comentario/materia/<int:id_mat>') 
+
+#_____________________________________________________________________________________
+#ACA ABAJO DE MI(? ESTABA LO DE /COMENTARIO/MATERIA/IDMAT Y /COMENTARIO METHOD=POST
+
+@app.route('/comentario/materia/<int:id_mat>')
 def comentario_materia(id_mat):
-    return render_template('index/indexcomentario.html', id_mat=id_mat)
-
-@app.route('/comentario', methods=['POST']) 
-def comment():
     import mysql.connector
     conn = mysql.connector.connect(
         host="yamabiko.proxy.rlwy.net",
@@ -242,27 +239,15 @@ def comment():
         password="sASsCizBGUvIcNuNNknMJUgCnHKiuIgH",
         database="railway"
     )
-    try:
-        data = request.get_json()
-        titulo = data['titulo']
-        comment = data['comment']
-        id_mat=data['id_mat']
-        id_usu = session.get('id_usu')  # Obtener el id del usuario de la sesión
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT nom_mat FROM materia WHERE id_mat=%s", (id_mat,))
+    materia = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return render_template('index/ComentariosParaTodos.html', id_mat=id_mat, materia=materia)
 
-        if not id_usu:
-            return jsonify({"success": False, "error": "Usuario no autenticado"}), 401
-        
-        cursor = conn.cursor()
-        query = "INSERT INTO preg (titulo, cont, id_mat, id_usu) VALUES (%s, %s, %s, %s)"
-        cursor.execute(query, (titulo, comment, id_mat, id_usu)) # Guardar el comentario en la base de datos
-        conn.commit() # Guardar los cambios en la base de datos
-        cursor.close()
-        conn.close() # Cerrar la conexión a la base de datos
-        return jsonify({"success": True})
-    except Exception as e:
-        print("Error al guardar comentario:", e)  # Esto mostrará el error en la consola de Flask
-        return jsonify({"success": False, "error": str(e)}), 500
-
+#___________________________________________________________________________________
+#ACA ARRIBA DE MI(? ESTABA LO DE /COMENTARIO/MATERIA/IDMAT Y /COMENTARIO METHOD=POST
 @app.route('/get_comentario')
 def get_comentario():
     import mysql.connector
