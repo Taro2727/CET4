@@ -1,3 +1,10 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
 /* Esto es el comienzo de la barra lateral */
 .elcostado {
     width: 10%;
@@ -31,7 +38,7 @@
 #out {
     color: white;
     font-size: 15px;
-    margin: 20px auto 0 100px;
+    margin: 5vh;
     cursor: pointer;
 }
 
@@ -41,36 +48,39 @@
 /* Esto es el comienzo de los iconos de la barra Lateral */
 
 /* Íconos de la barra lateral */
+a.separador3{
+    margin-top: 6vh;
+}
 .casa1{
-    margin-top: 50px;
     width: 35px;
-    height: 35px;
+    height: auto;
+    margin: 0;
 }
 .campana2{
-    margin-top: 50px;
     width: 35px;
-    height: 35px;
+    height: auto;
+    margin: 0;
 }
 .soporte3{
-    margin-top: 50px;
     width: 35px;
-    height: 35px;
+    height: auto;
+    margin: 0;
 }
 .grupo4{
-    margin-top: 50px;
     width: 35px;
-    height: 35px;
+    height: auto;
+    margin: 0;
 }
 .opcion5{
-    margin-top: 50px;
     width: 35px;
-    height: 35px;
+    height: auto;
+    margin: 0;
 }
 
 .usuario{
     width: 50px;
-    height: 50px;
-    margin-top: 30px;
+    height: auto;
+    margin: 0;
 }
 
 @media (max-width: 1024px) {
