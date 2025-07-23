@@ -100,6 +100,10 @@ def iniciarsesion():
 def crearcuenta():
     return render_template('index/indexcrearcuenta.html')
 
+@app.route('/fuentes/materias/1') 
+def Fuentes():
+    return render_template('index/ApartadoFuentes.html')
+
 @app.route('/indexhomeoinicio') #ruta para la página de inicio
 def indexhomeoinicio():
     return render_template('index/indexhomeoinicio.html')
