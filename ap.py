@@ -104,6 +104,14 @@ def crearcuenta():
 def indexhomeoinicio():
     return render_template('index/indexhomeoinicio.html')
 
+#--------------------------------------------
+#ESTO ES NUEVO / DE PRUEBA!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+@app.route('/fuentes/materias/1')
+def fuentes():
+    return render_template("index/ApartadoFuentes.html")
+
+#---------------------------------------------
 #desde aca se elige la modalidad
 @app.route('/programacion') #ruta para la página de programación
 def indexprogramacion():
