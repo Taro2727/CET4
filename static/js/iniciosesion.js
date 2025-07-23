@@ -7,7 +7,8 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
   const respuesta = await fetch("/verificar", {
     method: "POST",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrfToken
     },
     body: JSON.stringify({ email, password })
   });

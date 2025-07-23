@@ -3,11 +3,16 @@ from flask import Flask, request, jsonify, render_template, session, redirect, u
 import mysql.connector # Conectar a MySQL
 from werkzeug.security import generate_password_hash, check_password_hash
 
+from flask_wtf import CSRFProtect
+
 # Importar Flask-Login
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
 app = Flask(__name__)
 app.secret_key = 'mi_clave_secreta' # Clave secreta para sesiones, cookies, etc. ¡CAMBIAR EN PRODUCCIÓN!
+
+# --- Protección CSRF ---
+csrf = CSRFProtect(app)
 
 # --- Configuración de la base de datos (centralizada para evitar repetición) ---
 DB_CONFIG = {

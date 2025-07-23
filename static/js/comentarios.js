@@ -56,7 +56,11 @@ async function enviarRespuesta(id) {
     const respuesta = document.getElementById(`texto-respuesta-${id}`).value;
     const response = await fetch('/responder', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+         },
+
         body: JSON.stringify({ id_post: id, respuesta: respuesta })
     });
     const result = await response.json();
@@ -102,7 +106,10 @@ document.getElementById('commentForm').addEventListener('submit', async function
     const id_mat = document.getElementById('id_mat').value;
     const response = await fetch('/comentario/materias', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
         body: JSON.stringify({ titulo, comment, id_mat })
     });
     const result = await response.json();

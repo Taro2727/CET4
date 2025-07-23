@@ -11,13 +11,18 @@ regi.addEventListener('submit',async function (event){
         contra: contra,
         confcontra: confirmcontra
     };
-    fetch ('/crearcuenta/registrar',{
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(datos)
-    })
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    fetch('/crearcuenta/registrar', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken
+    },
+    body: JSON.stringify(datos)
+})
+
     .then(async response =>{
         const text = await response.text();
         if(!response.ok) {
