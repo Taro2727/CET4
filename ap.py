@@ -1,30 +1,65 @@
 # archivo: app.py
-from flask import Flask, request, jsonify, render_template, session, redirect, url_for
-#render_template se puede cambiar app = Flask(__name__, template_folder='mi_html')
-import mysql.connector #conectar a MySQL
+from flask import Flask, request, jsonify, render_template, session, redirect, url_for, flash
+import mysql.connector # Conectar a MySQL
 from werkzeug.security import generate_password_hash, check_password_hash
-#para hacer un hash
+
+from flask_wtf import CSRFProtect
+
+# Importar Flask-Login
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
 app = Flask(__name__)
-app.secret_key= 'mi_clave_secreta' #clave secreta para sesiones, cookies, etc.
+app.secret_key = 'mi_clave_secreta' # Clave secreta para sesiones, cookies, etc. ¡CAMBIAR EN PRODUCCIÓN!
 
-# #     NO DARLE BOLAAAAAAAAAAAAAAAAAAAAAAAA
-#db = mysql.connector.connect(
-#    host="gondola.proxy.rlwy.net",
-#    port=20050,           # puerto por defecto de MySQL
-#   user="root",         # tu usuario (normalmente es 'root')
-#    password="XGaKhmhcnmHScVRBFxukOaQkQdftuCzS",         # tu contraseña, si no tiene ponela vacía
-#    database="railway"  # nombre exacto de la base de datos
-#)
-# # # Conexión con MySQL
-# db = mysql.connector.connect(
-#     host="localhost",
-#     port=3306,           # puerto por defecto de MySQL
-#     user="root",         # tu usuario (normalmente es 'root')
-#     password="",         # tu contraseña, si no tiene ponela vacía
-#     database="cet4"  # nombre exacto de la base de datos
-# )
+# --- Protección CSRF ---
+csrf = CSRFProtect(app)
 
+# --- Configuración de la base de datos (centralizada para evitar repetición) ---
+DB_CONFIG = {
+    'host': "yamanote.proxy.rlwy.net",
+    'port': 33483,
+    'user': "root",
+    'password': "BNeAADHQCVLNkxkYTyLSjUqSPVxfrWvH",
+    'database': "railway"
+}
+
+# --- Inicializar Flask-Login ---
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'iniciarsesion' # Nombre de la función de vista para el login
+login_manager.login_message = "Por favor, inicia sesión para acceder a esta página." # Mensaje predeterminado
+
+# --- Clase User para Flask-Login ---
+class User(UserMixin):
+    def __init__(self, id_usu, nom_usu, email, contraseña_hash):
+        self.id = id_usu # Flask-Login espera que el ID se acceda a través de .id
+        self.nom_usu = nom_usu
+        self.email = email
+        self.contraseña_hash = contraseña_hash
+
+    # Método requerido por Flask-Login para obtener el ID unico del usuario
+    def get_id(self):
+        return str(self.id)
+
+# --- user_loader para Flask-Login ---
+# desde el ID de usuario almacenado en la sesion
+@login_manager.user_loader
+def load_user(user_id):
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT id_usu, nom_usu, email, contraseña FROM usuario WHERE id_usu = %s", (user_id,))
+        user_data = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        if user_data:
+            return User(user_data['id_usu'], user_data['nom_usu'], user_data['email'], user_data['contraseña'])
+        return None
+    except mysql.connector.Error as err:
+        print(f"Error al cargar usuario de DB: {err}")
+        return None
+
+# --- RUTAS DE NAVEGACIÓN GENERAL ---
 @app.route('/') #ruta para la página de inicio
 def inicio():
     return render_template('index/indexprincipal.html')
@@ -32,56 +67,54 @@ def inicio():
 @app.route('/comunicatenosotros')
 def comnos():
     return render_template('index/indexcentralayuda.html')
+
 #__________________________________
-#desde acá empieza el registro 
+#desde acá empieza el registro
 @app.route('/crearcuenta')
 def regi():
+    # Redirección si el usuario ya está autenticado
+    if current_user.is_authenticated:
+        flash('Ya has iniciado sesión.', 'info')
+        return redirect(url_for('inicio'))
     return render_template('index/indexcrearcuenta.html')
-#sin una / inicial antes del index/ pq ya stams en templates gracias al render_template
-@app.route('/crearcuenta/registrar',methods=['POST'])
-def dataregistro():
-   datosdesdejs = request.json
-   nombre = datosdesdejs['name']
-   mail = datosdesdejs['email']
-   contra = datosdesdejs['contra']
-   confcontra = datosdesdejs['confcontra']
-   #no se usan () en el if de python
-   if contra != confcontra:
-       return "la contraseña y la confirmación no son iguales, intente nuevamente",400
 
-   try:    
-        import mysql.connector
-        conn = mysql.connector.connect(
-            host="yamanote.proxy.rlwy.net",
-            port=33483,
-            user="root",
-            password="BNeAADHQCVLNkxkYTyLSjUqSPVxfrWvH",
-            database="railway"
-        )
-        #pasar datos de py a la bd
-        #hay q usar el cursor bld (jaja me habia olvidado)
+@app.route('/crearcuenta/registrar', methods=['POST'])
+def dataregistro():
+    datosdesdejs = request.json
+    nombre = datosdesdejs['name']
+    mail = datosdesdejs['email']
+    contra = datosdesdejs['contra']
+    confcontra = datosdesdejs['confcontra']
+
+    if contra != confcontra:
+        # CAMBIO: Devolver JSON consistente con otras rutas de API
+        return jsonify({"exito": False, "error": "La contraseña y la confirmación no son iguales, intente nuevamente"}), 400
+
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG) # Usar DB_CONFIG
         cursor = conn.cursor()
-        #el cursor genera una variable q apunta a donde va a mandar el dato (corte catapulta)
-        #consulta = sql xd
+
+        # Verificar si el email ya existe
+        cursor.execute("SELECT id_usu FROM usuario WHERE email = %s", (mail,))
+        if cursor.fetchone():
+            cursor.close()
+            conn.close()
+            # CAMBIO: Devolver JSON consistente
+            return jsonify({"exito": False, "error": "El email ya está registrado."}), 409 # Conflict
+
+        hash_contra = generate_password_hash(contra)
         sql = "INSERT INTO usuario(nom_usu, email, contraseña) VALUES (%s, %s, %s)"
-        #valores del %s los toma valores (los gaurda en orden)
-        #esos valores tienen q coinsidir con los q guardan el coso de js
-        hash_contra= generate_password_hash(contra)
-        #en el hash_contra estamos diciendo que vamos a hacer -->
-        #un cod secreto (hash) de los datos de la "contra"
-        valores = (nombre,mail,hash_contra)
-        #cursor manda los valores de sql (insert into) y los valores (valores ahr)
+        valores = (nombre, mail, hash_contra)
         cursor.execute(sql, valores)
-        #guarda todo lo anterior en la bd (osea lo aplica)
-        #Se cambió el conexion.commit por db.commit pq
-        #en mi archivo de py usé "conexion" para declarar la base de datos 
-        #pero en este python la bd está declarada como "db"   #ahora la bd esta declaarada como "conn"
         conn.commit()
         cursor.close()
-        conn.close() 
-        return "usuario registrado correctamente"
-   except Exception as e:    
-    return f"Error al registrar el usuario {e}",500  
+        conn.close()
+        # CAMBIO: Devolver JSON consistente
+        return jsonify({"exito": True, "mensaje": "Usuario registrado correctamente"})
+    except Exception as e:
+        print(f"Error al registrar el usuario: {e}") # Para depuración
+        # CAMBIO: Devolver JSON consistente
+        return jsonify({"exito": False, "error": f"Error al registrar el usuario: {e}"}), 500
 
 #hasta aca es lo de crear cuenta
 #________________________________
@@ -90,19 +123,18 @@ def dataregistro():
 
 #-----------------------------------------------
 
-
 #rutas para las páginas de inicio de sesión
 @app.route("/iniciarsesion")
 def iniciarsesion():
+    if current_user.is_authenticated:
+        flash('Ya has iniciado sesión.', 'info')
+        return redirect(url_for('inicio')) # Redirige si ya está logueado
     return render_template("index/indexiniciarsesion.html")
 
-@app.route('/crearcuenta') #ruta para la página de registro #cambiar nombre de la ruta
-def crearcuenta():
-    return render_template('index/indexcrearcuenta.html')
-
-@app.route('/fuentes/materias/1') 
-def Fuentes():
-    return render_template('index/ApartadoFuentes.html')
+# La ruta '/crearcuenta' ya está definida arriba como 'regi()'
+# @app.route('/crearcuenta') #ruta para la página de registro #cambiar nombre de la ruta
+# def crearcuenta():
+#     return render_template('index/indexcrearcuenta.html')
 
 @app.route('/indexhomeoinicio') #ruta para la página de inicio
 def indexhomeoinicio():
@@ -193,38 +225,59 @@ def index7moprog():
 #a partir de aca empieza el login/inicio de sesión
 @app.route('/verificar', methods=['POST'])
 def verificar():
-    import mysql.connector
-    conn = mysql.connector.connect(
-        host="yamanote.proxy.rlwy.net",
-        port=33483,
-        user="root",
-        password="BNeAADHQCVLNkxkYTyLSjUqSPVxfrWvH",
-        database="railway"
-    )
+    # CAMBIO: Eliminada la importación y conexión duplicada.
+    # Ahora usa DB_CONFIG definida globalmente.
+
+    # Si el usuario ya está logueado, no hace falta que intente de nuevo.
+    if current_user.is_authenticated:
+        return jsonify({"exito": True, "mensaje": "Ya has iniciado sesión."})
+
     datos = request.get_json() # Obtener los datos del JSON enviado desde el frontend
     email = datos.get('email') # Obtener el email del JSON
     contraseña = datos.get('password') # Obtener la contraseña del JSON
 
-    print("Email recibido:", email) 
-    print("Contraseña recibida:", contraseña)
+    # Validación básica de que los datos llegaron.
+    if not email or not contraseña:
+        return jsonify({"exito": False, "error": "Email y contraseña son requeridos"}), 400
 
-    if not email or not contraseña: 
-        return jsonify({"exito": False, "error": "email y contraseña son requeridos"}), 400 
+    try:
+        # Conexión a la base de datos y consulta del usuario.
+        conn = mysql.connector.connect(**DB_CONFIG) # Usar DB_CONFIG
+        cursor = conn.cursor(dictionary=True) # Para que devuelva diccionarios
 
-    cursor = conn.cursor(dictionary=True) 
-    cursor.execute("SELECT * FROM usuario WHERE email=%s", (email,)) #pide el usuario por email
-    #el cursor ejecuta la consulta y devuelve un diccionario con los resultados
-    usuario = cursor.fetchone() # Obtiene el primer resultado de la consulta
-    cursor.close()
-    conn.close() 
+        cursor.execute("SELECT id_usu, nom_usu, email, contraseña FROM usuario WHERE email=%s", (email,))
+        usuario_data = cursor.fetchone() # Aquí se guarda el resultado en 'usuario_data'
 
-    if usuario and check_password_hash (usuario['contraseña'], contraseña): # Verifica si el usuario existe y si la contraseña es correcta
-        session['id_usu'] = usuario['id_usu']  # Guardar el id de usuario en la sesión
-        session['usuario'] = usuario['nom_usu']
-        return jsonify({"exito": True}) 
-    else:
-        return jsonify({"exito": False})
-    
+        cursor.close()
+        conn.close()
+
+        # Verificar si el usuario existe y si la contraseña es correcta.
+        if usuario_data and check_password_hash(usuario_data['contraseña'], contraseña):
+            # Crear un objeto User y llamar a login_user()
+            # CAMBIO: 'User' con 'U' mayúscula, ya que es el nombre de tu clase.
+            user = User(usuario_data['id_usu'], usuario_data['nom_usu'], usuario_data['email'], usuario_data['contraseña'])
+            login_user(user) # ¡Este es el punto clave para iniciar sesión con Flask-Login!
+            return jsonify({"exito": True, "mensaje": "Inicio de sesión exitoso"})
+        else:
+            # Si el usuario no existe o la contraseña es incorrecta
+            return jsonify({"exito": False, "error": "Email o contraseña incorrectos"}), 401
+
+    # Manejo de errores para la conexión y consulta a la DB.
+    except mysql.connector.Error as err:
+        print(f"Error de base de datos en verificar: {err}")
+        return jsonify({"exito": False, "error": f"Error en la base de datos: {err}"}), 500
+    except Exception as e:
+        print(f"Error inesperado en verificar: {e}")
+        return jsonify({"exito": False, "error": f"Error inesperado: {e}"}), 500
+
+
+# --- Cierre de Sesión ---
+@app.route('/logout')
+@login_required # Decorador para proteger la ruta de logout
+def logout():
+    logout_user() # Función de Flask-Login para cerrar sesión
+    flash('Has cerrado sesión correctamente.', 'success')
+    return redirect(url_for('inicio'))
 
 
 #_____________________________________________________________________________________
@@ -232,68 +285,66 @@ def verificar():
 
 @app.route('/comentario/materias/<int:id_mat>')
 def comentario_materia(id_mat):
-    import mysql.connector
-    conn = mysql.connector.connect(
-        host="yamanote.proxy.rlwy.net",
-        port=33483,
-        user="root",
-        password="BNeAADHQCVLNkxkYTyLSjUqSPVxfrWvH",
-        database="railway"
-    )
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT nom_mat FROM materias WHERE id_mat=%s", (id_mat,))
-    materias = cursor.fetchone()
-    cursor.close()
-    conn.close()
-    return render_template('index/ComentariosParaTodos.html', id_mat=id_mat, materias=materias)
+    # CAMBIO: Eliminada la importación y conexión duplicada.
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG) # Usar DB_CONFIG
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT nom_mat FROM materias WHERE id_mat=%s", (id_mat,))
+        materias = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        return render_template('index/ComentariosParaTodos.html', id_mat=id_mat, materias=materias)
+    except mysql.connector.Error as err:
+        print(f"Error al obtener materia: {err}")
+        flash("Error al cargar la materia.", 'danger')
+        return redirect(url_for('inicio')) # O a una página de error
 
 @app.route('/comentario/materias', methods=['POST'])
+@login_required # CAMBIO: Protege la creación de comentarios
 def agregar_comentario():
-    import mysql.connector
+    # CAMBIO: Eliminada la importación y conexión duplicada.
     data = request.get_json()
-    titulo = data['titulo']
-    cont = data['comment']
-    id_mat = data['id_mat']
-    id_usu = session.get('id_usu') or None  # Si no hay login, pon None o 'Anónimo'
-    conn = mysql.connector.connect(
-        host="yamanote.proxy.rlwy.net",
-        port=33483,
-        user="root",
-        password="BNeAADHQCVLNkxkYTyLSjUqSPVxfrWvH",
-        database="railway"
-    )
-    cursor = conn.cursor()
-    cursor.execute(
-        "INSERT INTO preg (titulo, cont, id_mat, id_usu) VALUES (%s, %s, %s, %s)",
-        (titulo, cont, id_mat, id_usu)
-    )
-    conn.commit()
-    cursor.close()
-    conn.close()
-    return jsonify({"success": True})
+    titulo = data.get('titulo') # Usar .get() para evitar KeyError
+    cont = data.get('comment')  # Usar .get()
+    id_mat = data.get('id_mat') # Usar .get()
+
+    if not all([titulo, cont, id_mat]):
+        return jsonify({"success": False, "error": "Faltan datos para el comentario"}), 400
+
+    # CAMBIO: Obtiene el ID del usuario logueado usando current_user
+    id_usu = current_user.id
+
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG) # Usar DB_CONFIG
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO preg (titulo, cont, id_mat, id_usu) VALUES (%s, %s, %s, %s)",
+            (titulo, cont, id_mat, id_usu)
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return jsonify({"success": True, "mensaje": "Comentario agregado correctamente"}) # CAMBIO: Mensaje JSON
+    except mysql.connector.Error as err:
+        print(f"Error al agregar comentario: {err}")
+        return jsonify({"success": False, "error": f"Error al agregar comentario: {err}"}), 500
+    except Exception as e: # CAMBIO: Añadir manejo de excepción general
+        print(f"Error inesperado al agregar comentario: {e}")
+        return jsonify({"success": False, "error": f"Error inesperado: {e}"}), 500
+
 #___________________________________________________________________________________
 #ACA ARRIBA DE MI(? ESTABA LO DE /COMENTARIO/MATERIA/IDMAT Y /COMENTARIO METHOD=POST
 @app.route('/get_comentario')
 def get_comentario():
-    import mysql.connector
+    # CAMBIO: Eliminada la importación y conexión duplicada.
     id_mat = request.args.get('id_mat')
-    conn = mysql.connector.connect(
-        host="yamanote.proxy.rlwy.net",
-        port=33483,
-        user="root",
-        password="BNeAADHQCVLNkxkYTyLSjUqSPVxfrWvH",
-        database="railway"
-    ) 
-    cursor = conn.cursor(dictionary=True)
-    if id_mat:
-         cursor.execute("""
-            SELECT p.id_post, p.titulo, p.cont, p.fecha, u.nom_usu AS usuario
-            FROM preg p
-            LEFT JOIN usuario u ON p.id_usu = u.id_usu
-            WHERE p.id_mat=%s
-            ORDER BY p.fecha DESC
-        """, (id_mat,)) 
-    else:
+    if not id_mat: # CAMBIO: Validación si no se pasa id_mat
+        return jsonify({"success": False, "error": "ID de materia requerido"}), 400
+
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG) # Usar DB_CONFIG
+        cursor = conn.cursor(dictionary=True)
+        # CAMBIO: Simplificado el if/else redundante.
         cursor.execute("""
             SELECT p.id_post, p.titulo, p.cont, p.fecha, u.nom_usu AS usuario
             FROM preg p
@@ -301,61 +352,98 @@ def get_comentario():
             WHERE p.id_mat=%s
             ORDER BY p.fecha DESC
         """, (id_mat,))
-    comentarios = cursor.fetchall()
-    cursor.close()
-    conn.close()
-    return jsonify(comentarios)
+        comentarios = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return jsonify(comentarios)
+    except mysql.connector.Error as err:
+        print(f"Error al obtener comentarios: {err}")
+        return jsonify({"success": False, "error": f"Error al obtener comentarios: {err}"}), 500
+    except Exception as e: # CAMBIO: Añadir manejo de excepción general
+        print(f"Error inesperado al obtener comentarios: {e}")
+        return jsonify({"success": False, "error": f"Error inesperado: {e}"}), 500
+
 
 @app.route('/responder', methods=['POST'])
+@login_required # CAMBIO: Protege la capacidad de responder
 def responder():
-    import mysql.connector
-    conn = mysql.connector.connect(
-        host="yamanote.proxy.rlwy.net",
-        port=33483,
-        user="root",
-        password="BNeAADHQCVLNkxkYTyLSjUqSPVxfrWvH",
-        database="railway"
-    )
+    # CAMBIO: Eliminada la importación y conexión duplicada.
     data = request.get_json()
-    id_post = data['id_post']
-    cont = data['respuesta']
-    id_usu = session.get('id_usu')# si aún no tenés login funcional, usa 'Anónimo'
+    id_post = data.get('id_post') # Usar .get()
+    cont = data.get('respuesta') # Usar .get()
 
-    if not id_usu:
-        return jsonify({"success": False, "error": "Usuario no autenticado"}), 401
-    
-    cursor = conn.cursor()
-    query = "INSERT INTO rta (id_post, id_usu, cont) VALUES (%s, %s, %s)"
-    cursor.execute(query, (id_post, id_usu, cont))
-    conn.commit()
-    cursor.close()
-    conn.close()
-    return jsonify({"success": True})
+    if not all([id_post, cont]):
+        return jsonify({"success": False, "error": "Faltan datos para la respuesta"}), 400
+
+    # CAMBIO: Obtiene el ID del usuario logueado usando current_user
+    id_usu = current_user.id
+
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG) # Usar DB_CONFIG
+        cursor = conn.cursor()
+        query = "INSERT INTO rta (id_post, id_usu, cont) VALUES (%s, %s, %s)"
+        cursor.execute(query, (id_post, id_usu, cont))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return jsonify({"success": True, "mensaje": "Respuesta agregada correctamente"}) # CAMBIO: Mensaje JSON
+    except mysql.connector.Error as err:
+        print(f"Error al responder: {err}")
+        return jsonify({"success": False, "error": f"Error al responder: {err}"}), 500
+    except Exception as e: # CAMBIO: Añadir manejo de excepción general
+        print(f"Error inesperado al responder: {e}")
+        return jsonify({"success": False, "error": f"Error inesperado: {e}"}), 500
+
 
 @app.route('/get_respuestas/<int:id_post>')
 def get_respuestas(id_post):
-    import mysql.connector
-    conn = mysql.connector.connect(
-        host="yamanote.proxy.rlwy.net",
-        port=33483,
-        user="root",
-        password="BNeAADHQCVLNkxkYTyLSjUqSPVxfrWvH",
-        database="railway"
-    )
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("""
-        SELECT r.cont, u.nom_usu AS usuario
-        FROM rta r
-        LEFT JOIN usuario u ON r.id_usu = u.id_usu
-        WHERE r.id_post = %s
-        ORDER BY r.id_com ASC
-    """, (id_post,))
-    respuestas = cursor.fetchall()
-    cursor.close()
-    conn.close()
-    return jsonify(respuestas)
+    # CAMBIO: Eliminada la importación y conexión duplicada.
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG) # Usar DB_CONFIG
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT r.cont, u.nom_usu AS usuario
+            FROM rta r
+            LEFT JOIN usuario u ON r.id_usu = u.id_usu
+            WHERE r.id_post = %s
+            ORDER BY r.id_com ASC
+        """, (id_post,))
+        respuestas = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return jsonify(respuestas)
+    except mysql.connector.Error as err:
+        print(f"Error al obtener respuestas: {err}")
+        return jsonify({"success": False, "error": f"Error al obtener respuestas: {err}"}), 500
+    except Exception as e: # CAMBIO: Añadir manejo de excepción general
+        print(f"Error inesperado al obtener respuestas: {e}")
+        return jsonify({"success": False, "error": f"Error inesperado: {e}"}), 500
 
+@app.route('/api/like', methods=['POST'])
+def like_comment():
+    data = request.get_json()
+    comment_id = data.get('comment_id')
+    if not comment_id:
+        return jsonify({'success': False, 'error': 'Falta comment_id'}), 400
 
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor()
+
+        # Sumar un like (puedes personalizar la lógica para evitar duplicados por usuario)
+        cursor.execute("UPDATE preg SET likes = IFNULL(likes, 0) + 1 WHERE id_post = %s", (comment_id,))
+        conn.commit()
+
+        # Obtener el total actualizado
+        cursor.execute("SELECT likes FROM preg WHERE id_post = %s", (comment_id,))
+        total = cursor.fetchone()[0]
+
+        cursor.close()
+        conn.close()
+        return jsonify({'success': True, 'total': total})
+    except Exception as e:
+        print("Error en like_comment:", e)
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 if __name__ == "__main__":
     print("iniciando flask..")
