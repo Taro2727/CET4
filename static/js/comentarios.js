@@ -24,11 +24,19 @@ async function cargarComentarios() {
             <br>
             <button class="btn-responder" onclick="responder('${c.id_post}', '${c.usuario || "Anónimo"}')">Responder</button>
             <button class="btn-ver-respuestas" onclick="mostrarRespuestas('${c.id_post}')">Ver respuestas</button>
-            <div  br class="area-responder" id="area-responder-${c.id_post}"></div>
+            <button class="btn-like" id="like-${c.id_post}">♡</button>
+            <div class="area-responder" id="area-responder-${c.id_post}"></div>
             <div class="respuestas" id="respuestas-${c.id_post}" style="display: none;"></div>
         `  ;
         
         section.appendChild(div);
+        // Estas lineas de codigo hacen andar el corazon
+        const btnLike = document.getElementById(`like-${c.id_post}`);
+        btnLike.addEventListener('click',() => {
+        btnLike.classList.toggle('liked');
+        btnLike.textContent = btnLike.textContent === '♡' ? '♡' : '♡';
+        // linea corazoncito 
+        });
     });
 }
 
