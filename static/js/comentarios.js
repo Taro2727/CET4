@@ -25,6 +25,7 @@ async function cargarComentarios() {
             <button class="btn-responder" onclick="responder('${c.id_post}', '${c.usuario || "Anónimo"}')">Responder</button>
             <button class="btn-ver-respuestas" onclick="mostrarRespuestas('${c.id_post}')">Ver respuestas</button>
             <button class="btn-like" id="like-${c.id_post}">♡</button>
+            <span id="contador-${c.id_post}" class="contador-likes">0</span>
             <div class="area-responder" id="area-responder-${c.id_post}"></div>
             <div class="respuestas" id="respuestas-${c.id_post}" style="display: none;"></div>
         `  ;
@@ -32,11 +33,30 @@ async function cargarComentarios() {
         section.appendChild(div);
         // Estas lineas de codigo hacen andar el corazon
         const btnLike = document.getElementById(`like-${c.id_post}`);
-        btnLike.addEventListener('click',() => {
-        btnLike.classList.toggle('liked');
-        btnLike.textContent = btnLike.textContent === '♡' ? '♡' : '♡';
+        btnLike.addEventListener('click', async () => {
+            const res = await fetch('/api/like', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ comment_id: c.id_post })
+            });
+            const data = await res.json();
+
+            // Actualiza visual
+            const contador = document.getElementById(`contador-${c.id_post}`);
+            contador.textContent = data.total;
+
+            btnLike.classList.toggle('liked');
+    });
+
+
+        //-----------------------------------------
+        //esto iba abajo del 1er const
+        // btnLike.addEventListener('click',() => {
+        // btnLike.classList.toggle('liked');
+        // btnLike.textContent = btnLike.textContent === '♡' ? '♡' : '♡';
         // linea corazoncito 
-        });
+        //-------------------------------------------------
+
     });
 }
 

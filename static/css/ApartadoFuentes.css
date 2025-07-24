@@ -16,3 +16,10 @@ p{
     font-size: 20px;
     background-color: aliceblue;
 }
+
+#ordenar{
+    display: inline-flex;
+    left:50em;
+    background-color: blue;
+    color: azure;
+}
