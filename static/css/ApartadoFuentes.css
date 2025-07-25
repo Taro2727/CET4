@@ -1,0 +1,25 @@
+p{
+    display: block;
+    font-size: 2em;
+    color: azure;
+    padding-left: 15px;
+    padding-top: 15px;
+    padding-bottom: 25px;
+}
+#fuentes{
+    width: 80%;
+    height: 30em;
+    background-color: rgb(7, 17, 96);
+}
+
+#menues{
+    font-size: 20px;
+    background-color: aliceblue;
+}
+
+#ordenar{
+    display: inline-flex;
+    left:50em;
+    background-color: blue;
+    color: azure;
+}

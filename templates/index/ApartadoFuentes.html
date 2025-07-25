@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="/static/css/indexcajacomentario.css" />
    <link rel="stylesheet" href="/static/css/barralateral.css"/>
    <link rel="stylesheet" href="/static/css/ApartadoFuentes.css"/>
-   <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body>
   <div id="toggle">
@@ -30,24 +29,20 @@
   <main class="comentarios">
     <header class="comentarios-header">
       <span class="flechas" aria-hidden="true">▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶</span>
-      <h1>{{materias.nom_mat}} </h1>
+      <h1>Inserta Materia (error jinja) </h1>
       <span class="flechas" aria-hidden="true">◀◀◀◀◀◀◀◀◀◀◀◀◀◀◀◀◀◀◀◀</span>
     </header>
-    <!-- el section de abajo es para elegir entre las fuentes y los comentarios-->
-    <section id="menues">
-      <button href="#" id="ordenar">&#11015; Ordenar por</button>
-      <a href="/templates/index/ComentariosParaTodos.html">Comentarios</a>
+     <section id="menues">
+      <a href="/comentario/materias/1">Comentarios</a>
       <a href="/fuentes/materias/1">Fuentes</a>
     </section>
+    
+    <div id="fuentes">
+        <p>Fuente 1 <a> hola.com</a></p>
+        <p>Fuente 2 <a> chau.com.ar</a></p>
+        <p>Fuente 3 <a> MIAMEEEE.edu.gob.ar</a></p>
+    </div>
 
-<section class="caja-comentario">
-      <form id="commentForm">
-        <input type="text" id="titulo" name="titulo" placeholder="Título de la pregunta" required>
-        <textarea id="comentario" name="comentario" placeholder="Escribe tu comentario..." required></textarea>
-        <input type="hidden" id="id_mat" name="id_mat" value="{{ id_mat }}">
-        <button type="submit">Enviar</button>
-      </form>
-      <div id="commentsSection"></div>
   </main>
 <script src="/static/js/comentarios.js"></script>
 <script src="/static/js/barralateral.js"></script>

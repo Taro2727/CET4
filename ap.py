@@ -419,6 +419,31 @@ def get_respuestas(id_post):
         print(f"Error inesperado al obtener respuestas: {e}")
         return jsonify({"success": False, "error": f"Error inesperado: {e}"}), 500
 
+@app.route('/api/like', methods=['POST'])
+def like_comment():
+    data = request.get_json()
+    comment_id = data.get('comment_id')
+    if not comment_id:
+        return jsonify({'success': False, 'error': 'Falta comment_id'}), 400
+
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor()
+
+        # Sumar un like (puedes personalizar la lógica para evitar duplicados por usuario)
+        cursor.execute("UPDATE preg SET likes = IFNULL(likes, 0) + 1 WHERE id_post = %s", (comment_id,))
+        conn.commit()
+
+        # Obtener el total actualizado
+        cursor.execute("SELECT likes FROM preg WHERE id_post = %s", (comment_id,))
+        total = cursor.fetchone()[0]
+
+        cursor.close()
+        conn.close()
+        return jsonify({'success': True, 'total': total})
+    except Exception as e:
+        print("Error en like_comment:", e)
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 if __name__ == "__main__":
     print("iniciando flask..")

@@ -717,6 +717,24 @@ input{
   font-size: 0.95rem;
 }
 
+.btn-like{
+  font-size: 5vh;
+  color: #ccc;
+  cursor: pointer;
+  border: none;
+  background: none;
+  float: right;
+  transition: transform 0.4s ease;
+
+}
+.btn-like.liked{
+  color: red;
+}
+.btn-like:hover{
+  transform: scale(1.2);
+  color: none;
+  
+}
 
 @media (max-width: 500px) {
   /* Barra lateral más delgada y que se pueda ocultar o colapsar si querés */
