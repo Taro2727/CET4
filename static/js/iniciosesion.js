@@ -4,6 +4,8 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
+  const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
   const respuesta = await fetch("/verificar", {
     method: "POST",
     headers: {
