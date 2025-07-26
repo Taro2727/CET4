@@ -62,7 +62,9 @@ def load_user(user_id):
 # --- RUTAS DE NAVEGACIÓN GENERAL ---
 @app.route('/') #ruta para la página de inicio
 def inicio():
-    return render_template('index/indexprincipal.html')
+    if current_user.is_authenticated:
+        return redirect(url_for('indexhomeoinicio'))  # Redirige si ya está logueado
+    return render_template('index/indexprincipal.html')  # Si no va al menu principal
 
 @app.route('/comunicatenosotros')
 def comnos():
