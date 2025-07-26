@@ -1,3 +1,4 @@
+const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
 window.onload = async function () {
     // Se mantiene la carga inicial de comentarios
     await cargarComentarios();
@@ -36,7 +37,10 @@ async function cargarComentarios() {
         btnLike.addEventListener('click', async () => {
             const res = await fetch('/api/like', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json', // <--- ¡CON LA COMA!
+                    'X-CSRFToken': csrfToken 
+                },
                 body: JSON.stringify({ comment_id: c.id_post })
             });
             const data = await res.json();
