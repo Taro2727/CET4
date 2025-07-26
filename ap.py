@@ -109,11 +109,11 @@ def dataregistro():
         conn.commit()
         cursor.close()
         conn.close()
-        # CAMBIO: Devolver JSON consistente
+        # Devolver JSON consistente
         return jsonify({"exito": True, "mensaje": "Usuario registrado correctamente"})
     except Exception as e:
         print(f"Error al registrar el usuario: {e}") # Para depuración
-        # CAMBIO: Devolver JSON consistente
+        # Devolver JSON consistente
         return jsonify({"exito": False, "error": f"Error al registrar el usuario: {e}"}), 500
 
 #hasta aca es lo de crear cuenta
