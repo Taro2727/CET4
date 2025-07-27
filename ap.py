@@ -283,7 +283,7 @@ def get_comentario():
     cursor = conn.cursor(dictionary=True)
     if id_mat:
          cursor.execute("""
-            SELECT p.id_post, p.titulo, p.cont, p.fecha, u.nom_usu AS usuario
+            SELECT p.id_post, p.titulo, p.cont, p.fecha, u.nom_usu AS usuario, p.id_usu
             FROM preg p
             LEFT JOIN usuario u ON p.id_usu = u.id_usu
             WHERE p.id_mat=%s
@@ -340,7 +340,7 @@ def get_respuestas(id_post):
     )
     cursor = conn.cursor(dictionary=True)
     cursor.execute("""
-        SELECT r.cont, u.nom_usu AS usuario
+        SELECT r.id_com, r.cont, u.nom_usu AS usuario, r.id_usu
         FROM rta r
         LEFT JOIN usuario u ON r.id_usu = u.id_usu
         WHERE r.id_post = %s
@@ -351,7 +351,52 @@ def get_respuestas(id_post):
     conn.close()
     return jsonify(respuestas)
 
+#---RUTA PARA ELIMINAR COMENTARIOS---
+@app.route('/eliminar_comentario', methods=['POST'])
+def eliminar_comentario():
+    import mysql.connector
+    data = request.get_json()
+    id_post = data['id_post']
+    id_usu = session.get('id_usu')
+    if not id_usu:
+        return jsonify({'success': False, 'error': 'No autorizado'}), 401
+    conn = mysql.connector.connect(
+        host="yamanote.proxy.rlwy.net",
+        port=33483,
+        user="root",
+        password="BNeAADHQCVLNkxkYTyLSjUqSPVxfrWvH",
+        database="railway"
+    )
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM rta WHERE id_post=%s", (id_post,))
+    cursor.execute("DELETE FROM preg WHERE id_post=%s AND id_usu=%s", (id_post, id_usu))
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return jsonify({'success': True})
 
+#---RUTA PARA ELIMINAR RESPUESTAS---
+@app.route('/eliminar_respuesta', methods=['POST'])
+def eliminar_respuesta():
+    import mysql.connector
+    data = request.get_json()
+    id_com = data['id_com']
+    id_usu = session.get('id_usu')
+    if not id_usu:
+        return jsonify({'success': False, 'error': 'No autorizado'}), 401
+    conn = mysql.connector.connect(
+        host="yamanote.proxy.rlwy.net",
+        port=33483,
+        user="root",
+        password="BNeAADHQCVLNkxkYTyLSjUqSPVxfrWvH",
+        database="railway"
+    )
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM rta WHERE id_com=%s AND id_usu=%s", (id_com, id_usu))
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return jsonify({'success': True})
 
 if __name__ == "__main__":
     print("iniciando flask..")
