@@ -50,6 +50,7 @@ async function cargarComentarios() {
             contador.textContent = data.total;
 
             btnLike.classList.toggle('liked');
+            btnLike.textContent = btnLike.textContent === '♡' ? '♡' : '♡';
     });
 
 

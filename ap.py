@@ -432,11 +432,11 @@ def like_comment():
         cursor = conn.cursor()
 
         # Sumar un like
-        cursor.execute("UPDATE preg SET likes = IFNULL(likes, 0) + 1 WHERE id_post = %s", (comment_id,))
+        cursor.execute("UPDATE preg SET cont_likes = IFNULL(cont_likes, 0) + 1 WHERE id_post = %s", (comment_id,))
         conn.commit()
 
         # Obtener el total actualizado
-        cursor.execute("SELECT likes FROM preg WHERE id_post = %s", (comment_id,))
+        cursor.execute("SELECT cont_likes FROM preg WHERE id_post = %s", (comment_id,))
         total = cursor.fetchone()[0]
 
         cursor.close()
