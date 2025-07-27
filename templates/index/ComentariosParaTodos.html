@@ -48,8 +48,11 @@
         <input type="hidden" id="id_mat" name="id_mat" value="{{ id_mat }}">
         <button type="submit">Enviar</button>
       </form>
-      <div id="commentsSection"></div>
+      <div id="commentsSection"></div> 
   </main>
+<script>
+  const usuarioActual = {{ session.get('id_usu') | tojson }}; // NO BORRAAAAR ESTA LINEA WACHO
+</script>
 <script src="/static/js/comentarios.js"></script>
 <script src="/static/js/barralateral.js"></script>
 </body>

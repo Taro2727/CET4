@@ -29,6 +29,7 @@ async function cargarComentarios() {
             <span id="contador-${c.id_post}" class="contador-likes">0</span>
             <div class="area-responder" id="area-responder-${c.id_post}"></div>
             <div class="respuestas" id="respuestas-${c.id_post}" style="display: none;"></div>
+            ${c.id_usu == usuarioActual ? `<button class="btn-eliminar" onclick="eliminarComentario('${c.id_post}')">Eliminar</button>` : ''}
         `  ;
         
         section.appendChild(div);
@@ -122,10 +123,21 @@ if (estaVisible && !forzarApertura) {
     const res = await fetch('/get_respuestas/' + id_post + '?t=' + Date.now());
     const respuestas = await res.json();
     
-    // Se mantiene la clase original para cada respuesta individual: "respuesta"
-    divRespuestas.innerHTML = respuestas.length
-        ? respuestas.map(r => `<div class="respuesta-comentario"><p class="usuario-rta">${r.usuario || "Anónimo"}:</p> <p class="texto-rta">${r.cont}</p> </div>`).join('')
-        : '<div class="respuesta">No hay respuestas aún.</div>';
+     let html = '';
+    if (respuestas.length) {
+        respuestas.forEach(r => {
+            html += `
+                <div class="respuesta-comentario">
+                    <p class="usuario-rta">${r.usuario || "Anónimo"}:</p>
+                    <p class="texto-rta">${r.cont}</p>
+                    ${r.id_usu == usuarioActual ? `<button class="btn-eliminar" onclick="eliminarRespuesta('${r.id_com}')">Eliminar</button>` : ''}
+                </div>
+            `;
+        });
+    } else {
+        html = '<div class="respuesta">No hay respuestas aún.</div>';
+    }
+    divRespuestas.innerHTML = html;
 }
 
 
@@ -153,3 +165,34 @@ document.getElementById('commentForm').addEventListener('submit', async function
         alert("Error al enviar la pregunta");
     }
 });
+
+//---FUNCIONES DE ELIMINACIÓN DE COMENTARIOS Y RESPUESTAS---
+async function eliminarComentario(id_post) {
+    if (!confirm("¿Seguro que quieres eliminar esta pregunta?")) return;
+    const response = await fetch('/eliminar_comentario', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_post })
+    });
+    const result = await response.json();
+    if (result.success) {
+        await cargarComentarios();
+    } else {
+        alert("No se pudo eliminar.");
+    }
+}
+
+async function eliminarRespuesta(id_com) {
+    if (!confirm("¿Seguro que quieres eliminar esta respuesta?")) return;
+    const response = await fetch('/eliminar_respuesta', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_com })
+    });
+    const result = await response.json();
+    if (result.success) {
+        await cargarComentarios();
+    } else {
+        alert("No se pudo eliminar.");
+    }
+}

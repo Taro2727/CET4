@@ -347,14 +347,17 @@ def get_comentario():
         conn = mysql.connector.connect(**DB_CONFIG) # Usar DB_CONFIG
         cursor = conn.cursor(dictionary=True)
         # CAMBIO: Simplificado el if/else redundante.
-        cursor.execute("""
-            SELECT p.id_post, p.titulo, p.cont, p.fecha, u.nom_usu AS usuario
+        cursor = conn.cursor(dictionary=True)
+        if id_mat:
+         cursor.execute("""
+            SELECT p.id_post, p.titulo, p.cont, p.fecha, u.nom_usu AS usuario, p.id_usu
             FROM preg p
             LEFT JOIN usuario u ON p.id_usu = u.id_usu
             WHERE p.id_mat=%s
             ORDER BY p.fecha DESC
-        """, (id_mat,))
-        comentarios = cursor.fetchall()
+        """, (id_mat,)) 
+        else:
+            comentarios = cursor.fetchall()
         cursor.close()
         conn.close()
         return jsonify(comentarios)
@@ -404,7 +407,7 @@ def get_respuestas(id_post):
         conn = mysql.connector.connect(**DB_CONFIG) # Usar DB_CONFIG
         cursor = conn.cursor(dictionary=True)
         cursor.execute("""
-            SELECT r.cont, u.nom_usu AS usuario
+            SELECT r.id_com, r.cont, u.nom_usu AS usuario
             FROM rta r
             LEFT JOIN usuario u ON r.id_usu = u.id_usu
             WHERE r.id_post = %s
@@ -446,6 +449,53 @@ def like_comment():
     except Exception as e:
         print("Error en like_comment:", e)
         return jsonify({'success': False, 'error': str(e)}), 500
+
+#---RUTA PARA ELIMINAR COMENTARIOS---
+@app.route('/eliminar_comentario', methods=['POST'])
+def eliminar_comentario():
+    import mysql.connector
+    data = request.get_json()
+    id_post = data['id_post']
+    id_usu = session.get('id_usu')
+    if not id_usu:
+        return jsonify({'success': False, 'error': 'No autorizado'}), 401
+    conn = mysql.connector.connect(
+        host="yamanote.proxy.rlwy.net",
+        port=33483,
+        user="root",
+        password="BNeAADHQCVLNkxkYTyLSjUqSPVxfrWvH",
+        database="railway"
+    )
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM rta WHERE id_post=%s", (id_post,))
+    cursor.execute("DELETE FROM preg WHERE id_post=%s AND id_usu=%s", (id_post, id_usu))
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return jsonify({'success': True})
+
+#---RUTA PARA ELIMINAR RESPUESTAS---
+@app.route('/eliminar_respuesta', methods=['POST'])
+def eliminar_respuesta():
+    import mysql.connector
+    data = request.get_json()
+    id_com = data['id_com']
+    id_usu = session.get('id_usu')
+    if not id_usu:
+        return jsonify({'success': False, 'error': 'No autorizado'}), 401
+    conn = mysql.connector.connect(
+        host="yamanote.proxy.rlwy.net",
+        port=33483,
+        user="root",
+        password="BNeAADHQCVLNkxkYTyLSjUqSPVxfrWvH",
+        database="railway"
+    )
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM rta WHERE id_com=%s AND id_usu=%s", (id_com, id_usu))
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return jsonify({'success': True})
 
 if __name__ == "__main__":
     print("iniciando flask..")
