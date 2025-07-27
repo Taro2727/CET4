@@ -399,7 +399,6 @@ def responder():
 
 @app.route('/get_respuestas/<int:id_post>')
 def get_respuestas(id_post):
-    # CAMBIO: Eliminada la importación y conexión duplicada.
     try:
         conn = mysql.connector.connect(**DB_CONFIG) # Usar DB_CONFIG
         cursor = conn.cursor(dictionary=True)
@@ -432,12 +431,12 @@ def like_comment():
         conn = mysql.connector.connect(**DB_CONFIG)
         cursor = conn.cursor()
 
-        # Sumar un like (puedes personalizar la lógica para evitar duplicados por usuario)
-        cursor.execute("UPDATE preg SET likes = IFNULL(likes, 0) + 1 WHERE id_post = %s", (comment_id,))
+        # Sumar un like
+        cursor.execute("UPDATE preg SET cont_likes = IFNULL(cont_likes, 0) + 1 WHERE id_post = %s", (comment_id,))
         conn.commit()
 
         # Obtener el total actualizado
-        cursor.execute("SELECT likes FROM preg WHERE id_post = %s", (comment_id,))
+        cursor.execute("SELECT cont_likes FROM preg WHERE id_post = %s", (comment_id,))
         total = cursor.fetchone()[0]
 
         cursor.close()
