@@ -424,8 +424,9 @@ def get_respuestas(id_post):
 @login_required
 def like_comment():
     data = request.get_json()
+    print("Datos recibidos en /api/like:", data)
     comment_id = data.get('comment_id')
-    id_usu_like = data.get('user_like')
+    id_usu_like = current_user.id
     if not comment_id:
         return jsonify({'success': False, 'error': 'Falta comment_id'}), 400
     if not id_usu_like:
