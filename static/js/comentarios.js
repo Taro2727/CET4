@@ -38,7 +38,7 @@ async function cargarComentarios() {
             const res = await fetch('/api/like', {
                 method: 'POST',
                 headers: { 
-                    'Content-Type': 'application/json', // <--- ¡CON LA COMA!
+                    'Content-Type': 'application/json', 
                     'X-CSRFToken': csrfToken 
                 },
                 body: JSON.stringify({ comment_id: c.id_post })
