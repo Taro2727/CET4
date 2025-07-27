@@ -130,7 +130,7 @@ if (estaVisible && !forzarApertura) {
                 <div class="respuesta-comentario">
                     <p class="usuario-rta">${r.usuario || "Anónimo"}:</p>
                     <p class="texto-rta">${r.cont}</p>
-                    ${r.id_usu == usuarioActual ? `<button class="btn-eliminar" onclick="eliminarRespuesta('${r.id_com}')">Eliminar</button>` : ''}
+                    ${r.id_usu == usuarioActual ? `<button class="btn-eliminar" onclick="eliminarRespuesta('${r.id_com}')">Eliminar rta</button>` : ''}
                 </div>
             `;
         });
@@ -171,7 +171,10 @@ async function eliminarComentario(id_post) {
     if (!confirm("¿Seguro que quieres eliminar esta pregunta?")) return;
     const response = await fetch('/eliminar_comentario', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
         body: JSON.stringify({ id_post })
     });
     const result = await response.json();
@@ -186,7 +189,10 @@ async function eliminarRespuesta(id_com) {
     if (!confirm("¿Seguro que quieres eliminar esta respuesta?")) return;
     const response = await fetch('/eliminar_respuesta', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+         },
         body: JSON.stringify({ id_com })
     });
     const result = await response.json();

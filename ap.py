@@ -345,19 +345,16 @@ def get_comentario():
 
     try:
         conn = mysql.connector.connect(**DB_CONFIG) # Usar DB_CONFIG
-        cursor = conn.cursor(dictionary=True)
         # CAMBIO: Simplificado el if/else redundante.
         cursor = conn.cursor(dictionary=True)
-        if id_mat:
-         cursor.execute("""
+        cursor.execute("""
             SELECT p.id_post, p.titulo, p.cont, p.fecha, u.nom_usu AS usuario, p.id_usu
             FROM preg p
             LEFT JOIN usuario u ON p.id_usu = u.id_usu
             WHERE p.id_mat=%s
             ORDER BY p.fecha DESC
         """, (id_mat,)) 
-        else:
-            comentarios = cursor.fetchall()
+        comentarios = cursor.fetchall()
         cursor.close()
         conn.close()
         return jsonify(comentarios)
@@ -407,7 +404,7 @@ def get_respuestas(id_post):
         conn = mysql.connector.connect(**DB_CONFIG) # Usar DB_CONFIG
         cursor = conn.cursor(dictionary=True)
         cursor.execute("""
-            SELECT r.id_com, r.cont, u.nom_usu AS usuario
+            SELECT r.id_com, r.cont, u.nom_usu AS usuario, r.id_usu
             FROM rta r
             LEFT JOIN usuario u ON r.id_usu = u.id_usu
             WHERE r.id_post = %s
