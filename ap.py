@@ -421,24 +421,39 @@ def get_respuestas(id_post):
         return jsonify({"success": False, "error": f"Error inesperado: {e}"}), 500
 
 @app.route('/api/like', methods=['POST'])
+@login_required
 def like_comment():
     data = request.get_json()
     comment_id = data.get('comment_id')
+    id_usu_like = data.get('user_like')
     if not comment_id:
         return jsonify({'success': False, 'error': 'Falta comment_id'}), 400
+    if not id_usu_like:
+        return jsonify({'success': False, 'error': 'Falta id_usu_like'}), 2323
 
     try:
         conn = mysql.connector.connect(**DB_CONFIG)
         cursor = conn.cursor()
 
-        # Sumar un like
-        cursor.execute("UPDATE preg SET cont_likes = IFNULL(cont_likes, 0) + 1 WHERE id_post = %s", (comment_id,))
-        conn.commit()
+        # # Sumar un like
+        # cursor.execute("UPDATE preg SET cont_likes = IFNULL(cont_likes, 0) + 1 WHERE id_post = %s", (comment_id,))
+        # conn.commit()
+        # Paso 1: verificar si ya existe el like
+        cursor.execute("SELECT * FROM likes_comentarios WHERE id_post = %s AND id_usu = %s", (comment_id, id_usu_like))
+        existe = cursor.fetchone()
+        if existe:
+         # Ya había dado like → quitarlo
+            cursor.execute("UPDATE preg SET cont_likes = cont_likes - 1 WHERE id_post = %s", (comment_id,))
+            cursor.execute("DELETE FROM likes_comentarios WHERE id_post = %s AND id_usu = %s", (comment_id, id_usu_like))
+        else:
+        # No había dado like → agregarlo
+            cursor.execute("UPDATE preg SET cont_likes = IFNULL(cont_likes, 0) + 1 WHERE id_post = %s", (comment_id,))
+            cursor.execute("INSERT INTO likes_comentarios (id_post, id_usu) VALUES (%s, %s)", (comment_id, id_usu_like))
 
+        conn.commit()
         # Obtener el total actualizado
         cursor.execute("SELECT cont_likes FROM preg WHERE id_post = %s", (comment_id,))
         total = cursor.fetchone()[0]
-
         cursor.close()
         conn.close()
         return jsonify({'success': True, 'total': total})

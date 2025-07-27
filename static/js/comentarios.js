@@ -35,6 +35,7 @@ async function cargarComentarios() {
         section.appendChild(div);
         // Estas lineas de codigo hacen andar el corazon
         const btnLike = document.getElementById(`like-${c.id_post}`);
+        const user_like= usuarioActual;
         btnLike.addEventListener('click', async () => {
             const res = await fetch('/api/like', {
                 method: 'POST',
@@ -42,7 +43,7 @@ async function cargarComentarios() {
                     'Content-Type': 'application/json', 
                     'X-CSRFToken': csrfToken 
                 },
-                body: JSON.stringify({ comment_id: c.id_post })
+                body: JSON.stringify({ comment_id: c.id_post, user_like:user_like })
             });
             const data = await res.json();
 
