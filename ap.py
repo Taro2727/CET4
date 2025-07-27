@@ -9,7 +9,7 @@ from flask_wtf import CSRFProtect
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
 app = Flask(__name__)
-app.secret_key = 'mi_clave_secreta' # Clave secreta para sesiones, cookies, etc. ¡CAMBIAR EN PRODUCCIÓN!
+app.secret_key = 'mi_clave_secreta' # Clave secreta para sesiones, cookies, etc. 
 
 # --- Protección CSRF ---
 csrf = CSRFProtect(app)
@@ -258,7 +258,7 @@ def verificar():
             # Crear un objeto User y llamar a login_user()
             # CAMBIO: 'User' con 'U' mayúscula, ya que es el nombre de tu clase.
             user = User(usuario_data['id_usu'], usuario_data['nom_usu'], usuario_data['email'], usuario_data['contraseña'])
-            login_user(user) # ¡Este es el punto clave para iniciar sesión con Flask-Login!
+            login_user(user, remember=True)
             return jsonify({"exito": True, "mensaje": "Inicio de sesión exitoso"})
         else:
             # Si el usuario no existe o la contraseña es incorrecta
