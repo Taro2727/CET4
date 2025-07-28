@@ -1,5 +1,5 @@
 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-const usuarioActual = window.usuarioActual;
+const usuarioActual = document.querySelector('meta[name="usuario-id"]').content;
 window.onload = async function () {
     // Se mantiene la carga inicial de comentarios
     await cargarComentarios();
