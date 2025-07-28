@@ -506,11 +506,12 @@ def like_rta():
 
 #---RUTA PARA ELIMINAR COMENTARIOS---
 @app.route('/eliminar_comentario', methods=['POST'])
+@login_required
 def eliminar_comentario():
     import mysql.connector
     data = request.get_json()
     id_post = data['id_post']
-    id_usu = session.get('id_usu')
+    id_usu = current_user.id
     if not id_usu:
         return jsonify({'success': False, 'error': 'No autorizado'}), 401
     conn = mysql.connector.connect(
@@ -530,11 +531,12 @@ def eliminar_comentario():
 
 #---RUTA PARA ELIMINAR RESPUESTAS---
 @app.route('/eliminar_respuesta', methods=['POST'])
+@login_required
 def eliminar_respuesta():
     import mysql.connector
     data = request.get_json()
     id_com = data['id_com']
-    id_usu = session.get('id_usu')
+    id_usu = current_user.id
     if not id_usu:
         return jsonify({'success': False, 'error': 'No autorizado'}), 401
     conn = mysql.connector.connect(

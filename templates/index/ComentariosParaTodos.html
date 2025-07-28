@@ -51,7 +51,7 @@
       <div id="commentsSection"></div> 
   </main>
 <script>
-  const usuarioActual = {{ session.get('id_usu') | tojson }}; // NO BORRAAAAR ESTA LINEA WACHO
+    window.usuarioActual = {{ current_user.id or 'null' }}; // NO BORRAAAAR ESTA LINEA WACHO
 </script>
 <script src="/static/js/comentarios.js"></script>
 <script src="/static/js/barralateral.js"></script>
