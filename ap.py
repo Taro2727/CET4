@@ -340,6 +340,7 @@ def agregar_comentario():
 def get_comentario():
     # CAMBIO: Eliminada la importación y conexión duplicada.
     id_mat = request.args.get('id_mat')
+    id_usu =session.get('id_usu')
     if not id_mat: # CAMBIO: Validación si no se pasa id_mat
         return jsonify({"success": False, "error": "ID de materia requerido"}), 400
 
@@ -348,12 +349,16 @@ def get_comentario():
         # CAMBIO: Simplificado el if/else redundante.
         cursor = conn.cursor(dictionary=True)
         cursor.execute("""
-            SELECT p.id_post, p.titulo, p.cont, p.fecha, u.nom_usu AS usuario, p.id_usu
+            SELECT p.id_post, p.titulo, p.cont, p.fecha, u.nom_usu AS usuario, p.id_usu, p.cont_likes,
+            EXISTS(
+                 SELECT 1 FROM likes_comentarios l
+                 WHERE l.id_post = p.id_post AND l.id_usu = %s
+               )AS likeado_por_usuario
             FROM preg p
             LEFT JOIN usuario u ON p.id_usu = u.id_usu
             WHERE p.id_mat=%s
             ORDER BY p.fecha DESC
-        """, (id_mat,)) 
+        """, (id_usu, id_mat)) 
         comentarios = cursor.fetchall()
         cursor.close()
         conn.close()
@@ -403,12 +408,17 @@ def get_respuestas(id_post):
         conn = mysql.connector.connect(**DB_CONFIG) # Usar DB_CONFIG
         cursor = conn.cursor(dictionary=True)
         cursor.execute("""
-            SELECT r.id_com, r.cont, u.nom_usu AS usuario, r.id_usu
-            FROM rta r
-            LEFT JOIN usuario u ON r.id_usu = u.id_usu
-            WHERE r.id_post = %s
-            ORDER BY r.id_com ASC
-        """, (id_post,))
+            SELECT r.id_com, r.cont, u.nom_usu AS usuario, r.id_usu,
+            (SELECT COUNT(*) FROM likes_rta lr WHERE lr.id_com = r.id_com) AS cont_likes,
+            EXISTS(
+                SELECT 1 FROM likes_rta lr2
+                WHERE lr2.id_com = r.id_com AND lr2.id_usu = %s
+            ) AS likeado_por_usuario
+        FROM rta r
+        LEFT JOIN usuario u ON r.id_usu = u.id_usu
+        WHERE r.id_post = %s
+        ORDER BY r.id_com ASC
+        """, (current_user.id, id_post))
         respuestas = cursor.fetchall()
         cursor.close()
         conn.close()
@@ -420,6 +430,7 @@ def get_respuestas(id_post):
         print(f"Error inesperado al obtener respuestas: {e}")
         return jsonify({"success": False, "error": f"Error inesperado: {e}"}), 500
 
+#---RUTA PARA DAR LIKE A UN COMENTARIO---
 @app.route('/api/like', methods=['POST'])
 @login_required
 def like_comment():
@@ -461,6 +472,37 @@ def like_comment():
     except Exception as e:
         print("Error en like_comment:", e)
         return jsonify({'success': False, 'error': str(e)}), 500
+
+#---RUTA PARA DAR LIKE A UNA RESPUESTA---
+@app.route('/api/like_respuesta', methods=['POST'])
+def like_rta():
+    import mysql.connector
+    data = request.get_json()
+    id_com = data.get('id_com')
+    id_usu = session.get('id_usu')
+    if not id_usu:
+        return jsonify({'success': False, 'error': 'No autorizado'}), 401
+
+    conn = mysql.connector.connect(**DB_CONFIG)
+    cursor = conn.cursor()
+    cursor.execute("SELECT 1 FROM likes_rta WHERE id_com=%s AND id_usu=%s", (id_com, id_usu))
+    liked = cursor.fetchone()
+    if liked:
+        # Sacar like
+        cursor.execute("DELETE FROM likes_rta WHERE id_com=%s AND id_usu=%s", (id_com, id_usu))
+        conn.commit()
+        liked_now = False
+    else:
+        # Agregar like
+        cursor.execute("INSERT INTO likes_rta (id_com, id_usu) VALUES (%s, %s)", (id_com, id_usu))
+        conn.commit()
+        liked_now = True
+    # Contar likes totales
+    cursor.execute("SELECT COUNT(*) FROM likes_rta WHERE id_com=%s", (id_com,))
+    total = cursor.fetchone()[0]
+    cursor.close()
+    conn.close()
+    return jsonify({'total': total, 'liked': liked_now})
 
 #---RUTA PARA ELIMINAR COMENTARIOS---
 @app.route('/eliminar_comentario', methods=['POST'])
