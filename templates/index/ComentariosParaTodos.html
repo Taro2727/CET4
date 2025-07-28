@@ -50,9 +50,10 @@
       </form>
       <div id="commentsSection"></div> 
   </main>
-<script>
-    window.usuarioActual = {{ current_user.id or 'null' }}; // NO BORRAAAAR ESTA LINEA WACHO
-</script>
+<!-- Seguridad CSP: pasar ID por meta -->
+    <meta name="usuario-id" content="{{ current_user.id or 'null' }}"> <!--NO BORRAR ESTA LINEA-->
+
 <script src="/static/js/comentarios.js"></script>
 <script src="/static/js/barralateral.js"></script>
 </body>
+</html>

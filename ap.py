@@ -3,14 +3,38 @@ from flask import Flask, request, jsonify, render_template, session, redirect, u
 import mysql.connector # Conectar a MySQL
 from werkzeug.security import generate_password_hash, check_password_hash
 
+# Importar Flask-WTF para CSRF
 from flask_wtf import CSRFProtect
 
 # Importar Flask-Login
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
+# Importar Flask-Talisman 
+from flask import Flask
+from flask_talisman import Talisman
+
 app = Flask(__name__)
 app.secret_key = 'mi_clave_secreta' # Clave secreta para sesiones, cookies, etc. 
 
+#flask talisman
+csp = {
+    'default-src': ["'self'"],
+    'style-src': ["'self'", "https://cdn.jsdelivr.net", "'unsafe-inline'"],
+    'script-src': ["'self'", 'https://cdn.jsdelivr.net'],
+    'font-src': ["'self'", 'https://fonts.googleapis.com', 'https://fonts.gstatic.com'],
+    'frame-ancestors': ["'self'"]
+}
+
+# Inicializar Talisman con todas las protecciones
+Talisman(
+    app,
+    force_https=True,                          # Redirige HTTP → HTTPS
+    strict_transport_security=True,            # Activa HSTS (solo deja pasar con un link "seguro")
+    frame_options='DENY',                      # Bloquea clickjacking
+    content_security_policy=csp,               # Aplica tu CSP personalizada
+    x_content_type_options='nosniff',          # Evita sniffing de MIME
+    referrer_policy='no-referrer'              # Protege datos en enlaces salientes
+)
 # --- Protección CSRF ---
 csrf = CSRFProtect(app)
 
