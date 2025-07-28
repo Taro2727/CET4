@@ -535,28 +535,32 @@ def eliminar_comentario():
     data = request.get_json()
     if not data or 'id_post' not in data:
         return jsonify({'success': False, 'error': 'Datos inválidos'}), 400
+
     id_post = data['id_post']
-
     id_usu = current_user.id
-
-    if not id_usu:
-        return jsonify({'success': False, 'error': 'No autorizado'}), 401
 
     try:
         conn = mysql.connector.connect(**DB_CONFIG)
         cursor = conn.cursor()
 
-        #elimina los likes de rtas
-        cursor.execute("DELETE FROM likes_rtas WHERE id_post=%s",(id_post,))
+        # Obtener las respuestas asociadas a la pregunta
+        cursor.execute("SELECT id_com FROM rta WHERE id_post = %s", (id_post,))
+        respuestas = cursor.fetchall()
+        id_rtas = [row[0] for row in respuestas]
 
-        #elimina los likes de la pregunta 
-        cursor.execute("DELETE FROM likes_comentarios WHERE id_post=%s",(id_post,))
+        # Borrar los likes de esas respuestas (si hay)
+        if id_rtas:
+            placeholders = ','.join(['%s'] * len(id_rtas))
+            cursor.execute(f"DELETE FROM likes_rta WHERE id_com IN ({placeholders})", tuple(id_rtas))
 
-        # Eliminar respuestas asociadas (no requiere autorización)
-        cursor.execute("DELETE FROM rta WHERE id_post=%s", (id_post,))
+        # Borrar las respuestas asociadas a la pregunta (si hay)
+        cursor.execute("DELETE FROM rta WHERE id_post = %s", (id_post,))
 
-        # Intentar borrar la pregunta, pero sólo si es del usuario actual
-        cursor.execute("DELETE FROM preg WHERE id_post=%s AND id_usu=%s", (id_post, id_usu))
+        # Borrar los likes de la pregunta (si hay)
+        cursor.execute("DELETE FROM likes_comentarios WHERE id_post = %s", (id_post,))
+
+        # Borrar la pregunta, pero solo si pertenece al usuario actual
+        cursor.execute("DELETE FROM preg WHERE id_post = %s AND id_usu = %s", (id_post, id_usu))
         borrados = cursor.rowcount
 
         if borrados == 0:
@@ -569,9 +573,13 @@ def eliminar_comentario():
     except Exception as e:
         print("Error al eliminar comentario:", e)
         return jsonify({'success': False, 'error': 'Error interno al eliminar comentario'}), 500
+
     finally:
         cursor.close()
         conn.close()
+
+
+
 
 #---RUTA PARA ELIMINAR RESPUESTAS---
 @app.route('/eliminar_respuesta', methods=['POST'])
