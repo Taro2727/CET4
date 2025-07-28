@@ -20,7 +20,7 @@ app.secret_key = 'mi_clave_secreta' # Clave secreta para sesiones, cookies, etc.
 csp = {
     'default-src': ["'self'"],
     'style-src': ["'self'", "https://cdn.jsdelivr.net", "'unsafe-inline'"],
-    'script-src': ["'self'", 'https://cdn.jsdelivr.net'],
+    'script-src': ["'self'", 'https://cdn.jsdelivr.net', "'unsafe-inline'"],
     'font-src': ["'self'", 'https://fonts.googleapis.com', 'https://fonts.gstatic.com'],
     'frame-ancestors': ["'self'"]
 }
