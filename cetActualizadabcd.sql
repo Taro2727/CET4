@@ -82,8 +82,6 @@ CREATE TABLE `likes_rta` (
   `id_com` int NOT NULL,
   `id_usu` int NOT NULL,
   PRIMARY KEY (`id_like_rta`),
-  UNIQUE KEY `id_com` (`id_com`),
-  UNIQUE KEY `id_usu` (`id_usu`),
   CONSTRAINT `likes_rta_ibfk_1` FOREIGN KEY (`id_com`) REFERENCES `rta` (`id_com`),
   CONSTRAINT `likes_rta_ibfk_2` FOREIGN KEY (`id_usu`) REFERENCES `usuario` (`id_usu`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
