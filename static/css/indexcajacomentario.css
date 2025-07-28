@@ -240,6 +240,10 @@ input{
   margin-top: 8px;
   margin-right: 5px;
 }
+.btn-eliminar{
+  display: inline-block;
+
+}
 .texto-comentario {
   display: block;
   margin-bottom: 12px;

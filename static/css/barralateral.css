@@ -39,6 +39,7 @@
     color: white;
     font-size: 15px;
     margin: 5vh;
+    margin-bottom: -2vh;
     cursor: pointer;
 }
 
