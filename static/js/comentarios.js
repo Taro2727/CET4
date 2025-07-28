@@ -1,4 +1,5 @@
 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+const usuarioActual = window.usuarioActual;
 window.onload = async function () {
     // Se mantiene la carga inicial de comentarios
     await cargarComentarios();
@@ -49,7 +50,8 @@ async function cargarComentarios() {
             const data = await res.json();
             const contador = document.getElementById(`contador-${c.id_post}`);
             contador.textContent = data.total;
-            await cargarComentarios();
+            btnLike.classList.toggle('liked', data.liked);
+            btnLike.textContent = data.liked ? '❤️' : '♡';
     });
 
 
@@ -204,8 +206,8 @@ async function eliminarComentario(id_post) {
     if (result.success) {
         await cargarComentarios();
     } else {
-        alert("No se pudo eliminar.");
-    }
+        alert(result.error || "No se pudo eliminar.");
+}
 }
 
 async function eliminarRespuesta(id_com) {

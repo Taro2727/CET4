@@ -340,7 +340,7 @@ def agregar_comentario():
 def get_comentario():
     # CAMBIO: Eliminada la importación y conexión duplicada.
     id_mat = request.args.get('id_mat')
-    id_usu =session.get('id_usu')
+    id_usu = current_user.id
     if not id_mat: # CAMBIO: Validación si no se pasa id_mat
         return jsonify({"success": False, "error": "ID de materia requerido"}), 400
 
@@ -475,11 +475,11 @@ def like_comment():
 
 #---RUTA PARA DAR LIKE A UNA RESPUESTA---
 @app.route('/api/like_respuesta', methods=['POST'])
+@login_required
 def like_rta():
-    import mysql.connector
     data = request.get_json()
     id_com = data.get('id_com')
-    id_usu = session.get('id_usu')
+    id_usu = current_user.id
     if not id_usu:
         return jsonify({'success': False, 'error': 'No autorizado'}), 401
 
@@ -508,26 +508,46 @@ def like_rta():
 @app.route('/eliminar_comentario', methods=['POST'])
 @login_required
 def eliminar_comentario():
-    import mysql.connector
     data = request.get_json()
+    if not data or 'id_post' not in data:
+        return jsonify({'success': False, 'error': 'Datos inválidos'}), 400
     id_post = data['id_post']
+
     id_usu = current_user.id
+
     if not id_usu:
         return jsonify({'success': False, 'error': 'No autorizado'}), 401
-    conn = mysql.connector.connect(
-        host="yamanote.proxy.rlwy.net",
-        port=33483,
-        user="root",
-        password="BNeAADHQCVLNkxkYTyLSjUqSPVxfrWvH",
-        database="railway"
-    )
-    cursor = conn.cursor()
-    cursor.execute("DELETE FROM rta WHERE id_post=%s", (id_post,))
-    cursor.execute("DELETE FROM preg WHERE id_post=%s AND id_usu=%s", (id_post, id_usu))
-    conn.commit()
-    cursor.close()
-    conn.close()
-    return jsonify({'success': True})
+
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor()
+
+        #elimina los likes de rtas
+        cursor.execute("DELETE FROM likes_rtas WHERE id_post=%s",(id_post,))
+
+        #elimina los likes de la pregunta 
+        cursor.execute("DELETE FROM likes_comentarios WHERE id_post=%s",(id_post,))
+
+        # Eliminar respuestas asociadas (no requiere autorización)
+        cursor.execute("DELETE FROM rta WHERE id_post=%s", (id_post,))
+
+        # Intentar borrar la pregunta, pero sólo si es del usuario actual
+        cursor.execute("DELETE FROM preg WHERE id_post=%s AND id_usu=%s", (id_post, id_usu))
+        borrados = cursor.rowcount
+
+        if borrados == 0:
+            conn.rollback()
+            return jsonify({'success': False, 'error': 'No sos dueño del comentario'}), 403
+
+        conn.commit()
+        return jsonify({'success': True})
+
+    except Exception as e:
+        print("Error al eliminar comentario:", e)
+        return jsonify({'success': False, 'error': 'Error interno al eliminar comentario'}), 500
+    finally:
+        cursor.close()
+        conn.close()
 
 #---RUTA PARA ELIMINAR RESPUESTAS---
 @app.route('/eliminar_respuesta', methods=['POST'])
@@ -547,6 +567,7 @@ def eliminar_respuesta():
         database="railway"
     )
     cursor = conn.cursor()
+    cursor.execute("DELETE FROM likes_rta WHERE id_com=%s",(id_com,))
     cursor.execute("DELETE FROM rta WHERE id_com=%s AND id_usu=%s", (id_com, id_usu))
     conn.commit()
     cursor.close()
