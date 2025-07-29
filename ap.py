@@ -218,7 +218,8 @@ def cambiar_contra():
     hay_usuario=cursor.fetchone()
     if not hay_usuario:
         return jsonify({'error': 'Email no registrado'}),404
-
+    expiracion = datetime.utcnow() + timedelta(minutes=5)
+    session['email_para_verificacion'] = email
     # Generar código OTP
     otp = ''.join(secrets.choice(string.digits) for _ in range(6))
     expiracion = datetime.utcnow() + timedelta(minutes=5)
@@ -246,8 +247,92 @@ def cambiar_contra():
         return jsonify({'error': 'No se pudo enviar el código'}), 500
 
 #------------------------------------------------
-@app.route("/codigo")
-    
+@app.route('/Verificar_codigo', methods=['POST'])
+def verificar_codigo():
+    data = request.get_json()
+    email = session.get('email_para_verificacion')
+    codigo_enviado = data.get('cod')
+
+    if not email or not codigo_enviado:
+        return jsonify({'error': 'Email y código requeridos'}), 400
+
+    conn = mysql.connector.connect(**DB_CONFIG)
+    cursor = conn.cursor(dictionary=True)
+
+    # Buscar el código en la tabla
+    cursor.execute("""
+        SELECT codigo, expiracion FROM codigos_verificacion
+        WHERE email = %s AND tipo = %s
+    """, (email, 'recuperacion'))
+
+    resultado = cursor.fetchone()
+    if not resultado:
+        cursor.close()
+        conn.close()
+        return jsonify({'error': 'No se encontró código para ese email'}), 404
+
+    codigo_guardado = resultado['codigo']
+    expiracion = resultado['expiracion']
+
+    # Validar expiración
+    if datetime.utcnow() > expiracion:
+        cursor.execute("DELETE FROM codigos_verificacion WHERE email = %s AND tipo = %s", (email, 'recuperacion'))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return jsonify({'error': 'El código ha expirado'}), 400
+
+    # Validar coincidencia
+    if codigo_enviado != codigo_guardado:
+        cursor.close()
+        conn.close()
+        return jsonify({'error': 'Código incorrecto'}), 401
+
+    # Código correcto → eliminar código de la tabla
+    cursor.execute("DELETE FROM codigos_verificacion WHERE email = %s AND tipo = %s", (email, 'recuperacion'))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    # Guardás el email en sesión por si querés usarlo en el paso siguiente
+    session['email_para_cambio'] = email
+    return jsonify({'success': True}), 200
+#----------------------------------------------------------------------------
+# verificar contraseña NUEVAAAAAA
+
+@app.route('/ActualizarContra', methods=['POST'])
+def ActualizarContra():
+    data = request.get_json()
+    contra=data.get('newpassword')
+    confcontra=data.get('newconfirm')
+    email = session.get('email_para_cambio')  # Recuperás el email guardado
+   
+    if not contra or not confcontra:
+        return jsonify({"exito": False, "error": "Faltan campos requeridos"}), 400
+
+    if contra != confcontra:
+        # CAMBIO: Devolver JSON consistente con otras rutas de API
+        return jsonify({"exito": False, "error": "La contraseña y la confirmación no son iguales, intente nuevamente"}), 400
+
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG) # Usar DB_CONFIG
+        cursor = conn.cursor()
+        #hasheo de contraseña xd
+        hash_contra = generate_password_hash(contra)
+        sql = "UPDATE usuarios SET contraseña = %s WHERE email = %s"
+        valores = ( hash_contra, email)
+        cursor.execute(sql, valores)
+        conn.commit()
+        # Devolver JSON consistente
+        return jsonify({"exito": True, "mensaje": "Actualizaste tu contraseña!!!"})
+    except Exception as e:
+        print(f"Error al actualizar contraseña: {e}") # Para depuración
+        # Devolver JSON consistente
+        return jsonify({"exito": False, "error": f"Error al actualizar contraseña: {e}"}), 500
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()  
 
 #-----------------------------------------------
 #rutas para las páginas de inicio de sesión
