@@ -265,7 +265,7 @@ def verificar_codigo():
         WHERE email = %s AND tipo = %s
     """, (email, 'recuperacion'))
 
-    resultado = cursor.fetchone()
+    resultado = cursor.fetchall()
     if not resultado:
         cursor.close()
         conn.close()
