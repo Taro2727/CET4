@@ -257,7 +257,7 @@ def verificar_codigo():
         return jsonify({'error': 'Email y código requeridos'}), 400
 
     conn = mysql.connector.connect(**DB_CONFIG)
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor(dictionary=True, buffered=True)
 
     # Buscar el código en la tabla
     cursor.execute("""
@@ -265,7 +265,7 @@ def verificar_codigo():
         WHERE email = %s AND tipo = %s
     """, (email, 'recuperacion'))
 
-    resultado = cursor.fetchall()
+    resultado = cursor.fetchone()
     if not resultado:
         cursor.close()
         conn.close()

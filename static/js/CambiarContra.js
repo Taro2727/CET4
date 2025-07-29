@@ -53,7 +53,7 @@ document.getElementById('correo-recuperacion').addEventListener('submit', async 
 
     if (res.ok) {
       alert('cambiaste tu contraseña');
-      window.location.href = '/'
+      window.location.href = '/';
     } else {
       alert(result.error || 'Hubo un problema');
     }
