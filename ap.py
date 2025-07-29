@@ -9,6 +9,17 @@ from flask_wtf import CSRFProtect
 # Importar Flask-Login
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
+#importar Flask-Mail
+from flask_mail import Mail, Message
+
+#importar flask-Pyotp
+from datetime import datetime, timedelta
+import pyotp
+import random
+import string
+import secrets
+
+
 # Importar Flask-Talisman 
 from flask import Flask
 from flask_talisman import Talisman
@@ -47,6 +58,36 @@ DB_CONFIG = {
     'database': "railway"
 }
 
+#-C-O-N-F-I-G-U-R-A-C-I-O-N--M-A-I-L
+
+app.config.update(
+    MAIL_SERVER='smtp.gmail.com',
+    MAIL_PORT=587,
+    MAIL_USE_TLS=True,
+    MAIL_USERNAME='soportes.zettinno.cet@gmail.com',
+    MAIL_PASSWORD='tplb flie cpya oxos',
+    MAIL_DEFAULT_SENDER=('cet', 'soportes.zettinno.cet@gmail.com')
+)
+mail = Mail(app)
+
+#------------------------------------
+
+#----F-U-N-C-I-O-N-E-S--P-Y-O-T-P----
+#.....despues las podemos usar.......
+
+def generar_otp(intervalo=600):
+    secreto = pyotp.random_base32()  
+    totp = pyotp.TOTP(secreto, interval=intervalo)
+    codigo = totp.now()
+    return secreto, codigo
+
+def verificar_otp(secreto, codigo, intervalo=600):
+    totp = pyotp.TOTP(secreto, interval=intervalo)
+    return totp.verify(codigo)
+
+
+#------------------------------------
+
 # --- Inicializar Flask-Login ---
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -82,6 +123,7 @@ def load_user(user_id):
     except mysql.connector.Error as err:
         print(f"Error al cargar usuario de DB: {err}")
         return None
+    
 
 # --- RUTAS DE NAVEGACIÓN GENERAL ---
 @app.route('/') #ruta para la página de inicio
@@ -145,10 +187,69 @@ def dataregistro():
 #hasta aca es lo de crear cuenta
 #________________________________
 
-#ACA RUTASSSSSS DINAMICAAAAAAAS
+#ACA RUTASS PROVISORIAS (2FA)
+
+@app.route("/actualizar")
+def actualizar():
+    return render_template('index/1ProvisorioActuContra.html')
+
+@app.route("/cambiar")
+def Cambiar():
+    return render_template('index/1ProvisorioCambiarContra.html')
+
+@app.route("/IngresarCodigo")
+def otp():
+    return render_template('index/1ProvisorioOTP.html')
+#-----------------------------------------------
+# PROCESO DE CARGAR EL CORREO EN LA BD Y HACER EL CODIGUITO OTP
+
+@app.route('/CambiarContra', methods=['POST'])
+def cambiar_contra():
+    data = request.get_json()
+    email = data.get('email')
+    conn = mysql.connector.connect(**DB_CONFIG) # Usar DB_CONFIG
+    cursor = conn.cursor()
+
+    if not email:
+        return jsonify({'error': 'Email requerido'}), 400
+
+    # Simular búsqueda de usuario en BD
+    cursor.execute("SELECT * FROM usuario where email=%s",(email,))
+    hay_usuario=cursor.fetchone()
+    if not hay_usuario:
+        return jsonify({'error': 'Email no registrado'}),404
+
+    # Generar código OTP
+    otp = ''.join(secrets.choice(string.digits) for _ in range(6))
+    expiracion = datetime.utcnow() + timedelta(minutes=5)
+
+    cursor.execute("""
+        INSERT INTO codigos_verificacion (email, codigo, tipo, expiracion)
+        VALUES (%s, %s, %s, %s)
+        ON DUPLICATE KEY UPDATE 
+            codigo = VALUES(codigo), 
+            tipo = VALUES(tipo), 
+            expiracion = VALUES(expiracion)
+    """, (email, otp, 'recuperacion', expiracion))
+    conn.commit()
+
+    # ✉️ Enviar correo con el código
+    try:
+        msg = Message("Tu código de verificación",
+                  sender=app.config['MAIL_USERNAME'],
+                  recipients=[email])
+        msg.body = f"Tu código de verificacion es: {otp}"
+        mail.send(msg)
+        return jsonify({'success': True}), 200
+    except Exception as e:
+        print("Error enviando el correo:", e)
+        return jsonify({'error': 'No se pudo enviar el código'}), 500
+
+#------------------------------------------------
+@app.route("/codigo")
+    
 
 #-----------------------------------------------
-
 #rutas para las páginas de inicio de sesión
 @app.route("/iniciarsesion")
 def iniciarsesion():

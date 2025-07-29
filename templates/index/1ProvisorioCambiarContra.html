@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ingresar Correo - CET</title>
+  <link rel="stylesheet" href="/static/css/estilocrearcuenta.css"/>
+   <meta name="csrf-token" content="{{ csrf_token() }}">
+</head>
+<body>
+
+  <div class="fondo">
+    <video autoplay muted loop class="video">
+      <source src="/static/utils/img/fondo_login.mp4" type="video/mp4" />
+    </video>
+  </div>
+
+  <main class="contenedor">
+    <section class="presentacion">
+      <figure class="cota">
+        <figcaption class="globo">¡Hola pon tu correo pequeño olvidadizo!</figcaption>
+        <img class="masimg" src="/static/utils/img/zettinocrea.png" alt="Mascota Zettino" />
+      </figure>
+    </section>
+
+    <section class="formulario">
+      <h1>¡Otra vez por aqui!</h1>
+      <form id="correo-recuperacion">
+        <div class="input-group">
+          <label for="email">Correo electrónico</label>
+          <input type="email" id="email" name="email" required />
+        </div>
+        </div>
+        <button type="submit">Enviar Codigo</button>
+      </form>
+    </section>
+  </main>
+
+  <script src="/static/js/CambiarContra.js"></script>
+</body>
+</html>
