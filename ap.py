@@ -489,6 +489,7 @@ def verificar():
 @login_required # Decorador para proteger la ruta de logout
 def logout():
     logout_user() # Función de Flask-Login para cerrar sesión
+    session.clear()
     flash('Has cerrado sesión correctamente.', 'success')
     return redirect(url_for('inicio'))
 
