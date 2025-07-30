@@ -296,6 +296,7 @@ def verificar_codigo():
 
     # Guardás el email en sesión por si querés usarlo en el paso siguiente
     session['email_para_cambio'] = email
+    session.permanent = True
     return jsonify({'success': True}), 200
 #----------------------------------------------------------------------------
 # verificar contraseña NUEVAAAAAA
@@ -319,7 +320,7 @@ def ActualizarContra():
         cursor = conn.cursor()
         #hasheo de contraseña xd
         hash_contra = generate_password_hash(contra)
-        sql = "UPDATE usuarios SET contraseña = %s WHERE email = %s"
+        sql = "UPDATE usuario SET contraseña = %s WHERE email = %s"
         valores = ( hash_contra, email)
         cursor.execute(sql, valores)
         conn.commit()
