@@ -303,6 +303,11 @@ def verificar_codigo():
 
 @app.route('/ActualizarContra', methods=['POST'])
 def ActualizarContra():
+    if 'email_para_cambio' not in session:
+        return jsonify({
+            "exito": False,
+            "error": "No estás autorizado para actualizar la contraseña. Verificá tu código primero."
+        }), 403
     data = request.get_json()
     contra=data.get('newpassword')
     confcontra=data.get('newconfirm')
@@ -324,6 +329,8 @@ def ActualizarContra():
         valores = ( hash_contra, email)
         cursor.execute(sql, valores)
         conn.commit()
+        #se limpia variable
+        session.pop('email_para_cambio', None)
         # Devolver JSON consistente
         return jsonify({"exito": True, "mensaje": "Actualizaste tu contraseña!!!"})
     except Exception as e:
