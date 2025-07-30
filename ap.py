@@ -434,7 +434,7 @@ def index6toprog():
 def index7moprog():
     return render_template("index/indexdseptimo.html")
 
-#-------------------------------------------------------
+#--------------------------------------------------------------------------------------------
 #a partir de aca empieza el login/inicio de sesión
 @app.route('/verificar', methods=['POST'])
 def verificar():
