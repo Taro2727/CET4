@@ -195,7 +195,7 @@ def actualizar():
 
 @app.route("/cambiar")
 def Cambiar():
-    return render_template('index/1ProvisorioCambiarContra.html')
+    return render_template('index/1ProvisorioEnviarCorreo.html')
 
 @app.route("/IngresarCodigo")
 def otp():
