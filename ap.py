@@ -127,12 +127,6 @@ def load_user(user_id):
 
 # --- RUTAS DE NAVEGACIÓN GENERAL ---
 @app.route('/') #ruta para la página de inicio
-def inicioo():
-    if current_user.is_authenticated:
-        return redirect(url_for('indexhomeoinicio'))  # Redirige si ya está logueado
-    return render_template('index/indexprincipal.html')  # Si no va al menu principal
-
-@app.route('/inicio') #ruta para la página de inicio
 def inicio():
     if current_user.is_authenticated:
         return redirect(url_for('indexhomeoinicio'))  # Redirige si ya está logueado
@@ -357,7 +351,9 @@ def iniciarsesion():
 
 @app.route('/indexhomeoinicio') #ruta para la página de inicio
 def indexhomeoinicio():
-    return render_template('index/indexhomeoinicio.html')
+    if not current_user.is_authenticated:
+        return redirect(url_for('iniciarsesion'))  # O a otra vista pública
+    return render_template('index/indexhomeoinicio.html') 
 
 #desde aca se elige la modalidad
 @app.route('/programacion') #ruta para la página de programación
@@ -492,12 +488,16 @@ def verificar():
 
 # --- Cierre de Sesión ---
 @app.route('/logout')
-@login_required # Decorador para proteger la ruta de logout
+@login_required
 def logout():
-    logout_user() # Función de Flask-Login para cerrar sesión
+    logout_user()
     session.clear()
-    flash('Has cerrado sesión correctamente.', 'success')
-    return redirect(url_for('inicio'))
+    resp = redirect(url_for('inicio'))
+    # Borrar la cookie remember (clave por defecto: remember_token)
+    resp.delete_cookie('remember_token')
+    return resp
+
+
 
 
 #_____________________________________________________________________________________
