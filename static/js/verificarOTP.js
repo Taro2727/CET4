@@ -19,14 +19,9 @@ document.getElementById('otp').addEventListener('submit', async (e) => {
     if (res.ok && result.success) {
       alert('¡Código verificado correctamente!');
 
-      if (result.redirigir) {
-        // ⚡️ Es registro → redirigimos al formulario para completar nombre y contraseña
+      if (result.success && result.redirigir) {
         window.location.href = result.redirigir;
-      } else {
-        // 🔁 Es recuperación → redirigimos al cambio de contraseña
-        window.location.href = '/ActualizarContra';
       }
-
     } else {
       alert(result.error || 'Hubo un problema con la verificación');
     }

@@ -319,23 +319,16 @@ def verificar_codigo():
         cursor.close()
         conn.close()
 
-    if not ya_existe:
-        # Es registro y no existe → que el frontend redirija al formulario
-        return jsonify({'success': True, 'redirigir': '/crearcuenta'}), 200
-
-    # Si ya existía, igual lo dejamos pasar (ya verificó código)
-    return jsonify({'success': True}), 200
+        if not ya_existe:
+            return jsonify({'success': True, 'redirigir': '/crearcuenta'}), 200
+        else:
+            return jsonify({'success': True, 'redirigir': '/actualizar'}), 200  # 👈 Redirigir a cambiar contraseña
 
 #----------------------------------------------------------------------------
 # verificar contraseña NUEVAAAAAA
 
 @app.route('/ActualizarContra', methods=['POST'])
 def ActualizarContra():
-    if 'email_para_cambio' not in session:
-        return jsonify({
-            "exito": False,
-            "error": "No estás autorizado para actualizar la contraseña. Verificá tu código primero."
-        }), 403
     data = request.get_json()
     contra=data.get('newpassword')
     confcontra=data.get('newconfirm')
@@ -357,8 +350,6 @@ def ActualizarContra():
         valores = ( hash_contra, email)
         cursor.execute(sql, valores)
         conn.commit()
-        #se limpia variable
-        session.pop('email_para_cambio', None)
         # Devolver JSON consistente
         return jsonify({"exito": True, "mensaje": "Actualizaste tu contraseña!!!"})
     except Exception as e:
@@ -488,10 +479,7 @@ def verificar():
     # Validación básica de que los datos llegaron.
     if not email or not contraseña:
         return jsonify({"exito": False, "error": "Email y contraseña son requeridos"}), 400
-    
-    #hacer el codigo otp (desde la ruta ya hecha anteriormente, tmb desde esa ruta hacer q te lleve a la verificacion y q dsps venga para aca)
 
-    #if codigo verificacion hecho=
     try:
         # Conexión a la base de datos y consulta del usuario.
         conn = mysql.connector.connect(**DB_CONFIG) # Usar DB_CONFIG
@@ -521,8 +509,7 @@ def verificar():
     except Exception as e:
         print(f"Error inesperado en verificar: {e}")
         return jsonify({"exito": False, "error": f"Error inesperado: {e}"}), 500
-    #else
-    #return jsonifi({error: no ingresaste el codigo})
+
 
 # --- Cierre de Sesión ---
 @app.route('/logout')
