@@ -13,15 +13,21 @@ document.getElementById('otp').addEventListener('submit', async (e) => {
       },
       body: JSON.stringify({ cod })
     });
-
+//<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>
     const result = await res.json();
 
     if (res.ok && result.success) {
       alert('¡Código verificado correctamente!');
 
-      if (result.success && result.redirigir) {
-        window.location.href = result.redirigir;
+      if (result.success && result.redirigir=='registrar') {
+        window.location.href = '/crearcuenta';
+      }else if (result.success && result.redirigir=='cambiar_contra'){
+        window.location.href = '/actualizar';
+      }else{
+        alert(result.error || 'hubo un problema (gav linea 27 verificarOTP)');
       }
+
+
     } else {
       alert(result.error || 'Hubo un problema con la verificación');
     }

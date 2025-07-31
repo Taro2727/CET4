@@ -1,8 +1,8 @@
 //AGARRA EL FORMULARIO DEL CORREO DE CAMBIARCONTRA.HTML CNDO APRETAS EL BOTON
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('correo-recuperacion');
-  const email = document.getElementById("email").value;
-  localStorage.setItem("userEmail", email); // Guarda el email
+  const email = document.getElementById("email").value; //x algun motivo no se usa (averiguar dsps)
+  // localStorage.setItem("userEmail", email); // Guarda el email //PROBLEMA (GUARDAR EN PYTHON)
   if (form) {
     form.addEventListener('submit', async (e) => {
       e.preventDefault(); // evita o frena q la pag se recargue
@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
           body: JSON.stringify({ email })
         });
 
+        //aca es la division (aca abajo se redirije a  ingresar el codigo)
         const result = await res.json();
 
         if (res.ok) {

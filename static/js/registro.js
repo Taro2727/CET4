@@ -1,11 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     const formRegistro = document.getElementById('registro');
-    const savedEmail = localStorage.getItem("userEmail");
-    console.log("Email recuperado:", savedEmail);
+    
 
-    if (savedEmail) {
-        document.getElementById("email").value = savedEmail;
-    }
+    
 
     if (formRegistro) {
         formRegistro.addEventListener('submit', async function(event) {
@@ -17,7 +14,6 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const datos = {
                 name: nombre,
-                email: savedEmail,
                 contra: contra,
                 confcontra: confirmcontra
             };
@@ -34,6 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     },
                     body: JSON.stringify(datos)
                 });
+                //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
                 const resultado = await response.json();
 
