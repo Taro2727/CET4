@@ -461,7 +461,10 @@ def verificar():
     # Validación básica de que los datos llegaron.
     if not email or not contraseña:
         return jsonify({"exito": False, "error": "Email y contraseña son requeridos"}), 400
+    
+    #hacer el codigo otp (desde la ruta ya hecha anteriormente, tmb desde esa ruta hacer q te lleve a la verificacion y q dsps venga para aca)
 
+    #if codigo verificacion hecho=
     try:
         # Conexión a la base de datos y consulta del usuario.
         conn = mysql.connector.connect(**DB_CONFIG) # Usar DB_CONFIG
@@ -491,7 +494,8 @@ def verificar():
     except Exception as e:
         print(f"Error inesperado en verificar: {e}")
         return jsonify({"exito": False, "error": f"Error inesperado: {e}"}), 500
-
+    #else
+    #return jsonifi({error: no ingresaste el codigo})
 
 # --- Cierre de Sesión ---
 @app.route('/logout')
