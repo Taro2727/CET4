@@ -1,18 +1,23 @@
 document.addEventListener('DOMContentLoaded', function() {
     const formRegistro = document.getElementById('registro');
+    const savedEmail = localStorage.getItem("userEmail");
+    console.log("Email recuperado:", savedEmail);
+
+    if (savedEmail) {
+        document.getElementById("email").value = savedEmail;
+    }
 
     if (formRegistro) {
         formRegistro.addEventListener('submit', async function(event) {
             event.preventDefault();
 
             const nombre = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
             const contra = document.getElementById('password').value;
             const confirmcontra = document.getElementById('confirm').value;
             
             const datos = {
                 name: nombre,
-                email: email,
+                email: savedEmail,
                 contra: contra,
                 confcontra: confirmcontra
             };

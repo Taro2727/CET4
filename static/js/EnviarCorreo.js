@@ -1,6 +1,8 @@
 //AGARRA EL FORMULARIO DEL CORREO DE CAMBIARCONTRA.HTML CNDO APRETAS EL BOTON
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('correo-recuperacion');
+  const email = document.getElementById("email").value;
+  localStorage.setItem("userEmail", email); // Guarda el email
   if (form) {
     form.addEventListener('submit', async (e) => {
       e.preventDefault(); // evita o frena q la pag se recargue

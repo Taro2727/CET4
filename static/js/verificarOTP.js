@@ -1,5 +1,5 @@
 document.getElementById('otp').addEventListener('submit', async (e) => {
-  e.preventDefault(); // evita o frena q la pag se recargue
+  e.preventDefault();
 
   const cod = document.getElementById('cod').value;
   const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -16,12 +16,21 @@ document.getElementById('otp').addEventListener('submit', async (e) => {
 
     const result = await res.json();
 
-    if (result.success) {
-        alert('¡Código verificado correctamente!');  
-        window.location.href = '/actualizar';     
+    if (res.ok && result.success) {
+      alert('¡Código verificado correctamente!');
+
+      if (result.redirigir) {
+        // ⚡️ Es registro → redirigimos al formulario para completar nombre y contraseña
+        window.location.href = result.redirigir;
+      } else {
+        // 🔁 Es recuperación → redirigimos al cambio de contraseña
+        window.location.href = '/ActualizarContra';
+      }
+
     } else {
       alert(result.error || 'Hubo un problema con la verificación');
     }
+
   } catch (err) {
     console.error('Error en la petición:', err);
     alert('Error de red');
