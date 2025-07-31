@@ -1,8 +1,6 @@
 //AGARRA EL FORMULARIO DEL CORREO DE CAMBIARCONTRA.HTML CNDO APRETAS EL BOTON
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('correo-recuperacion');
-  const email = document.getElementById("email").value;
-  localStorage.setItem("userEmail", email); // Guarda el email
   if (form) {
     form.addEventListener('submit', async (e) => {
       e.preventDefault(); // evita o frena q la pag se recargue
@@ -22,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const result = await res.json();
 
-        if (res.ok) {
+        if (res.ok) { //desde aca
           alert('Código OTP enviado al mail');
           window.location.href = '/IngresarCodigo';
         } else {
@@ -30,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       } catch (err) {
           console.error('Error en la petición:', err);
-          alert('Error de red');
+          alert('Error de red'); //hasta aca no me acuerdo perdon :_(
         }
     });
   }
