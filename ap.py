@@ -281,17 +281,23 @@ def cambiar_contra():
 @app.route('/Verificar_codigo', methods=['POST'])
 def verificar_codigo():
     data = request.get_json()
+    print("DATA:", data)
+    print("SESSION:", dict(session))
 
     # Determinar el tipo
     if 'email_para_verificacion_registro' in session:
         email = session.get('email_para_verificacion_registro')
         tipo = 'registro'
+    elif 'email_del_usuario' in session :
+        email=session.get('email_del_usuario')
+        tipo = 'login'
     else:
         email = session.get('email_para_verificacion')
         tipo = 'recuperacion'
     codigo_enviado = data.get('cod') #codigo q escribio el usuario en html
 
     if not email or not codigo_enviado:
+        print("Faltan datos:", email, codigo_enviado)
         return jsonify({'error': 'Email y código requeridos'}), 400
 
     conn = mysql.connector.connect(**DB_CONFIG)
@@ -345,9 +351,10 @@ def verificar_codigo():
         return jsonify({'success': True, 'redirigir': 'registrar'}), 200
     elif tipo == 'recuperacion':
         return jsonify({'success': True, 'redirigir': 'cambiar_contra'}), 200  # 👈 Redirigir a cambiar contraseña
-        #aca va taro JJAJAJA
+    elif tipo == 'login':
+        return jsonify({'success': True, 'redirigir': 'ini_ses'}),200
     else:
-        return jsonify({'success':True,'redirigir':'NO'})
+        return jsonify({'success':False,'redirigir':'NO'}),200
 
 #----------------------------------------------------------------------------
 # verificar contraseña NUEVAAAAAA
@@ -488,7 +495,7 @@ def index7moprog():
 
 #--------------------------------------------------------------------------------------------
 #a partir de aca empieza el login/inicio de sesión
-@app.route('/verificar', methods=['POST'])
+@app.route('/verificar', methods=['GET','POST'])
 def verificar():
     # CAMBIO: Eliminada la importación y conexión duplicada.
     # Ahora usa DB_CONFIG definida globalmente.
@@ -497,14 +504,13 @@ def verificar():
     if current_user.is_authenticated:
         return jsonify({"exito": True, "mensaje": "Ya has iniciado sesión."})
 
-    datos = request.get_json() # Obtener los datos del JSON enviado desde el frontend
-    email = datos.get('email') # Obtener el email del JSON
-    contraseña = datos.get('password') # Obtener la contraseña del JSON
+    email= session['email_del_usuario'] 
+    contraseña= session['contra_del_usuario']
 
     # Validación básica de que los datos llegaron.
     if not email or not contraseña:
         return jsonify({"exito": False, "error": "Email y contraseña son requeridos"}), 400
-
+    
     try:
         # Conexión a la base de datos y consulta del usuario.
         conn = mysql.connector.connect(**DB_CONFIG) # Usar DB_CONFIG
@@ -548,7 +554,49 @@ def logout():
     return resp
 
 
+@app.route('/otp_login', methods=['POST'])
+def otp_login():    
+    #ACA METER CODIGO PYOTP
+    datos = request.get_json() # Obtener los datos del JSON enviado desde el frontend
+    email = datos.get('email') # Obtener el email del JSON
+    contraseña = datos.get('password') # Obtener la contraseña del JSON
+    session['email_del_usuario'] = email
+    session['contra_del_usuario'] = contraseña
 
+    expiracion = datetime.utcnow() + timedelta(minutes=5)
+    # Generar código OTP
+    otp = ''.join(secrets.choice(string.digits) for _ in range(6))
+    expiracion = datetime.utcnow() + timedelta(minutes=5)
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO codigos_verificacion (email, codigo, tipo, expiracion)
+            VALUES (%s, %s, %s, %s)
+            ON DUPLICATE KEY UPDATE 
+                codigo = VALUES(codigo), 
+                tipo = VALUES(tipo), 
+                expiracion = VALUES(expiracion)
+        """, (email, otp, 'login', expiracion))
+        conn.commit()
+
+        # ✉️ Enviar correo con el código
+        try:
+            msg = Message("I-N-I-C-I-O--S-E-S-I-O-N--C-E-T",
+                    sender=app.config['MAIL_USERNAME'],
+                    recipients=[email])
+            msg.body = f"Tu código de verificacion es: {otp}"
+            mail.send(msg)
+            return jsonify({'success': True}), 200
+        except Exception as e:
+            print("Error enviando el correo:", e)
+            return jsonify({'error': 'No se pudo enviar el código'}), 500
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+    
+ #esto se tiene q hacer dsps...
 
 #_____________________________________________________________________________________
 #ACA ABAJO DE MI(? ESTABA LO DE /COMENTARIO/MATERIA/IDMAT Y /COMENTARIO METHOD=POST
@@ -602,7 +650,7 @@ def agregar_comentario():
         print(f"Error inesperado al agregar comentario: {e}")
         return jsonify({"success": False, "error": f"Error inesperado: {e}"}), 500
 
-#___________________________________________________________________________________
+#________________________________________________________________________________________________
 #ACA ARRIBA DE MI(? ESTABA LO DE /COMENTARIO/MATERIA/IDMAT Y /COMENTARIO METHOD=POST
 @app.route('/get_comentario')
 def get_comentario():

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Codigo de Verificacion - CET</title>
+  <link rel="stylesheet" href="/static/css/estilocrearcuenta.css"/>
+   <meta name="csrf-token" content="{{ csrf_token() }}">
+</head>
+<body>
+
+  <div class="fondo">
+    <video autoplay muted loop class="video">
+      <source src="/static/utils/img/fondo_login.mp4" type="video/mp4" />
+    </video>
+  </div>
+
+  <main class="contenedor">
+    <section class="presentacion">
+      <figure class="cota">
+        <figcaption class="globo">¡Hola pone el codigo de verificacion!</figcaption>
+        <img class="masimg" src="/static/utils/img/zettinocrea.png" alt="Mascota Zettino" />
+      </figure>
+    </section>
+
+    <section class="formulario">
+      <h1>¡Hola de vuelta!</h1>
+      <form id="otp">
+        <div class="input-group">
+          <label for="name">Codigo De Verificacion:</label>
+          <input type="text" id="cod" name="name" required />
+        </div>
+        <button type="submit">Validar Codigo</button>
+      </form>
+    </section>
+  </main>
+
+  <script src="/static/js/verificarOTP.js"></script>
+</body>
+</html>

@@ -6,7 +6,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
 
   const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-  const respuesta = await fetch("/verificar", {
+  const respuesta = await fetch("/otp_login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -17,9 +17,10 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
 
   const resultado = await respuesta.json();
 
-  if (resultado.exito) {
-    window.location.href = '/indexhomeoinicio';
+  if (resultado.success) {
+    // Redirige a la página para ingresar el código OTP
+    window.location.href = '/IngresarCodigo';
   } else {
-    document.getElementById("mensaje").textContent = "Usuario o contraseña incorrectos.";
+    document.getElementById("mensaje").textContent = resultado.error || "No se pudo enviar el código OTP.";
   }
 });
