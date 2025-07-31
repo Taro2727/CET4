@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
         //aca es la division (aca abajo se redirije a  ingresar el codigo)
         const result = await res.json();
 
-        if (res.ok) {
+        if (res.ok) { //desde aca
           alert('Código OTP enviado al mail');
           window.location.href = '/IngresarCodigo';
         } else {
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       } catch (err) {
           console.error('Error en la petición:', err);
-          alert('Error de red');
+          alert('Error de red'); //hasta aca no me acuerdo perdon :_(
         }
     });
   }

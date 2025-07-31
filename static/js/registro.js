@@ -1,8 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
     const formRegistro = document.getElementById('registro');
-    
-
-    
 
     if (formRegistro) {
         formRegistro.addEventListener('submit', async function(event) {
