@@ -5,43 +5,42 @@ document.getElementById('otp').addEventListener('submit', async (e) => {
   const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
   try {
-    // 1. Verificar el código OTP
     const res = await fetch('/Verificar_codigo', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'X-CSRFToken': csrfToken
       },
-      body: JSON.stringify({ cod })
+      body: JSON.stringify({ cod: cod })
     });
 
     const result = await res.json();
 
-    if (res.ok && result.success && result.redirigir === 'ini_ses') {
-      // 2. Si el OTP es correcto, ahora hace el login real
-      const verificarRes = await fetch('/verificar', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrfToken
-        }
-      });
-      const verificarResult = await verificarRes.json();
+    if (result.exito) {
+      // El servidor dice que el código es correcto, ahora vemos a dónde ir.
+      const destino = result.redirigir;
 
-      if (verificarRes.ok && verificarResult.exito) {
-        window.location.href = '/indexhomeoinicio';
+      if (destino === '/crearcuenta') {
+        alert('¡Correo verificado! Ahora completa tu registro.');
+        window.location.href = destino;
+      } else if (destino === '/actualizar') {
+        alert('¡Código correcto! Ahora puedes cambiar tu contraseña.');
+        window.location.href = destino;
+      } else if (destino === 'indexhomeoinicio') {
+        // --- ESTA ES LA CONDICIÓN QUE FALTABA ---
+        // No es necesario un alert, simplemente redirigimos.
+        window.location.href = '/indexhomeoinicio'; 
       } else {
-        alert(verificarResult.error || 'Error al iniciar sesión');
+        // Si el servidor envía una redirección desconocida.
+        alert('Respuesta desconocida del servidor.');
       }
-    } else if (result.success && result.redirigir === 'registrar') {
-      window.location.href = '/crearcuenta';
-    } else if (result.success && result.redirigir === 'cambiar_contra') {
-      window.location.href = '/actualizar';
     } else {
-      alert(result.error || 'hubo un problema (gav linea 27 verificarOTP)');
+      // Si result.exito es false, mostramos el error del servidor.
+      alert(result.error || 'Hubo un problema con la verificación');
     }
+
   } catch (err) {
     console.error('Error en la petición:', err);
-    alert('Error de red');
+    alert('Error de red. Revisa la consola para más detalles.');
   }
 });

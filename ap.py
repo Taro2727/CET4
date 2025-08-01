@@ -219,68 +219,47 @@ def otp():
 def cambiar_contra():
     data = request.get_json()
     email = data.get('email')
-    conn = mysql.connector.connect(**DB_CONFIG) # Usar DB_CONFIG
-    cursor = conn.cursor()
+    
+    # --- CORRECCIÓN: Limpiar claves de sesión viejas ---
+    session.pop('email_del_usuario', None)
 
     if not email:
         return jsonify({'error': 'Email requerido'}), 400
 
-    # Simular búsqueda de usuario en BD
+    conn = mysql.connector.connect(**DB_CONFIG)
+    cursor = conn.cursor()
     cursor.execute("SELECT * FROM usuario where email=%s",(email,))
-    hay_usuario=cursor.fetchone()
+    hay_usuario = cursor.fetchone()
 
+    # Si no hay usuario, es un REGISTRO
     if not hay_usuario:
-       # (se saca lo de allá --> pq  sino no sigue el codigo) return jsonify({'error': 'Email no registrado '}),404
-        expiracion = datetime.utcnow() + timedelta(minutes=5)
+        # --- CORRECCIÓN: Limpiar clave de recuperación ---
+        session.pop('email_para_verificacion', None)
         session['email_para_verificacion_registro'] = email
-        # Generar código OTP
-        otp = ''.join(secrets.choice(string.digits) for _ in range(6))
-        expiracion = datetime.utcnow() + timedelta(minutes=5)
+        tipo_otp = 'registro'
+        asunto_mail = "R-E-G-I-S-T-R-O--C-E-T"
+    # Si hay usuario, es una RECUPERACIÓN de contraseña
+    else:
+        # --- CORRECCIÓN: Limpiar clave de registro ---
+        session.pop('email_para_verificacion_registro', None)
+        session['email_para_verificacion'] = email
+        tipo_otp = 'recuperacion'
+        asunto_mail = "R-E-E-S-T-A-B-L-E-C-E-R--C-O-N-T-R-A-S-E-Ñ-A"
 
-        cursor.execute("""
-            INSERT INTO codigos_verificacion (email, codigo, tipo, expiracion)
-            VALUES (%s, %s, %s, %s)
-            ON DUPLICATE KEY UPDATE 
-                codigo = VALUES(codigo), 
-                tipo = VALUES(tipo), 
-                expiracion = VALUES(expiracion)
-        """, (email, otp, 'registro', expiracion))
-        conn.commit()
-
-        # ✉️ Enviar correo con el código
-        try:
-            msg = Message("R-E-G-I-S-T-R-O--C-E-T",
-                    sender=app.config['MAIL_USERNAME'],
-                    recipients=[email])
-            msg.body = f"Tu código de verificacion es: {otp}"
-            mail.send(msg)
-            return jsonify({'success': True}), 200
-        except Exception as e:
-            print("Error enviando el correo:", e)
-            return jsonify({'error': 'No se pudo enviar el código'}), 500
-        #Hasta aca llega el mail registro
-    
-    expiracion = datetime.utcnow() + timedelta(minutes=5)
-    session['email_para_verificacion'] = email
-    # Generar código OTP
+    # Generar y guardar el OTP
     otp = ''.join(secrets.choice(string.digits) for _ in range(6))
     expiracion = datetime.utcnow() + timedelta(minutes=5)
-
     cursor.execute("""
         INSERT INTO codigos_verificacion (email, codigo, tipo, expiracion)
         VALUES (%s, %s, %s, %s)
-        ON DUPLICATE KEY UPDATE 
-            codigo = VALUES(codigo), 
-            tipo = VALUES(tipo), 
-            expiracion = VALUES(expiracion)
-    """, (email, otp, 'recuperacion', expiracion))
+        ON DUPLICATE KEY UPDATE codigo = VALUES(codigo), tipo = VALUES(tipo), expiracion = VALUES(expiracion)
+    """, (email, otp, tipo_otp, expiracion))
     conn.commit()
+    conn.close()
 
-    # ✉️ Enviar correo con el código
+    # Enviar correo
     try:
-        msg = Message("R-E-E-S-T-A-B-L-E-C-E-R--C-O-N-T-R-A-S-E-Ñ-A",
-                  sender=app.config['MAIL_USERNAME'],
-                  recipients=[email])
+        msg = Message(asunto_mail, sender=app.config['MAIL_USERNAME'], recipients=[email])
         msg.body = f"Tu código de verificacion es: {otp}"
         mail.send(msg)
         return jsonify({'success': True}), 200
@@ -288,89 +267,71 @@ def cambiar_contra():
         print("Error enviando el correo:", e)
         return jsonify({'error': 'No se pudo enviar el código'}), 500
 
-
 #------------------------------------------------
 @app.route('/Verificar_codigo', methods=['POST'])
 def verificar_codigo():
     data = request.get_json()
-    print("DATA:", data)
-    print("SESSION:", dict(session))
+    codigo_enviado = data.get('cod')
 
-    # Determinar el tipo
     if 'email_para_verificacion_registro' in session:
         email = session.get('email_para_verificacion_registro')
         tipo = 'registro'
-    elif 'email_del_usuario' in session :
-        email=session.get('email_del_usuario')
+    elif 'email_del_usuario' in session:
+        email = session.get('email_del_usuario')
         tipo = 'login'
-    else:
+    elif 'email_para_verificacion' in session:
         email = session.get('email_para_verificacion')
         tipo = 'recuperacion'
-    codigo_enviado = data.get('cod') #codigo q escribio el usuario en html
+    else:
+        return jsonify({'error': 'Sesión inválida o expirada. Por favor, inicia el proceso de nuevo.'}), 400
 
     if not email or not codigo_enviado:
-        print("Faltan datos:", email, codigo_enviado)
-        return jsonify({'error': 'Email y código requeridos'}), 400
+        return jsonify({'error': 'Faltan datos en la solicitud.'}), 400
 
     conn = mysql.connector.connect(**DB_CONFIG)
-    cursor = conn.cursor(dictionary=True, buffered=True)
+    cursor = conn.cursor(dictionary=True)
 
-    # Buscar el código en la tabla
-    cursor.execute("""
-        SELECT codigo, expiracion FROM codigos_verificacion
-        WHERE email = %s AND tipo = %s
-    """, (email, tipo))
-
+    sql_query = "SELECT * FROM codigos_verificacion WHERE email = %s AND tipo = %s AND expiracion > NOW()"
+    cursor.execute(sql_query, (email, tipo))
     resultado = cursor.fetchone()
+
     if not resultado:
-        cursor.close()
         conn.close()
-        return jsonify({'error': 'No se encontró código para ese email'}), 404
-
-    codigo_guardado = resultado['codigo']  #codigo que tiró la maquina y se guardó en la bd
-    expiracion = resultado['expiracion']
-
-    # Validar expiración
-    if datetime.utcnow() > expiracion:
-        cursor.execute("DELETE FROM codigos_verificacion WHERE email = %s AND tipo = %s", (email, tipo))
-        conn.commit()
-        cursor.close()
-        conn.close()
-        return jsonify({'error': 'El código ha expirado'}), 400
-
-    # Validar coincidencia
-    if codigo_enviado != codigo_guardado:
-        cursor.close()
+        return jsonify({'error': 'El código es incorrecto o ha expirado.'}), 404
+    if codigo_enviado != resultado['codigo']:
         conn.close()
         return jsonify({'error': 'Código incorrecto'}), 401
-
-    # Código correcto → eliminar código de la tabla
     cursor.execute("DELETE FROM codigos_verificacion WHERE email = %s AND tipo = %s", (email, tipo))
     conn.commit()
+    session['otp_verificado'] = True
 
-    # Si es registro → crear usuario automáticamente
-    # Guardar email para usar luego
-    session['email_para_cambio'] = email
-    session.permanent = True
+    if tipo == 'login':
+        contraseña = session.get('contra_del_usuario')
+        cursor.execute("SELECT * FROM usuario WHERE email=%s", (email,))
+        usuario_data = cursor.fetchone()
 
-    if tipo == 'registro':
-        # cursor.execute("SELECT * FROM usuario WHERE email = %s", (email,))
-        # ya_existe = cursor.fetchone()
-        # cursor.close()
-        # conn.close()
+        if usuario_data and check_password_hash(usuario_data['contraseña'], contraseña):
+            user = User(usuario_data['id_usu'], usuario_data['nom_usu'], usuario_data['email'], usuario_data['contraseña'])
+            login_user(user, remember=True)
+            session.pop('email_del_usuario', None)
+            session.pop('contra_del_usuario', None)
+            session.pop('otp_verificado', None)
+            conn.close()
+            return jsonify({'exito': True, 'redirigir': 'indexhomeoinicio'})
+        else:
+            conn.close()
+            return jsonify({'error': 'La contraseña guardada es incorrecta.'}), 401
 
-        # if not ya_existe:
-        session['otp_verificado'] = True
-        return jsonify({'success': True, 'redirigir': 'registrar'}), 200
+    elif tipo == 'registro':
+        session.pop('email_del_usuario', None)
+        conn.close()
+        return jsonify({'exito': True, 'redirigir': '/crearcuenta'})
+
     elif tipo == 'recuperacion':
-        session['otp_verificado'] = True
-        return jsonify({'success': True, 'redirigir': 'cambiar_contra'}), 200  # 👈 Redirigir a cambiar contraseña
-    elif tipo == 'login':
-        session['otp_verificado'] = True
-        return jsonify({'success': True, 'redirigir': 'ini_ses'}),200
-    else:
-        return jsonify({'success':False,'redirigir':'NO'}),200
-
+        session['email_para_cambio'] = email
+        session.pop('email_del_usuario', None)
+        conn.close()
+        return jsonify({'exito': True, 'redirigir': '/actualizar'})
 #----------------------------------------------------------------------------
 # verificar contraseña NUEVAAAAAA
 
@@ -575,42 +536,46 @@ def logout():
 
 
 @app.route('/otp_login', methods=['POST'])
-def otp_login():    
-    #ACA METER CODIGO PYOTP
-    datos = request.get_json() # Obtener los datos del JSON enviado desde el frontend
-    email = datos.get('email') # Obtener el email del JSON
-    contraseña = datos.get('password') # Obtener la contraseña del JSON
+def otp_login():
+    datos = request.get_json()
+    email = datos.get('email')
+    contraseña = datos.get('password')
+
+    session.pop('email_para_verificacion_registro', None)
+    session.pop('email_para_verificacion', None)
+
     session['email_del_usuario'] = email
     session['contra_del_usuario'] = contraseña
 
-    expiracion = datetime.utcnow() + timedelta(minutes=5)
-    # Generar código OTP
     otp = ''.join(secrets.choice(string.digits) for _ in range(6))
     expiracion = datetime.utcnow() + timedelta(minutes=5)
     try:
         conn = mysql.connector.connect(**DB_CONFIG)
         cursor = conn.cursor()
+
+        # --- CAMBIO IMPORTANTE ---
+        # 1. BORRAMOS cualquier código de 'login' anterior para este email.
+        # Esto garantiza que siempre trabajemos con el código más reciente.
+        cursor.execute("DELETE FROM codigos_verificacion WHERE email = %s AND tipo = 'login'", (email,))
+
+        # 2. INSERTAMOS el nuevo código generado.
+        # Ya no necesitamos ON DUPLICATE KEY UPDATE porque siempre empezamos de cero.
         cursor.execute("""
             INSERT INTO codigos_verificacion (email, codigo, tipo, expiracion)
             VALUES (%s, %s, %s, %s)
-            ON DUPLICATE KEY UPDATE 
-                codigo = VALUES(codigo), 
-                tipo = VALUES(tipo), 
-                expiracion = VALUES(expiracion)
         """, (email, otp, 'login', expiracion))
+
         conn.commit()
 
-        # ✉️ Enviar correo con el código
-        try:
-            msg = Message("I-N-I-C-I-O--S-E-S-I-O-N--C-E-T",
-                    sender=app.config['MAIL_USERNAME'],
-                    recipients=[email])
-            msg.body = f"Tu código de verificacion es: {otp}"
-            mail.send(msg)
-            return jsonify({'success': True}), 200
-        except Exception as e:
-            print("Error enviando el correo:", e)
-            return jsonify({'error': 'No se pudo enviar el código'}), 500
+        msg = Message("I-N-I-C-I-O--S-E-S-I-O-N--C-E-T",
+                sender=app.config['MAIL_USERNAME'],
+                recipients=[email])
+        msg.body = f"Tu código de verificacion es: {otp}"
+        mail.send(msg)
+        return jsonify({'success': True}), 200
+    except Exception as e:
+        print("Error en otp_login:", e)
+        return jsonify({'error': 'No se pudo enviar el código'}), 500
     finally:
         if conn.is_connected():
             cursor.close()
