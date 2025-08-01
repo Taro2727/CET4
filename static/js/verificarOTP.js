@@ -5,12 +5,8 @@ document.getElementById('otp').addEventListener('submit', async (e) => {
   const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
   try {
-<<<<<<< HEAD
-    const res = await fetch('/Verificar_codigo', {
-=======
     // 1. Verificar el código OTP
     const res = await fetch('/verificar_codigo', {
->>>>>>> bde7f753eb2cf331007ec5adc6de0248ad6a666a
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

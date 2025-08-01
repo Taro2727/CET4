@@ -220,7 +220,6 @@ def cambiar_contra():
     data = request.get_json()
     email = data.get('email')
     
-    # --- CORRECCIÓN: Limpiar claves de sesión viejas ---
     session.pop('email_del_usuario', None)
 
     if not email:
@@ -231,33 +230,31 @@ def cambiar_contra():
     cursor.execute("SELECT * FROM usuario where email=%s",(email,))
     hay_usuario = cursor.fetchone()
 
-    # Si no hay usuario, es un REGISTRO
     if not hay_usuario:
-        # --- CORRECCIÓN: Limpiar clave de recuperación ---
         session.pop('email_para_verificacion', None)
         session['email_para_verificacion_registro'] = email
         tipo_otp = 'registro'
         asunto_mail = "R-E-G-I-S-T-R-O--C-E-T"
-    # Si hay usuario, es una RECUPERACIÓN de contraseña
     else:
-        # --- CORRECCIÓN: Limpiar clave de registro ---
         session.pop('email_para_verificacion_registro', None)
         session['email_para_verificacion'] = email
         tipo_otp = 'recuperacion'
         asunto_mail = "R-E-E-S-T-A-B-L-E-C-E-R--C-O-N-T-R-A-S-E-Ñ-A"
 
-    # Generar y guardar el OTP
     otp = ''.join(secrets.choice(string.digits) for _ in range(6))
     expiracion = datetime.utcnow() + timedelta(minutes=5)
+    
+    # --- CORRECCIÓN APLICADA ---
+    # Usamos el método DELETE + INSERT para ser consistentes y evitar errores.
+    cursor.execute("DELETE FROM codigos_verificacion WHERE email = %s AND tipo = %s", (email, tipo_otp))
     cursor.execute("""
         INSERT INTO codigos_verificacion (email, codigo, tipo, expiracion)
         VALUES (%s, %s, %s, %s)
-        ON DUPLICATE KEY UPDATE codigo = VALUES(codigo), tipo = VALUES(tipo), expiracion = VALUES(expiracion)
     """, (email, otp, tipo_otp, expiracion))
+
     conn.commit()
     conn.close()
 
-    # Enviar correo
     try:
         msg = Message(asunto_mail, sender=app.config['MAIL_USERNAME'], recipients=[email])
         msg.body = f"Tu código de verificacion es: {otp}"
@@ -471,58 +468,6 @@ def index7moprog():
     return render_template("index/indexdseptimo.html")
 
 #--------------------------------------------------------------------------------------------
-#a partir de aca empieza el login/inicio de sesión
-@app.route('/verificar', methods=['GET','POST'])
-def verificar():
-    # CAMBIO: Eliminada la importación y conexión duplicada.
-    # Ahora usa DB_CONFIG definida globalmente.
-
-    # Si el usuario ya está logueado, no hace falta que intente de nuevo.
-    if current_user.is_authenticated:
-        return jsonify({"exito": True, "mensaje": "Ya has iniciado sesión."})
-
-    if not session.get('otp_verificado'):
-        return redirect(url_for('inicio'))
-
-    email= session['email_del_usuario'] 
-    contraseña= session['contra_del_usuario']
-
-    # Validación básica de que los datos llegaron.
-    if not email or not contraseña:
-        return jsonify({"exito": False, "error": "Email y contraseña son requeridos"}), 400
-    
-    try:
-        # Conexión a la base de datos y consulta del usuario.
-        conn = mysql.connector.connect(**DB_CONFIG) # Usar DB_CONFIG
-        cursor = conn.cursor(dictionary=True) # Para que devuelva diccionarios
-
-        cursor.execute("SELECT id_usu, nom_usu, email, contraseña FROM usuario WHERE email=%s", (email,))
-        usuario_data = cursor.fetchone() # Aquí se guarda el resultado en 'usuario_data'
-
-        cursor.close()
-        conn.close()
-
-        # Verificar si el usuario existe y si la contraseña es correcta.
-        if usuario_data and check_password_hash(usuario_data['contraseña'], contraseña):
-            # Crear un objeto User y llamar a login_user()
-            # CAMBIO: 'User' con 'U' mayúscula, ya que es el nombre de tu clase.
-            user = User(usuario_data['id_usu'], usuario_data['nom_usu'], usuario_data['email'], usuario_data['contraseña'])
-            login_user(user, remember=True)
-            session.pop('otp_verificado', None)
-            return jsonify({"exito": True, "mensaje": "Inicio de sesión exitoso"})
-        else:
-            # Si el usuario no existe o la contraseña es incorrecta
-            return jsonify({"exito": False, "error": "Email o contraseña incorrectos"}), 401
-
-    # Manejo de errores para la conexión y consulta a la DB.
-    except mysql.connector.Error as err:
-        print(f"Error de base de datos en verificar: {err}")
-        return jsonify({"exito": False, "error": f"Error en la base de datos: {err}"}), 500
-    except Exception as e:
-        print(f"Error inesperado en verificar: {e}")
-        return jsonify({"exito": False, "error": f"Error inesperado: {e}"}), 500
-
-
 # --- Cierre de Sesión ---
 @app.route('/logout')
 @login_required
@@ -534,7 +479,7 @@ def logout():
     resp.delete_cookie('remember_token')
     return resp
 
-
+# --- Verificación de OTP ---
 @app.route('/otp_login', methods=['POST'])
 def otp_login():
     datos = request.get_json()
