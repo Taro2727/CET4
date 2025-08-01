@@ -141,9 +141,16 @@ def comnos():
 @app.route('/crearcuenta')
 def regi():
     # Redirección si el usuario ya está autenticado
+    # if current_user.is_authenticated:
+    #     flash('Ya has iniciado sesión.', 'info')
+    #     return redirect(url_for('inicio'))
+    
     if current_user.is_authenticated:
         flash('Ya has iniciado sesión.', 'info')
         return redirect(url_for('inicio'))
+    # Si NO verificó el OTP, lo manda a la página de ingresar código
+    if not session.get('otp_verificado'):
+        flash('Primero debes verificar el código OTP.', 'warning')  
     return render_template('index/indexcrearcuenta.html')
 
 @app.route('/crearcuenta/registrar', methods=['POST'])
@@ -177,6 +184,7 @@ def dataregistro():
         conn.commit()
         cursor.close()
         conn.close()
+        session.pop('otp_verificado', None)
         # Devolver JSON consistente
         return jsonify({"exito": True, "mensaje": "Usuario registrado correctamente"})
     except Exception as e:
@@ -191,6 +199,8 @@ def dataregistro():
 
 @app.route("/actualizar")
 def actualizar():
+    if not session.get('otp_verificado'):
+        flash('Primero debes verificar el codigo que se te a enviado al mail', 'warning')
     return render_template('index/1ProvisorioActuContra.html')
 
 @app.route("/cambiar")
@@ -348,10 +358,13 @@ def verificar_codigo():
         # conn.close()
 
         # if not ya_existe:
+        session['otp_verificado'] = True
         return jsonify({'success': True, 'redirigir': 'registrar'}), 200
     elif tipo == 'recuperacion':
+        session['otp_verificado'] = True
         return jsonify({'success': True, 'redirigir': 'cambiar_contra'}), 200  # 👈 Redirigir a cambiar contraseña
     elif tipo == 'login':
+        session['otp_verificado'] = True
         return jsonify({'success': True, 'redirigir': 'ini_ses'}),200
     else:
         return jsonify({'success':False,'redirigir':'NO'}),200
@@ -382,6 +395,7 @@ def ActualizarContra():
         valores = ( hash_contra, email)
         cursor.execute(sql, valores)
         conn.commit()
+        session.pop('otp_verificado', None) #para q se borre el "permiso" de la sesion
         # Devolver JSON consistente
         return jsonify({"exito": True, "mensaje": "Actualizaste tu contraseña!!!"})
     except Exception as e:
@@ -504,6 +518,9 @@ def verificar():
     if current_user.is_authenticated:
         return jsonify({"exito": True, "mensaje": "Ya has iniciado sesión."})
 
+    if not session.get('otp_verificado'):
+        return jsonify({"exito": False, "error": "Primero debes verificar el código OTP."}), 401
+    
     email= session['email_del_usuario'] 
     contraseña= session['contra_del_usuario']
 
@@ -528,6 +545,7 @@ def verificar():
             # CAMBIO: 'User' con 'U' mayúscula, ya que es el nombre de tu clase.
             user = User(usuario_data['id_usu'], usuario_data['nom_usu'], usuario_data['email'], usuario_data['contraseña'])
             login_user(user, remember=True)
+            session.pop('otp_verificado', None)
             return jsonify({"exito": True, "mensaje": "Inicio de sesión exitoso"})
         else:
             # Si el usuario no existe o la contraseña es incorrecta
