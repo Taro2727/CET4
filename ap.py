@@ -265,7 +265,7 @@ def cambiar_contra():
         return jsonify({'error': 'No se pudo enviar el código'}), 500
 
 #------------------------------------------------
-@app.route('/Verificar_codigo', methods=['POST'])
+@app.route('/verificar_codigo', methods=['POST'])
 def verificar_codigo():
     data = request.get_json()
     codigo_enviado = data.get('cod')
