@@ -290,7 +290,7 @@ def cambiar_contra():
 
 
 #------------------------------------------------
-@app.route('/Verificar_codigo', methods=['POST'])
+@app.route('/verificar_codigo', methods=['POST'])
 def verificar_codigo():
     data = request.get_json()
     print("DATA:", data)

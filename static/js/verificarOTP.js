@@ -6,7 +6,7 @@ document.getElementById('otp').addEventListener('submit', async (e) => {
 
   try {
     // 1. Verificar el código OTP
-    const res = await fetch('/Verificar_codigo', {
+    const res = await fetch('/verificar_codigo', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
