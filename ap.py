@@ -150,7 +150,8 @@ def regi():
         return redirect(url_for('inicio'))
     # Si NO verificó el OTP, lo manda a la página de ingresar código
     if not session.get('otp_verificado'):
-        flash('Primero debes verificar el código OTP.', 'warning')  
+        flash('Primero debes verificar el código OTP.', 'warning')
+        return redirect(url_for('inicio'))  
     return render_template('index/indexcrearcuenta.html')
 
 @app.route('/crearcuenta/registrar', methods=['POST'])
@@ -201,6 +202,7 @@ def dataregistro():
 def actualizar():
     if not session.get('otp_verificado'):
         flash('Primero debes verificar el codigo que se te a enviado al mail', 'warning')
+        return redirect(url_for('inicio'))
     return render_template('index/1ProvisorioActuContra.html')
 
 @app.route("/cambiar")
@@ -519,8 +521,8 @@ def verificar():
         return jsonify({"exito": True, "mensaje": "Ya has iniciado sesión."})
 
     if not session.get('otp_verificado'):
-        return jsonify({"exito": False, "error": "Primero debes verificar el código OTP."}), 401
-    
+        return redirect(url_for('inicio'))
+
     email= session['email_del_usuario'] 
     contraseña= session['contra_del_usuario']
 
