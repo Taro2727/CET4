@@ -1,0 +1,178 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    
+}
+
+/* Fondo y fuente general */
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #0c1b32;
+    color: white;
+    overflow: hidden;
+}
+
+/* empieza la bARra de busqueda  */
+::placeholder {
+  color: #fff;
+}
+
+.buscador {
+  background-color: #54647c;
+  width: 95vh;
+  height: 35px;
+  margin-top: 2px;
+  border-radius: 20px;
+  border: none;
+  padding: 5px 10px 5px 35px;
+}
+
+.buscador-logo {
+  display: flex;
+  align-items: center;
+  gap: 30%;
+  justify-content: center;
+}
+
+.buscador-logo2 {
+  position: relative;
+  width: 700px;
+}
+
+.logo {
+  position: absolute;
+  top: 67%;
+  left: 10px;
+  transform: translateY(-50%);
+  height: 20px;
+  width: 20px;
+  pointer-events: none;
+}
+
+/* termina */
+/* empieza costado */
+.elcostado {
+    width: 10%;
+    height: 100vh;
+    background-color: #080c34;
+    position: fixed;
+    top: 0;
+    left: 0;
+    transition: left 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+   
+}
+
+#out {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 28px;
+    color: #fff;
+    cursor: pointer;
+}
+
+.ordenado {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    gap: 40px; /* Espaciado entre íconos */
+    
+}
+
+/* Aplica estilos comunes y animación suave */
+.ordenado img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    cursor: pointer;
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.ordenado img:hover {
+    transform: scale(1.1);
+    filter: brightness(1.4);
+}
+
+/* Línea separadora vertical */
+.separador-lateral {
+    position: fixed;
+    left: 10%;
+    top: 0;
+    width: 1px;
+    height: 100vh;
+    background-color: #444;
+}
+/* Fin de la barra Lateral */
+.profile-container {
+  background-color: #0c1b32 ;/*#0c1b32 usa este color para que se vea bien con el fondo usa blanco para poder ver el contenedor y ajustarlo si lo necesitas dea  */
+  color: #726f6f;
+  max-width: 100%; /* el ancho de el contenedor  */
+  height: 100%;
+  margin-left: 10%;
+  width: calc(100% - 10%);
+  min-height: 100vh; /* el alto de el contenedor  */
+  padding: 5%; /* Espacio interno */
+  /*lo de abajo es de los elementos que estan dentro de el contenedor */
+  display: flex;
+  flex-direction: column; /* Cambio clave para diseño vertical */
+  align-items: center; /* Centra los elementos */
+  text-align: center;
+  
+}
+
+.avatar {
+  width: 200px;
+  height: 200px; /* Igual al width para mantener la forma circular */
+  border-radius: 50%;
+  background-color: #282828;
+  margin-bottom: 20px;
+   width: 15vw;
+  height: 15vw;
+  border-radius: 50%;
+}
+
+
+.user-info {
+  margin: 0; /* Eliminamos el margen izquierdo */
+  color:white;
+}
+
+.user-info h2 {
+  font-size: 22px;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.user-info p {
+  color: #aaa;
+  margin: 4px 0;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.action-buttons button {
+  background-color: #272727;
+  color: #fff;
+  border: 1px solid #555;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.action-buttons button:hover {
+  background-color: #3a3a3a;
+}
+
+
