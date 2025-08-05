@@ -13,7 +13,7 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 from flask_mail import Mail, Message
 
 #importar flask-Pyotp
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import pyotp
 import random
 import string
@@ -37,7 +37,7 @@ app = Flask(__name__)
 app.secret_key = 'mi_clave_secreta' # Clave secreta para sesiones, cookies, etc. 
 
 limiter = Limiter(
-    app,
+    app=app,
     key_func=get_remote_address, # Función para obtener la dirección IP del cliente
     default_limits=["200 per day", "60 per hour"] #limita las opciones q no estan limitadas
 )
@@ -265,7 +265,7 @@ def cambiar_contra():
         asunto_mail = "R-E-E-S-T-A-B-L-E-C-E-R--C-O-N-T-R-A-S-E-Ñ-A"
 
     otp = ''.join(secrets.choice(string.digits) for _ in range(6))
-    expiracion = datetime.utcnow() + timedelta(minutes=5)
+    expiracion = datetime.now(timezone.utc) + timedelta(minutes=5)
     
     # --- CORRECCIÓN APLICADA ---
     # Usamos el método DELETE + INSERT para ser consistentes y evitar errores.
@@ -520,7 +520,7 @@ def otp_login():
     session['contra_del_usuario'] = contraseña
 
     otp = ''.join(secrets.choice(string.digits) for _ in range(6))
-    expiracion = datetime.utcnow() + timedelta(minutes=5)
+    expiracion = datetime.now(timezone.utc) + timedelta(minutes=5)
     try:
         conn = mysql.connector.connect(**DB_CONFIG)
         cursor = conn.cursor()
