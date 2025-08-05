@@ -14,6 +14,8 @@ async function cargarComentarios() {
 
     comentarios.forEach(c => {
         // Se mantiene la clase original del contenedor principal: "comment"
+        const contenidoSeguro = DOMPurify.sanitize(c.cont);
+        const tituloSeguro = DOMPurify.sanitize(c.titulo);
         const div = document.createElement('div');
         div.classList.add('comment');
 
@@ -21,8 +23,8 @@ async function cargarComentarios() {
         div.innerHTML = `
             <span class="usuario-comentario"><strong>${c.usuario || "Anónimo"}</strong>:</span>
             <br>
-            <span class="titulo-comentario"><b>${c.titulo}</b></span>
-            <span class="texto-comentario">${c.cont}</span>
+            <span class="titulo-comentario"><b>${tituloSeguro}</b></span>
+            <span class="texto-comentario">${contenidoSeguro}</span>
             <br>
             <button class="btn-responder" onclick="responder('${c.id_post}', '${c.usuario || "Anónimo"}')">Responder</button>
             <button class="btn-ver-respuestas" onclick="mostrarRespuestas('${c.id_post}')">Ver respuestas</button>
@@ -111,6 +113,7 @@ async function enviarRespuesta(id) {
 
 // Se mantiene el nombre original de la función: "mostrarRespuestas"
 async function mostrarRespuestas(id_post, forzarApertura = false) {
+    const textoRtaSeguro = DOMPurify.sanitize(r.cont);
     if (!id_post) return;
     // Apunta al contenedor de la lista de respuestas
     const divRespuestas = document.getElementById('respuestas-' + id_post);
@@ -131,7 +134,7 @@ async function mostrarRespuestas(id_post, forzarApertura = false) {
             html += `
         <div class="respuesta-comentario">
             <p class="usuario-rta">${r.usuario || "Anónimo"}:</p>
-            <p class="texto-rta">${r.cont}</p>
+            <p class="texto-rta">${textoRtaSeguro}</p>
             ${r.id_usu == usuarioActual ? `<button class="btn-eliminar" onclick="eliminarRespuesta('${r.id_com}')">Eliminar rta</button>` : ''}
             <button class="btn-like ${r.likeado_por_usuario ? 'liked' : ''}" id="like-resp-${r.id_com}">${r.likeado_por_usuario ? '❤️' : '♡'}</button>
             <span id="contador-resp-${r.id_com}" class="contador-likes">${r.cont_likes || 0}</span>
