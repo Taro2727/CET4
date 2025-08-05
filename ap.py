@@ -24,6 +24,12 @@ import secrets
 from flask import Flask
 from flask_talisman import Talisman
 
+from better_profanity import Profanity
+
+# Inicializar la censura con tu lista personalizada
+profanity = Profanity()
+profanity.load_censor_words_from_file('palabras_malas.txt')
+
 app = Flask(__name__)
 app.secret_key = 'mi_clave_secreta' # Clave secreta para sesiones, cookies, etc. 
 
@@ -57,6 +63,11 @@ DB_CONFIG = {
     'password': "BNeAADHQCVLNkxkYTyLSjUqSPVxfrWvH",
     'database': "railway"
 }
+
+#para censurar con corazones
+def censurar_con_corazones(texto):
+    censurado = profanity.censor(texto, censor_char='*')
+    return censurado.replace('*', '❤')
 
 #-C-O-N-F-I-G-U-R-A-C-I-O-N--M-A-I-L
 
@@ -157,7 +168,7 @@ def regi():
 @app.route('/crearcuenta/registrar', methods=['POST'])
 def dataregistro():
     datosdesdejs = request.json
-    nombre = datosdesdejs['name']
+    nombre = censurar_con_corazones(datosdesdejs['name'])
     mail =  session['email_para_verificacion_registro']
     contra = datosdesdejs['contra']
     confcontra = datosdesdejs['confcontra']
@@ -552,8 +563,8 @@ def comentario_materia(id_mat):
 def agregar_comentario():
     # CAMBIO: Eliminada la importación y conexión duplicada.
     data = request.get_json()
-    titulo = data.get('titulo') # Usar .get() para evitar KeyError
-    cont = data.get('comment')  # Usar .get()
+    titulo = censurar_con_corazones(data['titulo'])
+    cont = censurar_con_corazones(data['comment'])
     id_mat = data.get('id_mat') # Usar .get()
 
     if not all([titulo, cont, id_mat]):
@@ -623,7 +634,7 @@ def responder():
     # CAMBIO: Eliminada la importación y conexión duplicada.
     data = request.get_json()
     id_post = data.get('id_post') # Usar .get()
-    cont = data.get('respuesta') # Usar .get()
+    cont = censurar_con_corazones(data.get('respuesta')) # Usar .get()
 
     if not all([id_post, cont]):
         return jsonify({"success": False, "error": "Faltan datos para la respuesta"}), 400
