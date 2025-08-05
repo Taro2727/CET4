@@ -19,13 +19,22 @@ import random
 import string
 import secrets
 
-
 # Importar Flask-Talisman 
 from flask import Flask
 from flask_talisman import Talisman
 
+#importar flask limiter
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+
 app = Flask(__name__)
 app.secret_key = 'mi_clave_secreta' # Clave secreta para sesiones, cookies, etc. 
+
+limiter = Limiter(
+    app,
+    key_func=get_remote_address, # Función para obtener la dirección IP del cliente
+    default_limits=["200 per day", "60 per hour"] #limita las opciones q no estan limitadas
+)
 
 #flask talisman
 csp = {
@@ -155,6 +164,7 @@ def regi():
     return render_template('index/indexcrearcuenta.html')
 
 @app.route('/crearcuenta/registrar', methods=['POST'])
+@limiter.limit("10 per hour")
 def dataregistro():
     datosdesdejs = request.json
     nombre = datosdesdejs['name']
@@ -216,6 +226,8 @@ def otp():
 # PROCESO DE CARGAR EL CORREO EN LA BD Y HACER EL CODIGUITO OTP
 
 @app.route('/CambiarContra', methods=['POST'])
+@limiter.limit("3 per 5 minutes")
+@limiter.limit("1 per hour")
 def cambiar_contra():
     data = request.get_json()
     email = data.get('email')
@@ -266,6 +278,8 @@ def cambiar_contra():
 
 #------------------------------------------------
 @app.route('/verificar_codigo', methods=['POST'])
+@limiter.limit("5 per minute")
+@limiter.limit("1 per 15 minutes")
 def verificar_codigo():
     data = request.get_json()
     codigo_enviado = data.get('cod')
@@ -481,6 +495,8 @@ def logout():
 
 # --- Verificación de OTP ---
 @app.route('/otp_login', methods=['POST'])
+@limiter.limit("5 per minute")
+@limiter.limit("1 per 10 minutes") # Cooldown
 def otp_login():
     datos = request.get_json()
     email = datos.get('email')
@@ -549,6 +565,7 @@ def comentario_materia(id_mat):
 
 @app.route('/comentario/materias', methods=['POST'])
 @login_required # CAMBIO: Protege la creación de comentarios
+@limiter.limit("30 per seccond")
 def agregar_comentario():
     # CAMBIO: Eliminada la importación y conexión duplicada.
     data = request.get_json()
@@ -619,6 +636,7 @@ def get_comentario():
 
 @app.route('/responder', methods=['POST'])
 @login_required # CAMBIO: Protege la capacidad de responder
+@limiter.limit(" 2 per  10 seconds ")
 def responder():
     # CAMBIO: Eliminada la importación y conexión duplicada.
     data = request.get_json()
@@ -679,6 +697,7 @@ def get_respuestas(id_post):
 #---RUTA PARA DAR LIKE A UN COMENTARIO---
 @app.route('/api/like', methods=['POST'])
 @login_required
+@limiter.limit("100 per hour")
 def like_comment():
     data = request.get_json()
     print("Datos recibidos en /api/like:", data)
@@ -722,6 +741,7 @@ def like_comment():
 #---RUTA PARA DAR LIKE A UNA RESPUESTA---
 @app.route('/api/like_respuesta', methods=['POST'])
 @login_required
+@limiter.limit("100 per hour")
 def like_rta():
     data = request.get_json()
     id_com = data.get('id_com')
