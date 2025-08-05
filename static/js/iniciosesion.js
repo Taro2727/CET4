@@ -3,6 +3,14 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
 
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
+  const mensajehtml = document.getElementById("mensaje")
+
+  const regex = /^(?=.*[A-Z])(?=.*[0-9]).{8,}$/;
+
+  if (!regex.test(password)) {
+    mensajehtml.textContent = "Error: Contraseña muy corta.";
+    return;
+  }
 
   const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 

@@ -8,7 +8,24 @@ document.addEventListener('DOMContentLoaded', function() {
             const nombre = document.getElementById('name').value;
             const contra = document.getElementById('password').value;
             const confirmcontra = document.getElementById('confirm').value;
-            
+            const mensajehtml = document.getElementById("mensaje") //agarra el lugar en donde hay q poner u mensaje en el html
+            // Validación de la contraseña
+            // Asegúrate de que las contraseñas coincidan
+            if (contra !== confirmcontra) {
+               mensajehtml.textContent ="Error: Las contraseñas no coinciden.";
+                return;
+            }
+
+            // Expresión regular para validar la contraseña
+            // Mínimo 8 caracteres, una mayúscula y un número.
+            const regex = /^(?=.*[A-Z])(?=.*[0-9]).{8,}$/;
+
+            if (!regex.test(contra)) {
+                mensajehtml.textContent ="Error: La contraseña debe tener al menos 8 caracteres, una mayúscula y un número.";
+                return;
+            }
+
+
             const datos = {
                 name: nombre,
                 contra: contra,
