@@ -45,11 +45,12 @@ top: -40px;
 
 /* Estilo de los input de texto */
 input[type="text"] {
-  width:140vh; /* ancho de la caja de texto */
+  width:460px; /* ancho de la caja de texto */
   height: 80px;  /* alto de la caja de texto */
-  font-size: 50px;   /* ttamaño de la letra que escribís adentrop */
+  font-family: monospace;   
+  font-size: 60px;   /* ttamaño de la letra que escribís adentrop */
   text-align: center;  /* Centra el texto dentro de la caja */
-  letter-spacing: 9vh; 
+  letter-spacing: 35px; 
   border: none;   /* Elimina el borde por que esta por defecto */
   border-radius:2px;   /* redondea un toq las esquinas */
   outline: none;   /* Elimina el borde azul que aparece al hacer cliccc*/
@@ -62,7 +63,7 @@ input[type="text"] {
 /* Botón de enviar */
 input[type="button"] {
   font-size: 17px; /* tamaño del texxxt*/
-  background-color: #1f0e53; /* el color del boton xd*/
+  background-color: #130147; /* el color del boton xd*/
   color: rgb(255, 255, 255); /*color del texto*/
   border: none; /* para q no tenga borde daa*/
   border-radius: 7px; /* redindea las esquinas*/
@@ -73,4 +74,7 @@ input[type="button"] {
   position: relative; /*para que no este tan abajo*/
   top: -60px;
 }
-/*hol*/
+input[type="button"]:active{
+  background-color: #1e0963; /* Cambia el color de fondo al hacer clic */
+  color: #ffffff;            /* (opcional) cambia también el color del texto */
+}
