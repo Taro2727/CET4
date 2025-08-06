@@ -23,6 +23,7 @@
 .elcostado.active {
     left: 0;
 }
+ 
 /*Esto hace que la funcion de la barra lateral se cierre y abra */
 
 /*Fin de la funcion de la barra Lateral */
@@ -81,6 +82,11 @@ a.separador3{
     width: 50px;
     height: auto;
     margin: 0;
+}
+.ordenado {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 @media (max-width: 1024px) {
