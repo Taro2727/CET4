@@ -1,5 +1,6 @@
 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
 const usuarioActual = document.querySelector('meta[name="usuario-id"]').content;
+const rolUsuarioActual = document.querySelector('meta[name="usuario-rol"]').content;
 window.onload = async function () {
     // Se mantiene la carga inicial de comentarios
     await cargarComentarios();
@@ -28,7 +29,7 @@ async function cargarComentarios() {
             <br>
             <button class="btn-responder" onclick="responder('${c.id_post}', '${c.usuario || "Anónimo"}')">Responder</button>
             <button class="btn-ver-respuestas" onclick="mostrarRespuestas('${c.id_post}')">Ver respuestas</button>
-            ${c.id_usu == usuarioActual ? `<button class="btn-eliminar" onclick="eliminarComentario('${c.id_post}')">🗑️</button>` : ''}
+            ${c.id_usu == usuarioActual || rolUsuarioActual == 'admin' ? `<button class="btn-eliminar" onclick="eliminarComentario('${c.id_post}')">🗑️</button>` : ''}
             <button class="btn-like ${c.likeado_por_usuario ? 'liked' : ''}" id="like-${c.id_post}">${c.likeado_por_usuario ? '❤️' : '♡'}</button>
             <span id="contador-${c.id_post}" class="contador-likes">${c.cont_likes || 0}</span>
             <div class="area-responder" id="area-responder-${c.id_post}"></div>
@@ -136,7 +137,7 @@ async function mostrarRespuestas(id_post, forzarApertura = false) {
         <div class="respuesta-comentario">
             <p class="usuario-rta">${r.usuario || "Anónimo"}:</p>
             <p class="texto-rta">${textoRtaSeguro}</p>
-            ${r.id_usu == usuarioActual ? `<button class="btn-eliminar" onclick="eliminarRespuesta('${r.id_com}')">Eliminar rta</button>` : ''}
+            ${r.id_usu == usuarioActual || rolUsuarioActual == 'admin' ? `<button class="btn-eliminar" onclick="eliminarRespuesta('${r.id_com}')">Eliminar rta</button>` : ''}
             <button class="btn-like ${r.likeado_por_usuario ? 'liked' : ''}" id="like-resp-${r.id_com}">${r.likeado_por_usuario ? '❤️' : '♡'}</button>
             <span id="contador-resp-${r.id_com}" class="contador-likes">${r.cont_likes || 0}</span>
         </div>

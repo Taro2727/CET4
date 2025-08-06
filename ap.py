@@ -116,11 +116,12 @@ login_manager.login_message = "Por favor, inicia sesión para acceder a esta pá
 
 # --- Clase User para Flask-Login ---
 class User(UserMixin):
-    def __init__(self, id_usu, nom_usu, email, contraseña_hash):
+    def __init__(self, id_usu, nom_usu, email, contraseña_hash, rol):
         self.id = id_usu # Flask-Login espera que el ID se acceda a través de .id
         self.nom_usu = nom_usu
         self.email = email
         self.contraseña_hash = contraseña_hash
+        self.rol = rol
 
     # Método requerido por Flask-Login para obtener el ID unico del usuario
     def get_id(self):
@@ -133,12 +134,12 @@ def load_user(user_id):
     try:
         conn = mysql.connector.connect(**DB_CONFIG)
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT id_usu, nom_usu, email, contraseña FROM usuario WHERE id_usu = %s", (user_id,))
+        cursor.execute("SELECT id_usu, nom_usu, email, contraseña, rol FROM usuario WHERE id_usu = %s", (user_id,))
         user_data = cursor.fetchone()
         cursor.close()
         conn.close()
         if user_data:
-            return User(user_data['id_usu'], user_data['nom_usu'], user_data['email'], user_data['contraseña'])
+            return User(user_data['id_usu'], user_data['nom_usu'], user_data['email'], user_data['contraseña'], user_data['rol'])
         return None
     except mysql.connector.Error as err:
         print(f"Error al cargar usuario de DB: {err}")
@@ -242,7 +243,7 @@ def otp():
 
 @app.route('/CambiarContra', methods=['POST'])
 @limiter.limit("3 per 5 minutes")
-@limiter.limit("1 per hour")
+#@limiter.limit("1 per hour")
 def cambiar_contra():
     data = request.get_json()
     email = data.get('email')
@@ -294,7 +295,7 @@ def cambiar_contra():
 #------------------------------------------------
 @app.route('/verificar_codigo', methods=['POST'])
 @limiter.limit("5 per minute")
-@limiter.limit("1 per 15 minutes")
+#@limiter.limit("1 per 15 minutes")
 def verificar_codigo():
     data = request.get_json()
     codigo_enviado = data.get('cod')
@@ -337,7 +338,7 @@ def verificar_codigo():
         usuario_data = cursor.fetchone()
 
         if usuario_data and check_password_hash(usuario_data['contraseña'], contraseña):
-            user = User(usuario_data['id_usu'], usuario_data['nom_usu'], usuario_data['email'], usuario_data['contraseña'])
+            user = User(usuario_data['id_usu'], usuario_data['nom_usu'], usuario_data['email'], usuario_data['contraseña'], usuario_data['rol'])
             login_user(user, remember=True)
             session.pop('email_del_usuario', None)
             session.pop('contra_del_usuario', None)
@@ -572,7 +573,7 @@ def comentario_materia(id_mat):
         materias = cursor.fetchone()
         cursor.close()
         conn.close()
-        return render_template('index/ComentariosParaTodos.html', id_mat=id_mat, materias=materias)
+        return render_template('index/ComentariosParaTodos.html', id_mat=id_mat, materias=materias, usuario_rol=current_user.rol)
     except mysql.connector.Error as err:
         print(f"Error al obtener materia: {err}")
         flash("Error al cargar la materia.", 'danger')
@@ -795,6 +796,7 @@ def eliminar_comentario():
 
     id_post = data['id_post']
     id_usu = current_user.id
+    rol_usuario = current_user.rol
 
     try:
         conn = mysql.connector.connect(**DB_CONFIG)
@@ -816,8 +818,11 @@ def eliminar_comentario():
         # Borrar los likes de la pregunta (si hay)
         cursor.execute("DELETE FROM likes_comentarios WHERE id_post = %s", (id_post,))
 
+        if rol_usuario == 'admin':
+            cursor.execute("DELETE FROM preg WHERE id_post = %s", (id_post,))
+        else:
         # Borrar la pregunta, pero solo si pertenece al usuario actual
-        cursor.execute("DELETE FROM preg WHERE id_post = %s AND id_usu = %s", (id_post, id_usu))
+            cursor.execute("DELETE FROM preg WHERE id_post = %s AND id_usu = %s", (id_post, id_usu))
         borrados = cursor.rowcount
 
         if borrados == 0:
@@ -846,6 +851,7 @@ def eliminar_respuesta():
     data = request.get_json()
     id_com = data['id_com']
     id_usu = current_user.id
+    rol_usuario = current_user.rol
     if not id_usu:
         return jsonify({'success': False, 'error': 'No autorizado'}), 401
     conn = mysql.connector.connect(
@@ -857,7 +863,10 @@ def eliminar_respuesta():
     )
     cursor = conn.cursor()
     cursor.execute("DELETE FROM likes_rta WHERE id_com=%s",(id_com,))
-    cursor.execute("DELETE FROM rta WHERE id_com=%s AND id_usu=%s", (id_com, id_usu))
+    if (rol_usuario=='admin'):
+        cursor.execute("DELETE FROM rta WHERE id_com=%s", (id_com,))
+    else:
+        cursor.execute("DELETE FROM rta WHERE id_com=%s AND id_usu=%s", (id_com, id_usu))
     conn.commit()
     cursor.close()
     conn.close()
