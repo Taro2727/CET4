@@ -241,7 +241,11 @@ input{
   margin-right: 5px;
 }
 .btn-eliminar{
-  display: inline-block;
+  float: right;
+  font-size: 1.5rem;
+  border: none;
+  display: block;
+  margin-top: -20vh;
 
 }
 .texto-comentario {

@@ -28,8 +28,8 @@ async function cargarComentarios() {
             <br>
             <button class="btn-responder" onclick="responder('${c.id_post}', '${c.usuario || "Anónimo"}')">Responder</button>
             <button class="btn-ver-respuestas" onclick="mostrarRespuestas('${c.id_post}')">Ver respuestas</button>
+            ${c.id_usu == usuarioActual ? `<button class="btn-eliminar" onclick="eliminarComentario('${c.id_post}')">🗑️</button>` : ''}
             <button class="btn-like ${c.likeado_por_usuario ? 'liked' : ''}" id="like-${c.id_post}">${c.likeado_por_usuario ? '❤️' : '♡'}</button>
-            ${c.id_usu == usuarioActual ? `<button class="btn-eliminar" onclick="eliminarComentario('${c.id_post}')">Eliminar Comentario</button>` : ''}
             <span id="contador-${c.id_post}" class="contador-likes">${c.cont_likes || 0}</span>
             <div class="area-responder" id="area-responder-${c.id_post}"></div>
             <div class="respuestas" id="respuestas-${c.id_post}" style="display: none;"></div>
