@@ -113,7 +113,7 @@ async function enviarRespuesta(id) {
 
 // Se mantiene el nombre original de la función: "mostrarRespuestas"
 async function mostrarRespuestas(id_post, forzarApertura = false) {
-    const textoRtaSeguro = DOMPurify.sanitize(r.cont);
+    
     if (!id_post) return;
     // Apunta al contenedor de la lista de respuestas
     const divRespuestas = document.getElementById('respuestas-' + id_post);
@@ -131,6 +131,7 @@ async function mostrarRespuestas(id_post, forzarApertura = false) {
         let html = '';
     if (respuestas.length) {
         respuestas.forEach(r => {
+            const textoRtaSeguro = DOMPurify.sanitize(r.cont);
             html += `
         <div class="respuesta-comentario">
             <p class="usuario-rta">${r.usuario || "Anónimo"}:</p>
