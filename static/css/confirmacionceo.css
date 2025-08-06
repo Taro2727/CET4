@@ -1,0 +1,77 @@
+/* Fondo general */
+body {
+  background-color: #082c54;
+  color: #ffffff;
+  text-align: center;
+  padding-top: 100px;
+  margin: 0;
+}
+
+/* Título y texto */
+h3 {
+  font-size: 40px;
+  margin-bottom: 10px;
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+   position: relative;
+  top: -40px;
+}
+
+
+p {
+  font-size: 26px;
+  margin-bottom: 20px;
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  position: relative;
+  top: -40px;
+}
+
+/* Estilo del formulario */
+.codigo-fondo {
+ background-image: url('../utils/img/codverificacion.png'); /* para la fto de zettino teniendo el coso*/
+position: relative;
+top: -40px;
+ background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 800px;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin: 0 auto;
+  margin-bottom: 20px;
+}
+
+/* Estilo de los input de texto */
+input[type="text"] {
+  width:140vh; /* ancho de la caja de texto */
+  height: 80px;  /* alto de la caja de texto */
+  font-size: 50px;   /* ttamaño de la letra que escribís adentrop */
+  text-align: center;  /* Centra el texto dentro de la caja */
+  letter-spacing: 9vh; 
+  border: none;   /* Elimina el borde por que esta por defecto */
+  border-radius:2px;   /* redondea un toq las esquinas */
+  outline: none;   /* Elimina el borde azul que aparece al hacer cliccc*/
+  margin: 5px;   /* espacio alrededor del input (arriba, abajo, izquierda y derecha) */
+  margin-top: 100px;
+  background-color: transparent;/* Fondo completamente transparente */
+  color:rgb(255, 255, 255);  /*color del text*/
+}
+
+/* Botón de enviar */
+input[type="button"] {
+  font-size: 17px; /* tamaño del texxxt*/
+  background-color: #1f0e53; /* el color del boton xd*/
+  color: rgb(255, 255, 255); /*color del texto*/
+  border: none; /* para q no tenga borde daa*/
+  border-radius: 7px; /* redindea las esquinas*/
+  cursor: pointer; /*para cambiar el cursor del mouse a una manito */
+  width: 200px;    /* ancho */
+  height: 50px;    /* alto */
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  position: relative; /*para que no este tan abajo*/
+  top: -60px;
+}
+
+

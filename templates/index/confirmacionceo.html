@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmacion de Correo Electronico</title>
+    <link rel="stylesheet" href="/static/css/confirmacionceo.css">
+</head>
+<body>
+    <h3>Verificación</h3>
+  <p>Ingresa el código que le enviamos a su gmail</p>
+
+  <!-- Campos para ingresar los números del código -->
+  <form>
+    <div class="codigo-fondo">
+     <input type="text" name="codigo"
+       pattern="\d{6}" maxlength="6" inputmode="numeric" required>
+    </div>
+    <br><br>
+
+    <!-- Botón para verificar -->
+    <input type="button" value="Enviar">
+  </form>
+
+</body>
+</html>
