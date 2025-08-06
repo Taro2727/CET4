@@ -44,24 +44,13 @@ body {
 /* Fin de la barra Lateral */
 .profile-container {
     position: absolute;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 50vh;
-    width: 50vh;
-    margin-top: 33vh;
-    margin-left: 25vh;
-
-  
-}
-.fondo-perfile{
-    background-color: #ccc;
-    z-index: -1;
-    position: absolute;
-    height: 50vh;
-    width: 100%;
-    margin-left: 9%;
+    height: 80vh;
+    width: 120vh;
+    border-radius: 4vh;
+    border-color: rgb(255, 255, 255);
+    border: 0.5vh solid;
+    margin-left: 20%;
+    margin-top: 10vh;
 }
 
 .avatar {
@@ -69,17 +58,19 @@ body {
   height: 200px; /* Igual al width para mantener la forma circular */
   border-radius: 50%;
   background-color: #282828;
-  margin-bottom: 20px;
-  width: 15vw;
-  height: 15vw;
+  width: 35vh;
+  height: 35vh;
   border-radius: 50%;
-  
-
+  position: absolute;
+  margin-left: 20vh;
+  margin-top: 10vh;
 }
 
 
 .user-info {
-  margin: 0; /* Eliminamos el margen izquierdo */
+  position: absolute;
+  margin-left: 70vh;
+  margin-top: 20vh;
   color:white;
 }
 
@@ -95,21 +86,30 @@ body {
 }
 
 .action-buttons {
-  display: flex;
-  margin-top: 20px;
-  height: 5vh;
-    width: 100%;
-  justify-content: center;
-  flex-wrap: wrap;
+  position: absolute;
+  margin-left: 75vh;
+  margin-top: 30vh;
 }
 
+.caja-comentarios1{
+  margin-left: 20vh;
+  width: 100vh;
+  height: 20vh;
+  margin-top: 55vh;
+  margin-left: 7vh;
+  border-radius: 2vh;
+  border-color:#0f2f5e;
+  border: o.2vh solid;
+}
 .action-buttons button {
+  position: absolute;
   background-color: #272727;
   color: #fff;
-  border: 1px solid #555;
-  padding: 10px 16px;
-  border-radius: 6px;
-  font-size: 14px;
+  border: 0.2vh solid #555;
+  font-size: 3vh;
+  height: 7vh;
+  width: 25vh;
+  border-radius: 2vh;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
