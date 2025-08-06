@@ -1,0 +1,121 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    
+}
+
+/* Fondo y fuente general */
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #0c1b32;
+    color: white;
+    overflow: hidden;
+}
+
+/* empieza la bARra de busqueda  */
+::placeholder {
+  color: #fff;
+}
+
+/* Aplica estilos comunes y animación suave */
+.ordenado img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    cursor: pointer;
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.ordenado img:hover {
+    transform: scale(1.1);
+    filter: brightness(1.4);
+}
+
+/* Línea separadora vertical */
+.separador-lateral {
+    position: fixed;
+    left: 10%;
+    top: 0;
+    width: 1px;
+    height: 100vh;
+    background-color: #444;
+}
+/* Fin de la barra Lateral */
+.profile-container {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 50vh;
+    width: 50vh;
+    margin-top: 33vh;
+    margin-left: 25vh;
+
+  
+}
+.fondo-perfile{
+    background-color: #ccc;
+    z-index: -1;
+    position: absolute;
+    height: 50vh;
+    width: 100%;
+    margin-left: 9%;
+}
+
+.avatar {
+  width: 200px;
+  height: 200px; /* Igual al width para mantener la forma circular */
+  border-radius: 50%;
+  background-color: #282828;
+  margin-bottom: 20px;
+  width: 15vw;
+  height: 15vw;
+  border-radius: 50%;
+  
+
+}
+
+
+.user-info {
+  margin: 0; /* Eliminamos el margen izquierdo */
+  color:white;
+}
+
+.user-info h2 {
+  font-size: 4vh;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.user-info p {
+  color: #aaa;
+  margin: 4px 0;
+}
+
+.action-buttons {
+  display: flex;
+  margin-top: 20px;
+  height: 5vh;
+    width: 100%;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.action-buttons button {
+  background-color: #272727;
+  color: #fff;
+  border: 1px solid #555;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.action-buttons button:hover {
+  background-color: #3a3a3a;
+}
+
+
