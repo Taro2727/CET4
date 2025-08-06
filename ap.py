@@ -219,6 +219,10 @@ def dataregistro():
 
 #ACA RUTASS PROVISORIAS (2FA)
 
+@app.route("/perfil")
+def perfil():
+    return render_template('index/indexusuario.html')
+
 @app.route("/actualizar")
 def actualizar():
     if not session.get('otp_verificado'):
