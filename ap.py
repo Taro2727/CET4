@@ -872,16 +872,12 @@ def eliminar_respuesta():
     conn.close()
     return jsonify({'success': True})
 
-if __name__ == "__main__":
-    print("iniciando flask..")
-    app.run(debug=True)
-
 
 #ACA PANEL ADMIIIIIIIIIIN 
 
 @app.route("/paneladmin")
 def paneladmin():
-    return render_template("paneladmin.html")
+    return render_template("index/paneladmin.html")
 
 
 
@@ -933,3 +929,7 @@ def promote_user():
     finally:
         cursor.close()
         conn.close()
+
+if __name__ == "__main__":
+    print("iniciando flask..")
+    app.run(debug=True)
