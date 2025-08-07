@@ -875,3 +875,61 @@ def eliminar_respuesta():
 if __name__ == "__main__":
     print("iniciando flask..")
     app.run(debug=True)
+
+
+#ACA PANEL ADMIIIIIIIIIIN 
+
+@app.route("/paneladmin")
+def paneladmin():
+    return render_template("paneladmin.html")
+
+
+
+@app.route('/api/users')
+def get_users():
+    conn = DB_CONFIG()
+    if not conn:
+        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+
+    cursor = conn.cursor(dictionary=True) # Usamos dictionary=True para obtener un diccionario por cada fila
+    query = "SELECT id, email, rol FROM users"
+    
+    try:
+        cursor.execute(query)
+        users = cursor.fetchall() # Obtiene todas las filas como una lista de diccionarios
+    except mysql.connector.Error as err:
+        print(f"Error en la consulta: {err}")
+        users = []
+    finally:
+        cursor.close()
+        conn.close()
+
+    return jsonify(users)
+
+# app.py (ejemplo para promover un usuario)
+@app.route('/api/users/promote', methods=['POST'])
+def promote_user():
+    user_id = request.json.get('user_id')
+    
+    if not user_id:
+        return jsonify({"error": "ID de usuario no proporcionado"}), 400
+
+    conn = DB_CONFIG()
+    if not conn:
+        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+
+    cursor = conn.cursor()
+    
+    # MUY IMPORTANTE: Usar %s para la parametrización
+    query = "UPDATE users SET rol = 'admin' WHERE id = %s"
+    
+    try:
+        cursor.execute(query, (user_id,))
+        conn.commit()
+        return jsonify({"message": f"Usuario {user_id} promovido a admin"}), 200
+    except mysql.connector.Error as err:
+        print(f"Error en la consulta: {err}")
+        return jsonify({"error": "Error al promover al usuario"}), 500
+    finally:
+        cursor.close()
+        conn.close()
