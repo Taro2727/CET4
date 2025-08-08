@@ -244,10 +244,45 @@ input{
   float: right;
   font-size: 1.5rem;
   border: none;
-  display: block;
-  margin-top: -20vh;
-
+  
 }
+.btn-like{
+  font-size: 1.5rem;
+  color: #ccc;
+  cursor: pointer;
+  border: none;
+  background: none;
+  float: right;
+  transition: transform 0.4s ease;
+}
+.contador-likes{
+  float: right;
+  font-size: 1.2rem;
+  color: #ffffff;
+}
+.btn-like.liked{
+  color: red;
+}
+.btn-like:hover{
+  transform: scale(1.2);
+  color: none;
+}
+.btn-like:active{
+  transform: scale(0.9);
+  transition: all 0.1s ease;
+  color: none;
+}
+
+.btn-eliminar:hover{
+  transform: scale(1.2);
+  color: none;
+}
+.btn-eliminar:active{
+  transform: scale(0.9);
+  transition: all 0.1s ease;
+  color: none;
+}
+
 .texto-comentario {
   display: block;
   margin-bottom: 12px;
@@ -277,7 +312,7 @@ input{
    
 .usuario-comentario{
   color:rgb(131, 164, 214);
-    font-size: 0.9rem;
+  font-size: 0.9rem;
   font-weight: 600;
   margin-bottom: 4px;
   display: flex;
@@ -300,29 +335,24 @@ input{
   margin-top: 0.5em;
 }
 .texto-rta{
-  color:white;
   margin-left: 2rem;
+  font-size: 1.2rem;
 }
 .usuario-rta{
-  margin-top: 1rem;
-  margin-bottom: 1rem;
+  margin-bottom: -2.5rem;
   color:rgb(131, 164, 214);
-
-
 }
 .respuesta-comentario{
-  margin-top: 5px;
-  margin-bottom: 5px;
   font-size: 1,5rem;
-  
+  color:rgb(47, 94, 165);
+  border-radius: 10px;
+  border-bottom: 2px solid;
+  border-left: 2px solid;
 }
 
 #texto-respuesta-8{
-  margin-top: 2rem;
   margin-bottom: 2rem;
   background-color: #123	;
-  border-color: white;
-  margin-left: 2rem;
 }
 #texto-respuesta-8::placeholder{
   color:rgb(245, 245, 245);
@@ -723,25 +753,6 @@ input{
   word-break: break-word;
   white-space: pre-wrap;
   font-size: 0.95rem;
-}
-
-.btn-like{
-  font-size: 5vh;
-  color: #ccc;
-  cursor: pointer;
-  border: none;
-  background: none;
-  float: right;
-  transition: transform 0.4s ease;
-
-}
-.btn-like.liked{
-  color: red;
-}
-.btn-like:hover{
-  transform: scale(1.2);
-  color: none;
-  
 }
 
 @media (max-width: 500px) {

@@ -22,6 +22,7 @@ async function cargarComentarios() {
 
         // Se agrega la separación de divs pero sin cambiar la estructura visible inicial
         div.innerHTML = `
+        ${c.id_usu == usuarioActual || rolUsuarioActual == 'admin' ? `<button class="btn-eliminar" onclick="eliminarComentario('${c.id_post}')">🗑️</button>` : ''}
             <span class="usuario-comentario"><strong>${c.usuario || "Anónimo"}</strong>:</span>
             <br>
             <span class="titulo-comentario"><b>${tituloSeguro}</b></span>
@@ -29,7 +30,6 @@ async function cargarComentarios() {
             <br>
             <button class="btn-responder" onclick="responder('${c.id_post}', '${c.usuario || "Anónimo"}')">Responder</button>
             <button class="btn-ver-respuestas" onclick="mostrarRespuestas('${c.id_post}')">Ver respuestas</button>
-            ${c.id_usu == usuarioActual || rolUsuarioActual == 'admin' ? `<button class="btn-eliminar" onclick="eliminarComentario('${c.id_post}')">🗑️</button>` : ''}
             <button class="btn-like ${c.likeado_por_usuario ? 'liked' : ''}" id="like-${c.id_post}">${c.likeado_por_usuario ? '❤️' : '♡'}</button>
             <span id="contador-${c.id_post}" class="contador-likes">${c.cont_likes || 0}</span>
             <div class="area-responder" id="area-responder-${c.id_post}"></div>
@@ -135,9 +135,9 @@ async function mostrarRespuestas(id_post, forzarApertura = false) {
             const textoRtaSeguro = DOMPurify.sanitize(r.cont);
             html += `
         <div class="respuesta-comentario">
+            ${r.id_usu == usuarioActual || rolUsuarioActual == 'admin' ? `<button class="btn-eliminar" onclick="eliminarRespuesta('${r.id_com}')">🗑️</button>` : ''}
             <p class="usuario-rta">${r.usuario || "Anónimo"}:</p>
             <p class="texto-rta">${textoRtaSeguro}</p>
-            ${r.id_usu == usuarioActual || rolUsuarioActual == 'admin' ? `<button class="btn-eliminar" onclick="eliminarRespuesta('${r.id_com}')">Eliminar rta</button>` : ''}
             <button class="btn-like ${r.likeado_por_usuario ? 'liked' : ''}" id="like-resp-${r.id_com}">${r.likeado_por_usuario ? '❤️' : '♡'}</button>
             <span id="contador-resp-${r.id_com}" class="contador-likes">${r.cont_likes || 0}</span>
         </div>
