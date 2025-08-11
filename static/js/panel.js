@@ -7,33 +7,24 @@ window.onload = async function () {
 };
 //cargar_usuarios
 async function cargar_usuarios() {
-    const id_mat = document.getElementById('id_mat').value;
-    const response = await fetch('/get_comentario?id_mat='+encodeURIComponent(id_mat)+ '&t=' + Date.now());
-    const comentarios = await response.json();
-    const section = document.getElementById('commentsSection');
+    const response = await fetch('/get_usuario?t=' + Date.now());
+    const usuario = await response.json();
+    const section = document.getElementById('adminPanel');
     section.innerHTML = ''; // Limpia la sección antes de recargar
 
-    comentarios.forEach(c => {
+    usuario.forEach(u => {
         // Se mantiene la clase original del contenedor principal: "comment"
-        const contenidoSeguro = DOMPurify.sanitize(c.cont);
-        const tituloSeguro = DOMPurify.sanitize(c.titulo);
         const div = document.createElement('div');
         div.classList.add('comment');
 
         // Se agrega la separación de divs pero sin cambiar la estructura visible inicial
         div.innerHTML = `
-        ${c.id_usu == usuarioActual || rolUsuarioActual == 'admin' ? `<button class="btn-eliminar" onclick="eliminarComentario('${c.id_post}')">🗑️</button>` : ''}
-            <span class="usuario-comentario"><strong>${c.usuario || "Anónimo"}</strong>:</span>
-            <br>
-            <span class="titulo-comentario"><b>${tituloSeguro}</b></span>
-            <span class="texto-comentario">${contenidoSeguro}</span>
-            <br>
-            <button class="btn-responder" onclick="responder('${c.id_post}', '${c.usuario || "Anónimo"}')">Responder</button>
-            <button class="btn-ver-respuestas" onclick="mostrarRespuestas('${c.id_post}')">Ver respuestas</button>
-                
-          
-            <div class="area-responder" id="area-responder-${c.id_post}"></div>
-            <div class="respuestas" id="respuestas-${c.id_post}" style="display: none;"></div>
+            <button class="btn-eliminar" onclick="eliminarUsuario('${u.id}')">🗑️</button>
+            <span class="usuario-comentario"><strong>${u.nombre}</strong></span><br>
+            <span><b>ID:</b> ${u.id}</span><br>
+            <span><b>Email:</b> ${u.email}</span><br>
+            <span><b>Rol:</b> ${u.rol}</span><br>
+            <button class="btn-editar" onclick="editarRol('${u.id}', '${u.rol}')">Editar Rol</button>
             
         `  ;
         
@@ -54,44 +45,44 @@ async function cargar_usuarios() {
 }
 
 // Se mantiene sin cambios el formulario de envío de preguntas
-document.getElementById('commentForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
+// document.getElementById('commentForm').addEventListener('submit', async function(e) {
+//     e.preventDefault();
 
-    const titulo = document.getElementById('titulo').value;
-    const comment = document.getElementById('comentario').value;
-    const id_mat = document.getElementById('id_mat').value;
-    const response = await fetch('/comentario/materias', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken
-        },
-        body: JSON.stringify({ titulo, comment, id_mat })
-    });
-    const result = await response.json();
-    if (result.success) {
-        alert("¡Pregunta enviada!");
-        document.getElementById('commentForm').reset();
-        await cargarComentarios();
-    } else {
-        alert("Error al enviar la pregunta");
-    }
-});
+//     const titulo = document.getElementById('titulo').value;
+//     const comment = document.getElementById('comentario').value;
+//     const id_mat = document.getElementById('id_mat').value;
+//     const response = await fetch('/comentario/materias', {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json',
+//             'X-CSRFToken': csrfToken
+//         },
+//         body: JSON.stringify({ titulo, comment, id_mat })
+//     });
+//     const result = await response.json();
+//     if (result.success) {
+//         alert("¡Pregunta enviada!");
+//         document.getElementById('commentForm').reset();
+//         await cargarComentarios();
+//     } else {
+//         alert("Error al enviar la pregunta");
+//     }
+// });
 
 //---FUNCIONES DE ELIMINACIÓN DE COMENTARIOS Y RESPUESTAS---
-async function eliminarComentario(id_post) {
-    if (!confirm("¿Seguro que quieres eliminar esta pregunta?")) return;
-    const response = await fetch('/eliminar_comentario', {
+async function eliminarUsuario(id_usuario) {
+    if (!confirm("¿Seguro que quieres eliminar este usuario?")) return;
+    const response = await fetch('/eliminar_usuario', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': csrfToken
         },
-        body: JSON.stringify({ id_post })
+        body: JSON.stringify({ id_usuario })
     });
     const result = await response.json();
     if (result.success) {
-        await cargarComentarios();
+        await cargar_usuarios();
     } else {
         alert(result.error || "No se pudo eliminar.");
 }
