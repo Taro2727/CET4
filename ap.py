@@ -513,7 +513,6 @@ def logout():
 # --- Verificación de OTP ---
 @app.route('/otp_login', methods=['POST'])
 @limiter.limit("5 per minute")
-@limiter.limit("1 per 10 minutes") # Cooldown
 def otp_login():
     datos = request.get_json()
     email = datos.get('email')
