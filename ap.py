@@ -888,7 +888,7 @@ def get_users():
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
 
     cursor = conn.cursor(dictionary=True) # Usamos dictionary=True para obtener un diccionario por cada fila
-    query = "SELECT id, email, rol FROM users"
+    query = "SELECT id, email, rol FROM usuario"
     
     try:
         cursor.execute(query)
@@ -901,6 +901,8 @@ def get_users():
         conn.close()
 
     return jsonify(users)
+
+
 
 # app.py (ejemplo para promover un usuario)
 @app.route('/api/users/promote', methods=['POST'])

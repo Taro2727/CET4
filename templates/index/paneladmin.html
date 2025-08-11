@@ -1,114 +1,59 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Panel de Administración de Usuarios</title>
-    <style>
-        
-        body {
-            font-family: sans-serif;
-            padding: 2rem;
-            background-color: #0f172a;
-            color: #f3f4f6;
-        }
-
-        .container {
-            max-width: 48rem;
-            margin: auto;
-            background-color: #1e293b;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-
-        .header {
-            padding: 1rem 1.5rem;
-            background-color: #1d4ed8;
-            color: #ffffff;
-        }
-
-        .header h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-
-        .content {
-            padding: 1.5rem;
-        }
-
-        .table-wrapper {
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            overflow: hidden;
-            border-bottom: 1px solid #bfdbfe;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            border-spacing: 0;
-            border-top: 1px solid #bfdbfe;
-        }
-
-        thead {
-            background-color: #eff6ff;
-        }
-
-        th {
-            padding: 0.75rem 1.5rem;
-            text-align: left;
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: #1e40af;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        tbody {
-            background-color: #334155;
-        }
-        
-        tr:hover {
-            background-color: rgba(255, 255, 255, 0.05);
-        }
-
-        td {
-            padding: 1rem 1.5rem;
-            white-space: nowrap;
-            font-size: 0.875rem;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Comentarios con Menú</title>
+  <link rel="stylesheet" href="/static/css/indexcajacomentario.css" />
+  <link rel="stylesheet" href="/static/css/barralateral.css"/>
+  <link rel="stylesheet" href="/static/css/ApartadoFuentes.css"/>
+  <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
-<body class="p-8 bg-slate-900 text-gray-100">
-    <div class="container">
-        <div class="header">
-            <h1>Panel de Administración de Usuarios</h1>
-        </div>
-        <div class="content">
-            <div class="table-wrapper">
-                <table id="users-table">
-                    <thead>
-                        <tr>
-                            <th>
-                                ID
-                            </th>
-                            <th>
-                                Email
-                            </th>
-                            <th>
-                                Rol
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Aquí se renderizarán los usuarios con JavaScript -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
+<body>
+  <div id="toggle">
+        <span>&#9776;</span> <!--El simbolo de Tres barras-->
     </div>
+  <!--Todo la barra lateral-->
+    <div class="elcostado ordenado">
+        <div id="out">
+            <span>&#9587;</span> <!--El simbolo de la X-->
+        </div>
+        <a class="separador3" href="/templates/index/indexusuario.html"><img src="/static/utils/img/usuario.png" alt="Perfil" class="usuario"></a>
+        <a class="separador3" href="/indexhomeoinicio"><img src="/static/utils/img/casa-img1.png" alt="Inicio" class="casa1"></a>
+        <a class="separador3" href="/templates/index/indexnotificaciones.html"><img src="/static/utils/img/campana-img2.png" alt="Notificaciones" class="campana2"></a>
+        <a class="separador3" href="/templates/index/indexcentralayuda.html"><img src="/static/utils/img/pregunta-img3.png" alt="Soporte" class="soporte3"></a>
+        <a class="separador3" href="#"><img src="/static/utils/img/grupo-img4.png" alt="" class="grupo4"></a>
+        <a class="separador3" href="#"><img src="/static/utils/img/opciones-img5.png" alt="Configuracion" class="opcion5"></a>
+        <a href="/logout">cerrar sesion</a> <!--provisorio-->
+    </div>
+    <!--Fin de la barra lateral-->
+
+  <main class="comentarios">
+    <header class="comentarios-header">
+      <span class="flechas" aria-hidden="true">★★★★★★★★★★★★★★★★★★★★★</span>
+      <h1>Lista de usuarios</h1>
+      <span class="flechas" aria-hidden="true">★★★★★★★★★★★★★★★★★★★★★</span>
+    </header>
+    <!-- el section de abajo es para elegir entre las fuentes y los comentarios-->
+    <section id="menues">
+      <button href="#" id="ordenar">&#11015; Ordenar por</button>
+    </section>
+
+<section class="caja-comentario">
+      <form id="commentForm">
+        <input type="text" id="titulo" name="titulo" placeholder="Título de la pregunta" required>
+        <textarea id="comentario" name="comentario" placeholder="Escribe tu comentario..." required></textarea>
+        <input type="hidden" id="id_mat" name="id_mat" value="{{ id_mat }}">
+        <button type="submit">Enviar</button>
+      </form>
+      <div id="commentsSection"></div> 
+  </main>
+<!-- Seguridad CSP: pasar ID por meta -->
+    <meta name="usuario-id" content="{{ current_user.id or 'null' }}"> <!--NO BORRAR ESTA LINEA-->
+    <meta name="usuario-rol" content="{{ current_user.rol }}">
     
-    <!-- Incluye el script de JavaScript al final del body -->
- <!-- ACA IRIA EL <SCRIPT> Q VAYA A PANEL.JS Y HACER CARGAR LOS USUARIOS AL PANEL ETC ETC-->
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.5/dist/purify.min.js"></script>
+<script src="/static/js/comentarios.js"></script>
+<script src="/static/js/barralateral.js"></script>
 </body>
 </html>

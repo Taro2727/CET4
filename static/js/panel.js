@@ -1,56 +1,99 @@
-// Espera a que el DOM esté completamente cargado
-document.addEventListener('DOMContentLoaded', () => {
-    // URL de tu API de usuarios
-    const API_URL = '/api/users';
+const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+const usuarioActual = document.querySelector('meta[name="usuario-id"]').content;
+const rolUsuarioActual = document.querySelector('meta[name="usuario-rol"]').content;
+window.onload = async function () {
+    // Se mantiene la carga inicial de comentarios
+    await cargarComentarios();
+};
+//cargar_usuarios
+async function cargar_usuarios() {
+    const id_mat = document.getElementById('id_mat').value;
+    const response = await fetch('/get_comentario?id_mat='+encodeURIComponent(id_mat)+ '&t=' + Date.now());
+    const comentarios = await response.json();
+    const section = document.getElementById('commentsSection');
+    section.innerHTML = ''; // Limpia la sección antes de recargar
 
-    // Función asincrónica para obtener los usuarios
-    const fetchUsers = async () => {
-        try {
-            // Realiza la petición GET al endpoint
-            const response = await fetch(API_URL);
-            
-            // Verifica si la respuesta es exitosa
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            
-            // Parsea el JSON de la respuesta
-            const users = await response.json();
-            
-            // Muestra los usuarios en la tabla
-            renderUsers(users);
-            
-        } catch (error) {
-            console.error('Error al obtener los usuarios:', error);
-            // Podrías mostrar un mensaje de error en el UI
-            const tableBody = document.querySelector('#users-table tbody');
-            tableBody.innerHTML = `<tr><td colspan="3" class="text-center text-red-500">Error al cargar los usuarios.</td></tr>`;
-        }
-    };
+    comentarios.forEach(c => {
+        // Se mantiene la clase original del contenedor principal: "comment"
+        const contenidoSeguro = DOMPurify.sanitize(c.cont);
+        const tituloSeguro = DOMPurify.sanitize(c.titulo);
+        const div = document.createElement('div');
+        div.classList.add('comment');
 
-    // Función para renderizar los usuarios en la tabla
-    const renderUsers = (users) => {
-        const tableBody = document.querySelector('#users-table tbody');
-        tableBody.innerHTML = ''; // Limpia el cuerpo de la tabla antes de agregar nuevos datos
-
-        if (users.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="3" class="text-center text-gray-500">No hay usuarios para mostrar.</td></tr>`;
-            return;
-        }
-
-        users.forEach(user => {
-            const row = document.createElement('tr');
-            row.className = 'border-b hover:bg-gray-50';
+        // Se agrega la separación de divs pero sin cambiar la estructura visible inicial
+        div.innerHTML = `
+        ${c.id_usu == usuarioActual || rolUsuarioActual == 'admin' ? `<button class="btn-eliminar" onclick="eliminarComentario('${c.id_post}')">🗑️</button>` : ''}
+            <span class="usuario-comentario"><strong>${c.usuario || "Anónimo"}</strong>:</span>
+            <br>
+            <span class="titulo-comentario"><b>${tituloSeguro}</b></span>
+            <span class="texto-comentario">${contenidoSeguro}</span>
+            <br>
+            <button class="btn-responder" onclick="responder('${c.id_post}', '${c.usuario || "Anónimo"}')">Responder</button>
+            <button class="btn-ver-respuestas" onclick="mostrarRespuestas('${c.id_post}')">Ver respuestas</button>
+                
+          
+            <div class="area-responder" id="area-responder-${c.id_post}"></div>
+            <div class="respuestas" id="respuestas-${c.id_post}" style="display: none;"></div>
             
-            row.innerHTML = `
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${user.id}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${user.email}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${user.rol}</td>
-            `;
-            tableBody.appendChild(row);
-        });
-    };
+        `  ;
+        
+        section.appendChild(div);
+        // Estas lineas de codigo hacen andar el corazon
+       
 
-    // Llama a la función para obtener los usuarios cuando se carga la página
-    fetchUsers();
+
+        //-----------------------------------------
+        //esto iba abajo del 1er const
+        // btnLike.addEventListener('click',() => {
+        // btnLike.classList.toggle('liked');
+        // btnLike.textContent = btnLike.textContent === '♡' ? '♡' : '♡';
+        // linea corazoncito 
+        //-------------------------------------------------
+
+    });
+}
+
+// Se mantiene sin cambios el formulario de envío de preguntas
+document.getElementById('commentForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const titulo = document.getElementById('titulo').value;
+    const comment = document.getElementById('comentario').value;
+    const id_mat = document.getElementById('id_mat').value;
+    const response = await fetch('/comentario/materias', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({ titulo, comment, id_mat })
+    });
+    const result = await response.json();
+    if (result.success) {
+        alert("¡Pregunta enviada!");
+        document.getElementById('commentForm').reset();
+        await cargarComentarios();
+    } else {
+        alert("Error al enviar la pregunta");
+    }
 });
+
+//---FUNCIONES DE ELIMINACIÓN DE COMENTARIOS Y RESPUESTAS---
+async function eliminarComentario(id_post) {
+    if (!confirm("¿Seguro que quieres eliminar esta pregunta?")) return;
+    const response = await fetch('/eliminar_comentario', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({ id_post })
+    });
+    const result = await response.json();
+    if (result.success) {
+        await cargarComentarios();
+    } else {
+        alert(result.error || "No se pudo eliminar.");
+}
+}
+
