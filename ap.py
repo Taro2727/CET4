@@ -902,6 +902,30 @@ def get_users():
 
     return jsonify(users)
 
+@app.route('/eliminar_usuario', method=['POST'])
+def eliminarusuario():
+    conn=DB_CONFIG
+    datos_js = request.get_json()
+    id_usuario=datos_js[id_usuario]
+    if not id_usuario:
+        return jsonify({'success': False, 'error': 'No mandaste usuario'}), 401
+    
+    try:
+        cursor = conn.cursor()
+        cursor.execute("delete from usuario where id_usu=%s,",(id_usuario))
+        cursor.execute("delete from rta where id_usu=%s,",(id_usuario))
+        cursor.execute("delete from preg where id_usu=%s,",(id_usuario))
+        cursor.execute("delete from likes_rta where id_usu=%s,",(id_usuario)) 
+        cursor.execute("delete from likes_comentarios where id_usu=%s,",(id_usuario))
+
+
+    except:
+        print(f"Error en la consulta: ")
+        return jsonify({'success': False, 'error': 'Error interno al eliminar usuario'}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
 
 
 # app.py (ejemplo para promover un usuario)
