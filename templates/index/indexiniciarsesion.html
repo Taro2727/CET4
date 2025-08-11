@@ -22,7 +22,7 @@
     <section class="login-container" aria-labelledby="login-title">
       <h1 id="login-title">¡BIENVENIDO DE VUELTA!</h1>
 
-      <form id="loginForm">
+      <form id="loginForm" autocomplete="off">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
         <label for="email" class="sr-only">Correo electrónico</label>
