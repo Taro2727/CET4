@@ -183,6 +183,7 @@ def dataregistro():
     mail =  session['email_para_verificacion_registro']
     contra = datosdesdejs['contra']
     confcontra = datosdesdejs['confcontra']
+    rol='normal'
 
     if contra != confcontra:
         # CAMBIO: Devolver JSON consistente con otras rutas de API
@@ -201,8 +202,8 @@ def dataregistro():
             return jsonify({"exito": False, "error": "El email ya está registrado."}), 409 # Conflict
 
         hash_contra = generate_password_hash(contra)
-        sql = "INSERT INTO usuario(nom_usu, email, contraseña) VALUES (%s, %s, %s)"
-        valores = (nombre, mail, hash_contra)
+        sql = "INSERT INTO usuario(nom_usu, email, contraseña,rol) VALUES (%s, %s, %s, %s)"
+        valores = (nombre, mail, hash_contra, rol)
         cursor.execute(sql, valores)
         conn.commit()
         cursor.close()
@@ -888,7 +889,7 @@ def get_users():
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
 
     cursor = conn.cursor(dictionary=True) # Usamos dictionary=True para obtener un diccionario por cada fila
-    query = "SELECT id, email, rol FROM usuario"
+    query = "SELECT id_usu, nom_usu,email,rol FROM usuario"
     
     try:
         cursor.execute(query)
