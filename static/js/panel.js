@@ -20,6 +20,11 @@ async function cargar_usuarios() {
         // Se agrega la separación de divs pero sin cambiar la estructura visible inicial
         div.innerHTML = `
             <button class="btn-eliminar" onclick="eliminarUsuario('${u.id_usu}')">🗑️</button>
+            ${rolUsuarioActual == 'admin' ? `<select id="opciones" name="opciones">
+            <option value="opcion1">normal</option>
+    <option value="opcion2">Admin</option>
+  <option value="opcion3">Moderador</option>
+</select>` : ''}
             <span class="usuariooo"><strong>${u.nom_usu}</strong></span><br>
             <span class="usuariooo"><b>ID:</b> ${u.id_usu}</span><br>
             <span class="usuariooo"><b>Email:</b> ${u.email}</span><br>
