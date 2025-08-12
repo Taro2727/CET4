@@ -902,6 +902,26 @@ def get_users():
 
     return jsonify(users)
 
+@app.route('/upgradear',methods=['POST'])
+def ascender():
+    data = request.get_json()
+    id_usuario = data.get('id_usuario')
+    
+    if not id_usuario:
+        return jsonify({'success': False, 'error': 'No mandaste usuario'}), 401
+    
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor()
+        cursor.execute("update usuario set rol='admin' where id_usu=%s",(id_usuario,))
+        conn.commit()
+
+    except Exception as e:
+        print(f"❌ Error al eliminar usuario {id_usuario}: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500    
+
+
+
 @app.route('/eliminar_usuario', methods=['POST'])
 def eliminarusuario():
     datos_js = request.get_json()

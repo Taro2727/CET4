@@ -20,11 +20,7 @@ async function cargar_usuarios() {
         // Se agrega la separación de divs pero sin cambiar la estructura visible inicial
         div.innerHTML = `
             <button class="btn-eliminar" onclick="eliminarUsuario('${u.id_usu}')">🗑️</button>
-            ${rolUsuarioActual == 'admin' ? `<select id="opciones" name="opciones">
-            <option value="opcion1">normal</option>
-    <option value="opcion2">Admin</option>
-  <option value="opcion3">Moderador</option>
-</select>` : ''}
+            ${rolUsuarioActual == 'admin' ? `<button class="usuariooo" onclick="ascender('${u.id_usu}')">ascender</button>` : ''}
             <span class="usuariooo"><strong>${u.nom_usu}</strong></span><br>
             <span class="usuariooo"><b>ID:</b> ${u.id_usu}</span><br>
             <span class="usuariooo"><b>Email:</b> ${u.email}</span><br>
@@ -91,3 +87,20 @@ async function eliminarUsuario(id_usuario) {
 }
 }
 
+async function ascender(id_usuario) {
+    if (!confirm("¿Seguro que quieres ascemnder este usuario?")) return;
+    const response = await fetch('/upgradear', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({ id_usuario })
+    });
+    const result = await response.json();
+    if (result.success) {
+        await cargar_usuarios();
+    } else {
+        alert(result.error || "No se pudo eliminar.");
+}
+}
