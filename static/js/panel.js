@@ -20,13 +20,19 @@ async function cargar_usuarios() {
         // Se agrega la separación de divs pero sin cambiar la estructura visible inicial
         div.innerHTML = `
             <button class="btn-eliminar" onclick="eliminarUsuario('${u.id_usu}')">🗑️</button>
-            ${u.rol == 'normal'  ? `<button class="usuariooo" onclick="ascender('${u.id_usu}','${u.rol}')">ascender</button>` : `<button class="usuariooo" onclick="down('${u.id_usu}','${u.rol}')">down</button>`}
+            ${u.rol === 'normal' ? `<button onclick="ascender('${u.id_usu}','${u.rol}')">↑</button>`  
+            : u.rol === 'moderador' ? `<button onclick="ascender('${u.id_usu}','${u.rol}')">↑</button> <button onclick="down('${u.id_usu}','${u.rol}')">↓</button>`  
+            : `<button onclick="down('${u.id_usu}','${u.rol}')">↓</button>`}
             <span class="usuariooo"><strong>${u.nom_usu}</strong></span><br>
             <span class="usuariooo"><b>ID:</b> ${u.id_usu}</span><br>
             <span class="usuariooo"><b>Email:</b> ${u.email}</span><br>
             <span class="usuariooo"><b>Rol:</b> ${u.rol}</span><br>
         `  ;
         
+            //EXPLICACION LINEAS 23 24 Y 25
+            //    LINEA 23 "si el rol de usuario es NORMAL (? significa se cumple) entonces muetsra boton de upgradear"
+            //    LINEA 24 pero si no cumple con la linea 23 (: significa else if )"si el rol del usuario es MODERADOR entonces muestra dos botones upgradear y degradar "
+            //    LINEA 25 peeeero si no se cumple ninguna significa q es admin, entonces solo muestra boton de degradar
         section.appendChild(div);
         // Estas lineas de codigo hacen andar el corazon
        
@@ -104,7 +110,7 @@ async function ascender(id_usuario,rol_usuario) {
 }
 }
 //falta agregar q le pase el rol para q dependiendo del rol haga una cosa o otra en el ap.py
-async function degradar(id_usuario) {
+async function down(id_usuario,rol_usuario) {
     if (!confirm("¿Seguro que quieres degradar a este usuario?")) return;
     const response = await fetch('/down', {
         method: 'POST',
@@ -112,7 +118,7 @@ async function degradar(id_usuario) {
             'Content-Type': 'application/json',
             'X-CSRFToken': csrfToken
         },
-        body: JSON.stringify({ id_usuario })
+        body: JSON.stringify({ id_usuario,rol_usuario })
     });
     const result = await response.json();
     if (result.success) {

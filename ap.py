@@ -1003,11 +1003,11 @@ def eliminarusuario():
             pass
 
 
-@app.route('/down')
+@app.route('/down',methods=['POST'])
 def down():
     data = request.get_json()
-    id_usuario= data.get("id_usuario")
-    rol_usuario=data.get("rol_usuario")
+    id_usuario= data.get('id_usuario')
+    rol_usuario=data.get('rol_usuario')
     if not id_usuario:
         return jsonify({'success': False, 'error': 'No mandaste usuario'}), 401
 
