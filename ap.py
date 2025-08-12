@@ -904,29 +904,71 @@ def get_users():
 
 @app.route('/eliminar_usuario', methods=['POST'])
 def eliminarusuario():
-    conn = mysql.connector.connect(**DB_CONFIG)
     datos_js = request.get_json()
-    id_usuario=datos_js['id_usuario']
+    id_usuario = datos_js.get('id_usuario')
+
     if not id_usuario:
         return jsonify({'success': False, 'error': 'No mandaste usuario'}), 401
-    
-    try:
-        cursor = conn.cursor()
-        cursor.execute("delete from usuario where id_usu=%s", (id_usuario,))
-        cursor.execute("delete from rta where id_usu=%s", (id_usuario,))
-        cursor.execute("delete from preg where id_usu=%s", (id_usuario,))
-        cursor.execute("delete from likes_rta where id_usu=%s", (id_usuario,))
-        cursor.execute("delete from likes_comentarios where id_usu=%s", (id_usuario,))
 
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor()
+
+        # 0. Eliminar likes hechos por el usuario en comentarios
+        cursor.execute("DELETE FROM likes_comentarios WHERE id_usu = %s", (id_usuario,))
+
+        # 1. Eliminar likes de TODAS las respuestas que serán eliminadas
+        cursor.execute("""
+            DELETE FROM likes_rta 
+            WHERE id_com IN (
+                SELECT id_com FROM rta 
+                WHERE id_usu = %s OR id_post IN (
+                    SELECT id_post FROM preg WHERE id_usu = %s
+                )
+            )
+        """, (id_usuario, id_usuario))
+
+        # 2. Eliminar respuestas a preguntas del usuario
+        cursor.execute("""
+            DELETE FROM rta 
+            WHERE id_post IN (
+                SELECT id_post FROM preg WHERE id_usu = %s
+            )
+        """, (id_usuario,))
+
+        # 3. Eliminar likes de preguntas del usuario
+        cursor.execute("""
+            DELETE FROM likes_comentarios 
+            WHERE id_post IN (
+                SELECT id_post FROM preg WHERE id_usu = %s
+            )
+        """, (id_usuario,))
+
+        # 4. Eliminar preguntas del usuario
+        cursor.execute("DELETE FROM preg WHERE id_usu = %s", (id_usuario,))
+
+        # 5. Eliminar respuestas propias del usuario
+        cursor.execute("DELETE FROM rta WHERE id_usu = %s", (id_usuario,))
+
+        # 6. Finalmente, eliminar el usuario
+        cursor.execute("DELETE FROM usuario WHERE id_usu = %s", (id_usuario,))
         conn.commit()
+
         return jsonify({'success': True}), 200
+
     except Exception as e:
-        print(f"Error en la consulta: {e} ")
-        return jsonify({'success': False, 'error': 'Error interno al eliminar usuario'}), 500
-    
+        print(f"❌ Error al eliminar usuario {id_usuario}: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
     finally:
-        cursor.close()
-        conn.close()
+        try:
+            cursor.close()
+            conn.close()
+        except:
+            pass
+
+
+
 
 
 
