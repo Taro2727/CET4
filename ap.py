@@ -881,9 +881,9 @@ def paneladmin():
 
 
 
-@app.route('/api/users')
+@app.route('/api/users', methods=['GET', 'POST'])
 def get_users():
-    conn = DB_CONFIG()
+    conn = mysql.connector.connect(**DB_CONFIG)
     if not conn:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
 
@@ -902,26 +902,28 @@ def get_users():
 
     return jsonify(users)
 
-@app.route('/eliminar_usuario', method=['POST'])
+@app.route('/eliminar_usuario', methods=['POST'])
 def eliminarusuario():
-    conn=DB_CONFIG
+    conn = mysql.connector.connect(**DB_CONFIG)
     datos_js = request.get_json()
-    id_usuario=datos_js[id_usuario]
+    id_usuario=datos_js['id_usuario']
     if not id_usuario:
         return jsonify({'success': False, 'error': 'No mandaste usuario'}), 401
     
     try:
         cursor = conn.cursor()
-        cursor.execute("delete from usuario where id_usu=%s,",(id_usuario))
-        cursor.execute("delete from rta where id_usu=%s,",(id_usuario))
-        cursor.execute("delete from preg where id_usu=%s,",(id_usuario))
-        cursor.execute("delete from likes_rta where id_usu=%s,",(id_usuario)) 
-        cursor.execute("delete from likes_comentarios where id_usu=%s,",(id_usuario))
+        cursor.execute("delete from usuario where id_usu=%s", (id_usuario,))
+        cursor.execute("delete from rta where id_usu=%s", (id_usuario,))
+        cursor.execute("delete from preg where id_usu=%s", (id_usuario,))
+        cursor.execute("delete from likes_rta where id_usu=%s", (id_usuario,))
+        cursor.execute("delete from likes_comentarios where id_usu=%s", (id_usuario,))
 
-
-    except:
-        print(f"Error en la consulta: ")
+        conn.commit()
+        return jsonify({'success': True}), 200
+    except Exception as e:
+        print(f"Error en la consulta: {e} ")
         return jsonify({'success': False, 'error': 'Error interno al eliminar usuario'}), 500
+    
     finally:
         cursor.close()
         conn.close()

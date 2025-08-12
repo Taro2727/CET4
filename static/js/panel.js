@@ -3,11 +3,11 @@ const usuarioActual = document.querySelector('meta[name="usuario-id"]').content;
 const rolUsuarioActual = document.querySelector('meta[name="usuario-rol"]').content;
 window.onload = async function () {
     // Se mantiene la carga inicial de comentarios
-    await cargarComentarios();
+    await cargar_usuarios();
 };
 //cargar_usuarios
 async function cargar_usuarios() {
-    const response = await fetch('/get_usuario?t=' + Date.now());
+    const response = await fetch('/api/users?t=' + Date.now());
     const usuario = await response.json();
     const section = document.getElementById('adminPanel');
     section.innerHTML = ''; // Limpia la sección antes de recargar
@@ -19,13 +19,11 @@ async function cargar_usuarios() {
 
         // Se agrega la separación de divs pero sin cambiar la estructura visible inicial
         div.innerHTML = `
-            <button class="btn-eliminar" onclick="eliminarUsuario('${u.id}')">🗑️</button>
-            <span class="usuario-comentario"><strong>${u.nombre}</strong></span><br>
-            <span><b>ID:</b> ${u.id}</span><br>
+            <button class="btn-eliminar" onclick="eliminarUsuario('${u.id_usu}')">🗑️</button>
+            <span class="usuario-comentario"><strong>${u.nom_usu}</strong></span><br>
+            <span><b>ID:</b> ${u.id_usu}</span><br>
             <span><b>Email:</b> ${u.email}</span><br>
             <span><b>Rol:</b> ${u.rol}</span><br>
-            <button class="btn-editar" onclick="editarRol('${u.id}', '${u.rol}')">Editar Rol</button>
-            
         `  ;
         
         section.appendChild(div);

@@ -51,8 +51,8 @@
       <div id="commentsSection"></div> 
   </main>
 <!-- Seguridad CSP: pasar ID por meta -->
-    <meta name="usuario-id" content="{{ current_user.id or 'null' }}"> <!--NO BORRAR ESTA LINEA-->
-    <meta name="usuario-rol" content="{{ current_user.rol }}">
+    <meta name="usuario-id" content="{{ current_user.id or 'null' }}">
+    <meta name="usuario-rol" content="{{ current_user.rol or 'anonimo' }}">
     
 <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.5/dist/purify.min.js"></script>
 <script src="/static/js/comentarios.js"></script>

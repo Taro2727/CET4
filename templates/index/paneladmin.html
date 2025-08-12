@@ -39,7 +39,7 @@
       <button href="#" id="ordenar">&#11015; Ordenar por</button>
     </section>
 
-<section class="caja-comentario">
+<section id="adminPanel" class="lista-usuarios">
       <form id="commentForm" autocomplete="off">
         <input type="text" id="titulo" name="titulo" placeholder="Título de la pregunta" required>
         <textarea id="comentario" name="comentario" placeholder="Escribe tu comentario..." required></textarea>
@@ -53,7 +53,7 @@
     <meta name="usuario-rol" content="{{ current_user.rol }}">
     
 <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.5/dist/purify.min.js"></script>
-<script src="/static/js/comentarios.js"></script>
+<script src="/static/js/panel.js"></script>
 <script src="/static/js/barralateral.js"></script>
 </body>
 </html>
