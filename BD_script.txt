@@ -234,7 +234,7 @@ CREATE TABLE `usuario` (
   `nom_usu` varchar(30) NOT NULL,
   `email` varchar(50) NOT NULL,
   `contraseña` varchar(255) NOT NULL,
-  `rol` ENUM('normal','admin') NOT NULL
+  `rol` ENUM('normal','moderador','admin') NOT NULL
   PRIMARY KEY (`id_usu`),
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

@@ -906,19 +906,34 @@ def get_users():
 def ascender():
     data = request.get_json()
     id_usuario = data.get('id_usuario')
+    rol_usuario= data.get('rol_usuario')
     
-    if not id_usuario:
+    if not id_usuario or not rol_usuario:
         return jsonify({'success': False, 'error': 'No mandaste usuario'}), 401
     
-    try:
-        conn = mysql.connector.connect(**DB_CONFIG)
-        cursor = conn.cursor()
-        cursor.execute("update usuario set rol='admin' where id_usu=%s",(id_usuario,))
-        conn.commit()
-
-    except Exception as e:
-        print(f"❌ Error al eliminar usuario {id_usuario}: {e}")
-        return jsonify({'success': False, 'error': str(e)}), 500    
+    # pasa de NORMAL ========> MODERADOR
+    if rol_usuario == 'normal':
+        try:
+            conn = mysql.connector.connect(**DB_CONFIG)
+            cursor = conn.cursor()
+            cursor.execute("update usuario set rol='moderador' where id_usu=%s",(id_usuario,))
+            conn.commit()
+        except Exception as e:
+            print(f"❌ Error al upgradear usuario {id_usuario}: {e}")
+            return jsonify({'success': False, 'error': str(e)}), 500
+    #pasa de MODERADOR ============> ADMINISTRADOR
+    elif rol_usuario == 'moderador':
+        try:
+            conn = mysql.connector.connect(**DB_CONFIG)
+            cursor = conn.cursor()
+            cursor.execute("update usuario set rol='admin' where id_usu=%s",(id_usuario,))
+            conn.commit()
+        except Exception as e:
+            print(f"❌ Error al upgradear usuario {id_usuario}: {e}")
+            return jsonify({'success': False, 'error': str(e)}), 500
+    else:
+        print(f"❌ Error, rol invalido o no declarado {id_usuario}: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 
@@ -988,37 +1003,35 @@ def eliminarusuario():
             pass
 
 
+@app.route('/down')
+def down():
+    data = request.get_json()
+    id_usuario= data.get("id_usuario")
+    rol_usuario=data.get("rol_usuario")
+    if not id_usuario:
+        return jsonify({'success': False, 'error': 'No mandaste usuario'}), 401
 
-
-
-
-# app.py (ejemplo para promover un usuario)
-@app.route('/api/users/promote', methods=['POST'])
-def promote_user():
-    user_id = request.json.get('user_id')
-    
-    if not user_id:
-        return jsonify({"error": "ID de usuario no proporcionado"}), 400
-
-    conn = DB_CONFIG()
-    if not conn:
-        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
-
-    cursor = conn.cursor()
-    
-    # MUY IMPORTANTE: Usar %s para la parametrización
-    query = "UPDATE users SET rol = 'admin' WHERE id = %s"
-    
-    try:
-        cursor.execute(query, (user_id,))
-        conn.commit()
-        return jsonify({"message": f"Usuario {user_id} promovido a admin"}), 200
-    except mysql.connector.Error as err:
-        print(f"Error en la consulta: {err}")
-        return jsonify({"error": "Error al promover al usuario"}), 500
-    finally:
-        cursor.close()
-        conn.close()
+    if rol_usuario == 'admin':
+        try:
+            conn = mysql.connector.connect(**DB_CONFIG)
+            cursor = conn.cursor()
+            cursor.execute("update usuario set rol='moderador' where id_usu=%s",(id_usuario,))
+            conn.commit()
+        except Exception as e:
+            print(f"❌ Error al degradar usuario {id_usuario}: {e}")
+            return jsonify({'success': False, 'error': str(e)}), 500
+    elif rol_usuario == 'moderador':
+        try:
+            conn = mysql.connector.connect(**DB_CONFIG)
+            cursor = conn.cursor()
+            cursor.execute("update usuario set rol='normal' where id_usu=%s",(id_usuario,))
+            conn.commit()
+        except Exception as e:
+            print(f"❌ Error al degradar usuario {id_usuario}: {e}")
+            return jsonify({'success': False, 'error': str(e)}), 500
+    else:
+        print(f"❌ Error no hay rol apto para degradar {id_usuario}: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 if __name__ == "__main__":
     print("iniciando flask..")
