@@ -33,8 +33,50 @@ profanity.load_censor_words_from_file('palabras_malas.txt')
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
+#importar para notificaciones
+from pywebpush import webpush, WebPushException
+import json
+from flask import send_from_directory
+
+# from cryptography.hazmat.primitives.asymmetric import ec
+# from cryptography.hazmat.primitives import serialization
+# import base64
+
+# # Generar clave EC P-256
+# private_key = ec.generate_private_key(ec.SECP256R1())
+# public_key = private_key.public_key()
+
+# # Clave privada en formato Base64 URL Safe (para el servidor)
+# priv_bytes = private_key.private_numbers().private_value.to_bytes(32, 'big')
+# VAPID_PRIVATE_KEY = base64.urlsafe_b64encode(priv_bytes).decode('utf-8').rstrip('=')
+
+# # Clave pública en formato Base64 URL Safe (para el navegador)
+# pub_bytes = public_key.public_bytes(
+#     encoding=serialization.Encoding.X962,
+#     format=serialization.PublicFormat.UncompressedPoint
+# )
+# VAPID_PUBLIC_KEY = base64.urlsafe_b64encode(pub_bytes).decode('utf-8').rstrip('=')
+
+# # Claims
+# VAPID_CLAIMS = {
+#     "sub": "mailto:soportes.zettinno.cet@gmail.com"
+# }
+
+# print("✅ VAPID_PUBLIC_KEY:", VAPID_PUBLIC_KEY)
+# print("✅ VAPID_PRIVATE_KEY:", VAPID_PRIVATE_KEY)
+
+
 app = Flask(__name__)
 app.secret_key = 'mi_clave_secreta' # Clave secreta para sesiones, cookies, etc. 
+
+#configuracion pra notificaciones push
+VAPID_PUBLIC_KEY = """BLFlLPO2b42IUmClRKabKUcKGoewMZcudh8l30bIgZBOsLKUAqYFaVaLI1Fi3hSKlf4hnmEkcZCHFkTrvu0hM2w"""
+
+VAPID_PRIVATE_KEY = """zfdsyrUTUjzyrCjOdl-FDWtLRG9UczwLnkxJp2OtYfU"""
+
+VAPID_CLAIMS = {
+    "sub": "mailto:soportes.zettinno.cet@gmail.com"
+}
 
 limiter = Limiter(
     app=app,
@@ -78,6 +120,8 @@ def censurar_con_corazones(texto):
     censurado = profanity.censor(texto, censor_char='*')
     return censurado.replace('*', '❤')
 
+
+
 #-C-O-N-F-I-G-U-R-A-C-I-O-N--M-A-I-L
 
 app.config.update(
@@ -106,6 +150,25 @@ def verificar_otp(secreto, codigo, intervalo=600):
     return totp.verify(codigo)
 
 
+#------------------------------------
+#funcion reutilizable para enviar notificaciones push
+def notif_push(subscription_info, message_body):
+    """
+    Función para enviar una notificación push.
+    """
+    try:
+        webpush(
+            subscription_info=json.loads(subscription_info), # Decodifica el JSON de la BD
+            data=json.dumps(message_body),
+            vapid_private_key=VAPID_PRIVATE_KEY,
+            vapid_claims=VAPID_CLAIMS
+        )
+        print("Notificación enviada.")
+    except WebPushException as ex:
+        print(f"Error al enviar notificación: {ex}")
+        # Si la suscripción no es válida (código 410), deberías borrarla de la BD
+        if ex.response.status_code == 410:
+            print("Suscripción expirada o no válida. Se recomienda eliminarla.")
 #------------------------------------
 
 # --- Inicializar Flask-Login ---
@@ -147,6 +210,10 @@ def load_user(user_id):
     
 
 # --- RUTAS DE NAVEGACIÓN GENERAL ---
+@app.route('/sw.js') #ruta de notificaciones push
+def service_worker():
+    return send_from_directory('.', 'sw.js', mimetype='application/javascript')
+
 @app.route('/') #ruta para la página de inicio
 def inicio():
     if current_user.is_authenticated:
@@ -218,7 +285,38 @@ def dataregistro():
 
 #hasta aca es lo de crear cuenta
 #________________________________
+#rutas de notificaciones push
+@app.route('/vapid_key_publica', methods=['GET'])
+@login_required
+def vapid_key_publica():
+    return jsonify({'public_key': VAPID_PUBLIC_KEY})
 
+@app.route('/guardarsuscripcion', methods=['POST'])
+@login_required
+def guardar_suscripcion():
+    suscripcion_data = request.json
+    if not suscripcion_data:
+        return jsonify({'success': False, 'error': 'No se recibieron datos de suscripción'}), 400
+
+    id_usu = current_user.id
+    suscripcion_json = json.dumps(suscripcion_data)
+
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor()
+        # Evitar duplicados: Borrar suscripciones viejas del mismo usuario antes de insertar la nueva
+        cursor.execute("DELETE FROM suscripcion_push WHERE id_usu = %s", (id_usu,))
+        cursor.execute(
+            "INSERT INTO suscripcion_push (id_usu, suscripcion_json) VALUES (%s, %s)",
+            (id_usu, suscripcion_json)
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return jsonify({'success': True})
+    except mysql.connector.Error as err:
+        print(f"Error al guardar suscripción: {err}")
+        return jsonify({'success': False, 'error': 'Error de base de datos'}), 500
 #ACA RUTASS PROVISORIAS (2FA)
 
 @app.route("/perfil")
@@ -668,8 +766,22 @@ def responder():
     try:
         conn = mysql.connector.connect(**DB_CONFIG) # Usar DB_CONFIG
         cursor = conn.cursor()
+        cursor.execute("SELECT id_usu FROM preg WHERE id_post = %s", (id_post,))
+        post_author_data = cursor.fetchone()
+        id_autor_post = post_author_data['id_usu'] if post_author_data else None
         query = "INSERT INTO rta (id_post, id_usu, cont) VALUES (%s, %s, %s)"
         cursor.execute(query, (id_post, id_usu, cont))
+        if id_autor_post and id_autor_post != id_usu:
+            # 4. Buscar la suscripción del autor
+            cursor.execute("SELECT suscripcion_json FROM suscripcion_push WHERE id_usu = %s", (id_autor_post,))
+            subscriptions = cursor.fetchall()
+            for sub in subscriptions:
+                # 5. Enviar notificación
+                notif= {
+                    "title": "💬 ¡Nueva Respuesta!",
+                    "body": f"{current_user.nom_usu} ha respondido a tu pregunta."
+                }
+                notif_push(sub['suscripcion_json'], notif)
         conn.commit()
         cursor.close()
         conn.close()
@@ -726,12 +838,16 @@ def like_comment():
 
     try:
         conn = mysql.connector.connect(**DB_CONFIG)
-        cursor = conn.cursor()
+        cursor = conn.cursor(dictionary=True)
 
         # # Sumar un like
         # cursor.execute("UPDATE preg SET cont_likes = IFNULL(cont_likes, 0) + 1 WHERE id_post = %s", (comment_id,))
         # conn.commit()
         # Paso 1: verificar si ya existe el like
+        cursor.execute("SELECT id_usu FROM preg WHERE id_post = %s ", (comment_id,))
+        autor_data=cursor.fetchone()
+        id_autor_data= autor_data['id_usu'] if autor_data else None
+
         cursor.execute("SELECT * FROM likes_comentarios WHERE id_post = %s AND id_usu = %s", (comment_id, id_usu_like))
         existe = cursor.fetchone()
         if existe:
@@ -743,10 +859,19 @@ def like_comment():
             cursor.execute("UPDATE preg SET cont_likes = IFNULL(cont_likes, 0) + 1 WHERE id_post = %s", (comment_id,))
             cursor.execute("INSERT INTO likes_comentarios (id_post, id_usu) VALUES (%s, %s)", (comment_id, id_usu_like))
 
+            if id_autor_data and id_autor_data != id_usu_like:
+                cursor.execute("SELECT suscripcion_json FROM suscripcion_push WHERE id_usu = %s", (id_autor_data,))
+                suscripcion = cursor.fetchall()
+                for sub in suscripcion:
+                    notif ={
+                        "title": "Nuevo like en tu comentario",
+                        "body": f"{current_user.nom_usu} ha dado like a tu comentario",
+                    }
+                    notif_push(sub['suscripcion_json'], notif)
         conn.commit()
         # Obtener el total actualizado
         cursor.execute("SELECT cont_likes FROM preg WHERE id_post = %s", (comment_id,))
-        total = cursor.fetchone()[0]
+        total = cursor.fetchone()["cont_likes"] #lo cambie antes estaba asi [0] por si no funciona 
         cursor.close()
         conn.close()
         return jsonify({'success': True, 'total': total})
@@ -769,6 +894,10 @@ def like_rta():
     cursor = conn.cursor()
     cursor.execute("SELECT 1 FROM likes_rta WHERE id_com=%s AND id_usu=%s", (id_com, id_usu))
     liked = cursor.fetchone()
+    cursor.execute("SELECT id_usu FROM preg WHERE id_post = %s", (id_com,))
+    post_author_data = cursor.fetchone()
+    id_autor_post = post_author_data['id_usu'] if post_author_data else None
+
     if liked:
         # Sacar like
         cursor.execute("DELETE FROM likes_rta WHERE id_com=%s AND id_usu=%s", (id_com, id_usu))
@@ -779,6 +908,19 @@ def like_rta():
         cursor.execute("INSERT INTO likes_rta (id_com, id_usu) VALUES (%s, %s)", (id_com, id_usu))
         conn.commit()
         liked_now = True
+        if id_autor_post and id_autor_post != id_usu:
+                # 4. Buscar la suscripción del autor
+                cursor.execute("SELECT suscripcion_json FROM suscripcion_push WHERE id_usu = %s", (id_autor_post,))
+                subscriptions = cursor.fetchall()
+                for sub in subscriptions:
+                    # 5. Enviar la notificación
+                    notificacion_payload = {
+                        "title": "👍 ¡Nuevo Like!",
+                        "body": f"{current_user.nom_usu} le ha dado like a tu pregunta."
+                    }
+                    notif_push(sub['suscripcion_json'], notificacion_payload)
+
+        conn.commit()
     # Contar likes totales
     cursor.execute("SELECT COUNT(*) FROM likes_rta WHERE id_com=%s", (id_com,))
     total = cursor.fetchone()[0]

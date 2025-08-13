@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="/static/css/estilohomeoinicio.css">
     <link rel="stylesheet" href="/static/css/barralateral.css">
     <meta name="usuario-id" content="{{ current_user.id or 'null' }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="usuario-rol" content="{{ current_user.rol or 'anonimo' }}">
     <title>Home</title>
 </head>
@@ -35,6 +36,7 @@
     </div>
     <!--Fin de la barra lateral-->
     <div class="cuerpo1">
+        <button id="enable-notifications-btn" style="padding: 10px; margin: 20px; cursor: pointer;">Activar Notificaciones</button>
              <br>
     <div class="bloque-superpuesto">
         <a href=' /programacion'>
@@ -51,6 +53,7 @@
     </div>
     <div class="footer">  
     </div>
+    <script src="/static/js/notificaciones.js"></script>
     <script src="/static/js/comentarios.js"></script>
     <script src="/static/js/barralateral.js"></script>
 
