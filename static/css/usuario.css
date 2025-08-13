@@ -42,80 +42,147 @@ body {
     background-color: #444;
 }
 /* Fin de la barra Lateral */
+/* --- Estilos base adaptados --- */
 .profile-container {
-    position: absolute;
-    height: 80vh;
-    width: 140vh;
-    border-radius: 4vh;
-    border-color: rgb(255, 255, 255);
-    border: 0.5vh solid;
-    margin-left: 20%;
-    margin-top: 10vh;
+    position: relative;
+    max-width: 90%;
+    margin: 5em auto;
+    background-color: transparent;
+    border-radius: 20px;
+    border: 0.5vh solid white;
+    padding: 2em;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5em;
 }
 
 .avatar {
-  width: 200px;
-  height: 200px; /* Igual al width para mantener la forma circular */
-  border-radius: 50%;
-  background-color: #282828;
-  width: 35vh;
-  height: 35vh;
-  border-radius: 50%;
-  position: absolute;
-  margin-left: 20vh;
-  margin-top: 10vh;
+    background-color: #282828;
+    width: 15rem;
+    height: 15rem;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-bottom: 2em;
 }
 
-
 .user-info {
-  position: absolute;
-  margin-left: 70vh;
-  margin-top: 20vh;
-  color:white;
+    flex: 1 1 250px;
+    color: white;
+    align-self: center;
 }
 
 .user-info h2 {
-  font-size: 4vh;
-  color: #fff;
-  margin-bottom: 10px;
-}
-
-.user-info p {
-  color: #aaa;
-  margin: 4px 0;
+    font-size: 2rem;
+    margin-bottom: 10px;
 }
 
 .action-buttons {
-  position: absolute;
-  margin-left: 75vh;
-  margin-top: 30vh;
+    flex: 1 1 100%;
+    display: flex;
+    margin-top: -7em;
+    margin-left: 20em;
+    margin-bottom: 3em;
+
 }
 
-.caja-comentarios1{
-  margin-left: 20vh;
-  width: 100vh;
-  height: 20vh;
-  margin-top: 55vh;
-  margin-left: 7vh;
-  border-radius: 2vh;
-  border-color:#0f2f5e;
-  border: o.2vh solid;
-}
 .action-buttons button {
-  position: absolute;
-  background-color: #272727;
-  color: #fff;
-  border: 0.2vh solid #555;
-  font-size: 3vh;
-  height: 7vh;
-  width: 25vh;
-  border-radius: 2vh;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+    background-color: #272727;
+    color: #fff;
+    border: 0.2px solid #555;
+    font-size: 1.2rem;
+    padding: 0.8em 1.5em;
+    border-radius: 10px;
+    cursor: pointer;
 }
 
-.action-buttons button:hover {
-  background-color: #3a3a3a;
+.caja-comentarios1 {
+    flex: 1 1 100%;
+    border-radius: 10px;
+    border: 0.2vh solid #0f2f5e;
+    padding: 1em;
+    min-height: 6em;
 }
 
+/* --- Responsive tablet --- */
+@media (max-width: 1024px) {
+    .profile-container {
+        flex-direction: column;
+        align-items: center;
+        padding: 1.5em;
+    }
+    .action-buttons {
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        margin-left: 0;
+        margin-top: -10em;
+    }
 
+    .user-info {
+        margin-left: 0;
+        margin-top: 1em;
+        text-align: center;
+    }
+    .avatar {
+        width: 12rem;
+        height: 12rem;
+    }
+}
+
+/* --- Responsive móvil --- */
+@media (max-width: 768px) {
+    body {
+        overflow: auto;
+    }
+    .profile-container {
+        margin-top: 2em;
+        border-width: 0.3vh;
+        padding: 1em;
+    }
+    .avatar {
+        width: 9rem;
+        height: 9rem;
+    }
+    .user-info h2 {
+        font-size: 1.5rem;
+    }
+    .action-buttons{
+        margin-top: -13em;
+        width: 100%;
+        margin-bottom: 3em;
+    }
+    .action-buttons button {
+        font-size: 1rem;
+        width: auto;
+    }
+    .caja-comentarios1 {
+        width: 100%;
+        min-height: 13em;
+        margin: 1em 0 0em 0;
+    }
+}
+
+/* --- Móviles muy pequeños --- */
+@media (max-width: 480px) {
+    .profile-container {
+        padding: 0.8em;
+        gap: 1em;
+    }
+    .avatar {
+        width: 7rem;
+        height: 7rem;
+    }
+    .user-info h2 {
+        font-size: 1.2rem;
+    }
+    .action-buttons button {
+        font-size: 0.9rem;
+        padding: 0.5em 1em;
+    }
+    .caja-comentarios1 {
+        width: 100%;
+        padding: 0.8em;
+        font-size: 0.9rem;
+    }
+}

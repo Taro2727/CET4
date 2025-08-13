@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="/static/css/estilohomeoinicio.css">
     <link rel="stylesheet" href="/static/css/barralateral.css">
     <meta name="usuario-id" content="{{ current_user.id or 'null' }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="usuario-rol" content="{{ current_user.rol or 'anonimo' }}">
     <title>Home</title>
 </head>
@@ -28,13 +29,14 @@
         </div>
         <a class="separador3" href="/templates/index/indexusuario.html"><img src="/static/utils/img/usuario.png" alt="Perfil" class="usuario"></a>
         <a class="separador3" href="/indexhomeoinicio"><img src="/static/utils/img/casa-img1.png" alt="Inicio" class="casa1"></a>
-        <a class="separador3" href="/templates/index/indexnotificaciones.html"><img src="/static/utils/img/campana-img2.png" alt="Notificaciones" class="campana2"></a>
+        <a class="separador3" href="/panelnotificaciones"><img src="/static/utils/img/campana-img2.png" alt="Notificaciones" class="campana2"></a>
         <a class="separador3" href="/templates/index/indexcentralayuda.html"><img src="/static/utils/img/corazonlol.png" alt="Soporte" class="soporte3"></a>
         <a class="separador3" href="#"><img src="/static/utils/img/grupo-img4.png" alt="" class="grupo4"></a>
         <a class="separador3" href="#"><img src="/static/utils/img/opciones-img5.png" alt="Configuracion" class="opcion5"></a>
     </div>
     <!--Fin de la barra lateral-->
     <div class="cuerpo1">
+        <button id="enable-notifications-btn" style="padding: 10px; margin: 20px; cursor: pointer;">Activar Notificaciones</button>
              <br>
     <div class="bloque-superpuesto">
         <a href=' /programacion'>
@@ -51,6 +53,7 @@
     </div>
     <div class="footer">  
     </div>
+    <script src="/static/js/notificaciones.js"></script>
     <script src="/static/js/comentarios.js"></script>
     <script src="/static/js/barralateral.js"></script>
 
