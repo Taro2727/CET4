@@ -363,6 +363,19 @@ def mis_notificaciones_data():
     except Exception as e:
         print(f"Error inesperado en mis_notificaciones_data: {e}")
         return jsonify({'success': False, 'error': 'Error inesperado'}), 500
+    
+def notif_email(destinatario, asunto, cuerpo):
+    try:
+        msg = Message(
+            subject=asunto,
+            sender=app.config['MAIL_USERNAME'],
+            recipients=[destinatario],
+            body=cuerpo
+        )
+        mail.send(msg)
+        print("📧 Email de notificación enviado a", destinatario)
+    except Exception as e:
+        print("❌ Error al enviar email de notificación:", e)
 
 # @app.route('/test_notificacion') #ruta para probar si las notificaciones funcionan
 # @login_required
@@ -873,7 +886,14 @@ def responder():
                 }
                 notif_push(sub['suscripcion_json'], notif)
                 guardar_notificacion(id_autor_post, "respuesta", f"{current_user.nom_usu} respondió tu pregunta.")
-
+                cursor.execute("SELECT email FROM usuario WHERE id_usu = %s", (id_autor_post,))
+                email_data = cursor.fetchone()
+                if email_data:
+                    notif_email(
+                        destinatario=email_data['email'],
+                        asunto="💬 Nueva respuesta en tu post",
+                        cuerpo=f"{current_user.nom_usu} respondió a tu pregunta en el foro CET."
+                    )
         conn.commit()
         cursor.close()
         conn.close()
@@ -961,6 +981,14 @@ def like_comment():
                     }
                     notif_push(sub['suscripcion_json'], notif)
                     guardar_notificacion(id_autor_data, "like", f"{current_user.nom_usu} dio like a tu comentario.")
+                    cursor.execute("SELECT email FROM usuario WHERE id_usu = %s", (id_autor_data,))
+                    email_data = cursor.fetchone()
+                    if email_data:
+                        notif_email(
+                            destinatario=email_data['email'],
+                            asunto="👍 Nuevo like en tu comentario",
+                            cuerpo=f"{current_user.nom_usu} dio like a tu comentario en el foro CET."
+    )
 
         conn.commit()
         # Obtener el total actualizado
@@ -1014,6 +1042,14 @@ def like_rta():
                     }
                     notif_push(sub['suscripcion_json'], notificacion_payload)
                     guardar_notificacion(id_autor_post, "like", f"{current_user.nom_usu} dio like a tu comentario.")
+                    cursor.execute("SELECT email FROM usuario WHERE id_usu = %s", (id_autor_post,))
+                    email_data = cursor.fetchone()
+                    if email_data:
+                        notif_email(
+                            destinatario=email_data['email'],
+                            asunto="👍 Nuevo like en tu comentario",
+                            cuerpo=f"{current_user.nom_usu} dio like a tu comentario en el foro CET."
+                        )
         conn.commit()
     # Contar likes totales
     cursor.execute("SELECT COUNT(*) FROM likes_rta WHERE id_com=%s", (id_com,))

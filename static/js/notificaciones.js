@@ -1,12 +1,11 @@
 // static/js/notificaciones.js
 
 document.addEventListener('DOMContentLoaded', () => {
-    const enableNotificationsBtn = document.getElementById('enable-notifications-btn');
+    const yaActivadas = localStorage.getItem('notificaciones_activadas');
 
     // Comprobar si el navegador soporta notificaciones y service workers
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
         console.warn('Notificaciones Push no soportadas.');
-        if(enableNotificationsBtn) enableNotificationsBtn.style.display = 'none';
         return;
     }
 
@@ -14,9 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
     navigator.serviceWorker.register('/sw.js')
         .then(swReg => {
             console.log('Service Worker registrado', swReg);
-            if(enableNotificationsBtn) enableNotificationsBtn.addEventListener('click', () => {
-                askPermissionAndSubscribe(swReg);
-            });
         })
         .catch(error => console.error('Error al registrar Service Worker', error));
 });
@@ -59,11 +55,11 @@ async function askPermissionAndSubscribe(swReg) {
         // 3. Suscribir al usuario
         const subscription = await swReg.pushManager.subscribe(options);
         console.log('Usuario suscrito:', subscription);
+        localStorage.setItem('notificaciones_activadas', 'true');
 
         // 4. Enviar suscripción al backend
         await guardarsuscripcion(subscription);
         alert('¡Suscripción a notificaciones activada!');
-        document.getElementById('enable-notifications-btn').style.display = 'none';
 
     } catch (error) {
         console.error('Fallo al suscribir al usuario: ', error);
@@ -83,3 +79,36 @@ function urlBase64ToUint8Array(base64String) {
     }
     return outputArray;
 }
+
+// Mostrar modal de notificaciones al cargar la página
+document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('notificacion-modal');
+    
+    // Este if ahora engloba todo el código del modal
+    if (modal) { 
+        const btnPermitir = document.getElementById('btn-permitir');
+        const btnNoPermitir = document.getElementById('btn-no-permitir');
+
+        const yaActivadas = localStorage.getItem('notificaciones_activadas');
+        if (yaActivadas !== 'true') {
+            modal.style.display = 'block'; 
+        }
+
+        if (btnPermitir) {
+            btnPermitir.addEventListener('click', async () => {
+                const swReg = await navigator.serviceWorker.ready;
+                await askPermissionAndSubscribe(swReg);
+                modal.style.display = 'none';
+                localStorage.setItem('notificaciones_activadas', 'true');
+            });
+        }
+        
+        if (btnNoPermitir) {
+            btnNoPermitir.addEventListener('click', () => {
+                modal.style.display = 'none';
+                localStorage.setItem('notificaciones_activadas', 'false');
+            });
+        }
+    }
+});
+

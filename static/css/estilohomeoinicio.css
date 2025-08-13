@@ -188,3 +188,19 @@ body {
         font-size: 26px;
     }
 }
+
+/* Estilos para el cartelito de permitir notificaciones */
+/* .modal {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 16px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  z-index: 1000;
+}
+.modal-content button {
+  margin: 8px;
+} */
