@@ -317,6 +317,62 @@ def guardar_suscripcion():
     except mysql.connector.Error as err:
         print(f"Error al guardar suscripción: {err}")
         return jsonify({'success': False, 'error': 'Error de base de datos'}), 500
+    
+def guardar_notificacion(id_usu, tipo, mensaje):
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO notificaciones (id_usu, tipo, mensaje)
+            VALUES (%s, %s, %s)
+        """, (id_usu, tipo, mensaje))
+        conn.commit()
+        cursor.close()
+        conn.close()
+    except Exception as e:
+        print("Error al guardar notificación:", e)
+
+@app.route('/panelnotificaciones')
+@login_required
+def panelnotificaciones():
+    return render_template('index/panelnotificaciones.html')
+
+
+@app.route('/mis_notificaciones_data')
+@login_required
+def mis_notificaciones_data():
+    """Ruta que devuelve las notificaciones del usuario en formato JSON."""
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor(dictionary=True)
+        usuario_id = current_user.id
+        
+        # Obtener notificaciones
+        cursor.execute("""
+            SELECT id_notif, tipo, mensaje AS contenido, fecha AS fecha_creacion, leida
+            FROM notificaciones
+            WHERE id_usu = %s
+            ORDER BY fecha DESC
+        """, (usuario_id,))
+        notificaciones = cursor.fetchall()
+
+        # Marcar notificaciones como leídas
+        cursor.execute("UPDATE notificaciones SET leida = TRUE WHERE id_usu = %s", (usuario_id,))
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+
+        # Devuelve el JSON con la clave 'notificaciones', tal como lo espera tu JS
+        return jsonify({'success': True, 'notificaciones': notificaciones})
+
+    except mysql.connector.Error as err:
+        print(f"Error al obtener notificaciones: {err}")
+        return jsonify({'success': False, 'error': 'Error de base de datos'}), 500
+    except Exception as e:
+        print(f"Error inesperado en mis_notificaciones_data: {e}")
+        return jsonify({'success': False, 'error': 'Error inesperado'}), 500
+
 #ACA RUTASS PROVISORIAS (2FA)
 
 @app.route("/perfil")
@@ -782,6 +838,8 @@ def responder():
                     "body": f"{current_user.nom_usu} ha respondido a tu pregunta."
                 }
                 notif_push(sub['suscripcion_json'], notif)
+                guardar_notificacion(id_autor_post, "respuesta", f"{current_user.nom_usu} respondió tu pregunta.")
+
         conn.commit()
         cursor.close()
         conn.close()
@@ -868,6 +926,8 @@ def like_comment():
                         "body": f"{current_user.nom_usu} ha dado like a tu comentario",
                     }
                     notif_push(sub['suscripcion_json'], notif)
+                    guardar_notificacion(id_autor_data, "like", f"{current_user.nom_usu} dio like a tu comentario.")
+
         conn.commit()
         # Obtener el total actualizado
         cursor.execute("SELECT cont_likes FROM preg WHERE id_post = %s", (comment_id,))
@@ -919,7 +979,7 @@ def like_rta():
                         "body": f"{current_user.nom_usu} le ha dado like a tu pregunta."
                     }
                     notif_push(sub['suscripcion_json'], notificacion_payload)
-
+                    guardar_notificacion(id_autor_post, "like", f"{current_user.nom_usu} dio like a tu comentario.")
         conn.commit()
     # Contar likes totales
     cursor.execute("SELECT COUNT(*) FROM likes_rta WHERE id_com=%s", (id_com,))
