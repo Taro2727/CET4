@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración - Mi Foro</title>
+    <link rel="stylesheet" href="tuerca.css"> <link rel="stylesheet" href="configuracion.css"> 
+</head>
+<body>
+    <aside class="barra-lateral">
+        <a href="tuercabarralateral.html" class="enlace-configuracion">
+            <img src="icono-tuerca.svg" alt="Configuración"> </a>
+        </aside>
+
+    <main class="contenido-principal">
+        <div class="contenedor-configuracion">
+            <h1>Configuración</h1>
+
+            <form action="/guardar-configuracion" method="post">
+                <section class="seccion-config">
+                    <h2>Perfil de Usuario</h2>
+                    <div class="campo-form">
+                        <label for="nombre-usuario">Nombre de usuario:</label>
+                        <input type="text" id="nombre-usuario" name="nombre_usuario" value="TuUsuarioActual">
+                    </div>
+                    <div class="campo-form">
+                        <label for="email">Correo electrónico:</label>
+                        <input type="email" id="email" name="email" value="tu@correo.com">
+                    </div>
+                </section>
+
+                <hr>
+
+                <section class="seccion-config">
+                    <h2>Notificaciones</h2>
+                    <div class="campo-check">
+                        <input type="checkbox" id="notif-email" name="notif_email" checked>
+                        <label for="notif-email">Recibir notificaciones por correo.</label>
+                    </div>
+                    <div class="campo-check">
+                        <input type="checkbox" id="notif-nuevopost" name="notif_nuevopost">
+                        <label for="notif-nuevopost">Notificarme cuando alguien responda a mis posts.</label>
+                    </div>
+                </section>
+
+                <hr>
+
+                <section class="seccion-config">
+                    <h2>Seguridad</h2>
+                    <div class="campo-form">
+                        <label for="pass-actual">Contraseña actual:</label>
+                        <input type="password" id="pass-actual" name="pass_actual">
+                    </div>
+                    <div class="campo-form">
+                        <label for="pass-nueva">Nueva contraseña:</label>
+                        <input type="password" id="pass-nueva" name="pass_nueva">
+                    </div>
+                    <div class="campo-form">
+                        <label for="pass-confirmar">Confirmar nueva contraseña:</label>
+                        <input type="password" id="pass-confirmar" name="pass_confirmar">
+                    </div>
+                </section>
+
+                <button type="submit" class="btn-guardar">Guardar Cambios</button>
+            </form>
+        </div>
+    </main>
+</body>
+</html>
