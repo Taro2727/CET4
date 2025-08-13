@@ -97,7 +97,7 @@ async function eliminarUsuario(id_usuario,rol_usuario) {
 }
 }
 async function ascender(id_usuario,rol_usuario,mail_usuario) {
-    if (!confirm("¿Seguro que quieres ascemnder este usuario?")) return;
+    if (!confirm("¿Seguro que quieres ascender este usuario?")) return;
     sessionStorage.setItem('id_usuario_up', id_usuario);
     sessionStorage.setItem('rol_usuario_up', rol_usuario);
     const response = await fetch('/otp_roles', {
@@ -119,7 +119,7 @@ async function ascender(id_usuario,rol_usuario,mail_usuario) {
 //falta agregar q le pase el rol para q dependiendo del rol haga una cosa o otra en el ap.py
 async function down(id_usuario,rol_usuario,mail_usuario) {
     if (!confirm("¿Seguro que quieres degradar a este usuario?")) return;
-    const response = await fetch('/down', {
+    const response = await fetch('/otp_down', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -129,7 +129,8 @@ async function down(id_usuario,rol_usuario,mail_usuario) {
     });
     const result = await response.json();
     if (result.success) {
-        await cargar_usuarios();
+        alert('Código OTP enviado al mail');
+        window.location.href = '/IngresarCodigo';
     } else {
         alert(result.error || "No se pudo degradar.");
 }
