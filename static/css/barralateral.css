@@ -29,10 +29,12 @@
 #toggle {
     color: white;
     font-size: 45px;
-    margin: 15px;
     cursor: pointer;
+    margin-left: 0.2em;
     z-index: 1100;
-    float: left;
+    position: flex;
+    justify-content: left;
+    align-items: top;
 }
 
 #out {
