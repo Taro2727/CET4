@@ -9,15 +9,16 @@ body {
   background: black;
   color: white;
   line-height: 1.6;
-  overflow-x: hidden; 
+  overflow-x: hidden;
   scroll-behavior: smooth;
- }
+}
 
 html {
   height: auto;
 }
 
- .fondo {
+/* ---- VIDEO DE FONDO ---- */
+.fondo {
   position: fixed;
   width: 100%;
   height: 100vh;
@@ -48,6 +49,7 @@ html {
   z-index: 1;
 }
 
+/* ---- CONTENEDOR ---- */
 .contenedor {
   display: flex;
   flex-direction: column;
@@ -63,7 +65,7 @@ html {
   transform: translateY(30px);
   animation: fadeInUp 0.6s ease-out forwards;
 }
- 
+
 @keyframes fadeInUp {
   to {
     opacity: 1;
@@ -71,9 +73,9 @@ html {
   }
 }
 
-/* Presentación Mascota */
+/* ---- PRESENTACIÓN ---- */
 .presentacion {
-   display: flex;
+  display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
@@ -88,12 +90,15 @@ html {
   align-items: center;
 }
 
+/* Imagen mascota */
 .masimg {
-  width: -218px;
+  max-width: 300px; /* PC */
+  width: 100%;
   height: auto;
   z-index: 2;
 }
 
+/* Globo */
 .globo {
   position: absolute;
   top: -70px;
@@ -103,8 +108,8 @@ html {
   padding: 10px 16px;
   background: rgba(255, 255, 255, 0.95);
   color: #111;
-   border-radius: 20px;
-      font-weight: bold;
+  border-radius: 20px;
+  font-weight: bold;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   max-width: 260px;
   text-align: center;
@@ -122,15 +127,15 @@ html {
   border-color: white transparent transparent transparent;
 }
 
-/* Formulario */
+/* ---- FORMULARIO ---- */
 .formulario {
-   backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   background-color: rgba(23, 47, 80, 0.6);
   border: 1px solid rgba(255,255,255,0.2);
   padding: 40px;
   margin-top: -8px;
   border-radius: 60px;
-   max-width: 400px;
+  max-width: 400px;
   width: 100%;
   box-shadow: 0 0 20px rgba(0,0,0,0.5);
 }
@@ -190,21 +195,67 @@ button:hover {
   text-decoration: none;
 }
 
-/* Responsive */
+/* ---- RESPONSIVE ---- */
+
+/* Tablets */
+@media (max-width: 992px) {
+  .masimg {
+    max-width: 220px;
+  }
+  .globo {
+    position: static;
+    transform: none;
+    max-width: 200px;
+  }
+}
+
+/* Móviles grandes */
 @media (max-width: 768px) {
   .contenedor {
-    padding: 40px 20px;
-    gap: 24px;
+    padding: 30px 15px;
     margin-top: 40px;
+    max-width: 90%;
   }
-
   .globo {
     position: static;
     transform: none;
     margin-bottom: 20px;
   }
+  .masimg {
+    max-width: 320px;
+  }
+  .formulario {
+    padding: 25px;
+    border-radius: 30px;
+  }
+  .input-group input {
+    width: 90%;
+  }
+}
 
-  .globo::after {
-    display: none;
+/* Móviles pequeños */
+@media (max-width: 480px) {
+  .contenedor {
+    width: 75%;
+    padding: 20px 10px;
+    margin-top: -20px;
+  }
+  .formulario {
+    padding: 20px;
+  }
+  .masimg {
+    max-width: 260px;
+  }
+  .globo {
+    font-size: 0.8rem;
+    padding: 8px 12px;
+    max-width: 200px;
+  }
+  button {
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+  .input-group input {
+    width: 90%;
   }
 }
