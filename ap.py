@@ -467,6 +467,9 @@ def verificar_codigo():
     elif 'email_para_rol_up_code' in session:
         email= session.get('email_para_rol_up_code')
         tipo = 'ascender'
+    elif 'email_para_rol_down_code' in session:
+        email= session.get('email_para_rol_down_code')
+        tipo='degradar'
     else:
         return jsonify({'error': 'Sesión inválida o expirada. Por favor, inicia el proceso de nuevo.'}), 400
 
@@ -519,9 +522,14 @@ def verificar_codigo():
         return jsonify({'exito': True, 'redirigir': '/actualizar'})
     
     elif tipo == 'ascender':
-       email_usu = session.get('email_usuario_up')
+       email_usu = session.get('email_usuario_up') #no se ocupa en teoria
        conn.close()
        return jsonify({'exito': True, 'redirigir': '/upgradear'})
+    
+    elif tipo == 'degradar':
+        email_usu= session.get('email_usuario_down')
+        conn.close()
+        return jsonify({'exito': True, 'redirigir': '/down'})
         
 #----------------------------------------------------------------------------
 # verificar contraseña NUEVAAAAAA
@@ -1220,35 +1228,52 @@ def eliminarusuario():
             pass
 
 
-@app.route('/down',methods=['POST'])
+@app.route('/down', methods=['POST'])
 def down():
-    data = request.get_json()
-    id_usuario= data.get('id_usuario')
-    rol_usuario=data.get('rol_usuario')
-    if not id_usuario:
-        return jsonify({'success': False, 'error': 'No mandaste usuario'}), 401
+    # El 'data' del request no se usa en este caso, ya que los datos vienen de la sesión.
+    # Es seguro mantener la línea, pero no es funcionalmente necesaria para esta lógica.
+   
+    id_usuario = session.get('id_usuario_down')
+    rol_usuario = session.get('rol_usuario_down')
 
-    if rol_usuario == 'admin':
-        try:
-            conn = mysql.connector.connect(**DB_CONFIG)
-            cursor = conn.cursor()
-            cursor.execute("update usuario set rol='moderador' where id_usu=%s",(id_usuario,))
+    # Si no hay ID de usuario en la sesión, la petición no es válida.
+    if not id_usuario:
+        return jsonify({'success': False, 'error': 'No se encontró el usuario en la sesión'}), 401
+
+    conn = None
+    cursor = None
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor()
+
+        if rol_usuario == 'admin':
+            cursor.execute("UPDATE usuario SET rol='moderador' WHERE id_usu=%s", (id_usuario,))
             conn.commit()
-        except Exception as e:
-            print(f"❌ Error al degradar usuario {id_usuario}: {e}")
-            return jsonify({'success': False, 'error': str(e)}), 500
-    elif rol_usuario == 'moderador':
-        try:
-            conn = mysql.connector.connect(**DB_CONFIG)
-            cursor = conn.cursor()
-            cursor.execute("update usuario set rol='normal' where id_usu=%s",(id_usuario,))
+            # ¡AÑADIDO! Si todo salió bien, devolvemos un éxito.
+            return jsonify({'success': True, 'message': 'Usuario degradado a moderador.'}), 200
+            
+        elif rol_usuario == 'moderador':
+            cursor.execute("UPDATE usuario SET rol='normal' WHERE id_usu=%s", (id_usuario,))
             conn.commit()
-        except Exception as e:
-            print(f"❌ Error al degradar usuario {id_usuario}: {e}")
-            return jsonify({'success': False, 'error': str(e)}), 500
-    else:
-        print(f"❌ Error no hay rol apto para degradar {id_usuario}: {e}")
+            # ¡AÑADIDO! Si todo salió bien, devolvemos un éxito.
+            return jsonify({'success': True, 'message': 'Usuario degradado a normal.'}), 200
+
+        else:
+            # Si el rol no es admin ni moderador, no se puede degradar.
+            print(f"❌ Error: Rol '{rol_usuario}' no apto para degradar para el usuario {id_usuario}")
+            return jsonify({'success': False, 'error': 'El rol del usuario no puede ser degradado.'}), 400
+
+    except Exception as e:
+        # Si ocurre un error en la base de datos, lo capturamos y devolvemos el error.
+        print(f"❌ Error al degradar usuario {id_usuario}: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
+        
+    finally:
+        # Esto es crucial: asegura que la conexión se cierre siempre.
+        if cursor:
+            cursor.close()
+        if conn and conn.is_connected():
+            conn.close()
 
 #RUTAS DE ROLES OSEA DE LOS CODIGOS Q MANDAN CNDO QUERES CAMBIAR EL ROL DE ALGUIEN
 
@@ -1306,6 +1331,60 @@ def cambiar_roles_ascender():
             cursor.close()
             conn.close()
 
+
+@app.route('/otp_down', methods=['POST'])
+@limiter.limit("5 per minute")
+def cambiar_roles_down():
+    datos = request.get_json() #aca pide q rol es desde js con un json (hacer dssp)
+    if not datos:
+        return jsonify({'error': 'No se recibió JSON válido'}), 400
+
+    email_mail = 'foro.cet4@gmail.com'
+    rol_usuario = datos.get('rol_usuario')
+    email= datos.get('mail_usuario') #cambie esas 2 lineas pq decian cosas q el js no mandaba xd
+
+    session.pop('email_para_verificacion_registro', None)
+    session.pop('email_para_verificacion', None)
+
+    session['id_usuario_down'] = datos.get('id_usuario')
+    session['rol_usuario_down'] = datos.get('rol_usuario')
+    session['email_para_rol_down_code'] = email_mail #rol_up pq sube el rango/rol tiene q ser el mail de cet4 pq la verga esa dsps se manda al /veificar codigo y el codigo se manda a cet4 entonces va a verificar cet4
+    session['rol'] = rol_usuario
+    session['email_usuario_up'] = email
+
+    otp = ''.join(secrets.choice(string.digits) for _ in range(6))
+    expiracion = datetime.now(timezone.utc) + timedelta(minutes=5)
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor()
+
+        # --- CAMBIO IMPORTANTE ---
+        # 1. BORRAMOS cualquier código de 'degradar' anterior para este email.
+        # Esto garantiza que siempre trabajemos con el código más reciente.
+        cursor.execute("DELETE FROM codigos_verificacion WHERE email = %s AND tipo = 'degradar'", (email_mail,))
+
+        # 2. INSERTAMOS el nuevo código generado.
+        # Ya no necesitamos ON DUPLICATE KEY UPDATE porque siempre empezamos de cero.
+        cursor.execute("""
+            INSERT INTO codigos_verificacion (email, codigo, tipo, expiracion)
+            VALUES (%s, %s, %s, %s)
+        """, (email_mail, otp, 'degradar', expiracion))
+
+        conn.commit()
+
+        msg = Message("PETICION-DE-DEGRADACIÓN-DE-USUARIO",
+                sender=app.config['MAIL_USERNAME'],
+                recipients=[email_mail])
+        msg.body = f"Tu código de verificacion es: {otp}"
+        mail.send(msg)
+        return jsonify({'success': True}), 200
+    except Exception as e:
+        print("Error en otp_login:", e)
+        return jsonify({'error': 'No se pudo enviar el código'}), 500
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
 
 
 if __name__ == "__main__":

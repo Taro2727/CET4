@@ -59,6 +59,33 @@ document.getElementById('otp').addEventListener('submit', async (e) => {
         } else {
           alert(result2.error || 'Hubo un problema al ascender el usuario');
         }
+        
+      }else if (destino === '/down') {
+         // Aquí mandas el POST real al backend
+        // Ahora no usamos sessionStorage porque el servidor guarda id_usuario y rol_usuario en la session
+        console.log("degradando usando datos guardados en session del servidor");
+
+        const res2 = await fetch('/down', {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': csrfToken,
+            'Content-Type': 'application/json' 
+          }
+          // No enviamos body porque el backend tomará los datos de session
+        });
+
+        if (!res2.ok) {
+          alert('Error en la petición para degradar el usuario.');
+          return;
+        }
+
+        const result2 = await res2.json();
+        if (result2.success) {
+          alert('¡Usuario degradado con éxito!');
+          window.location.href = '/paneladmin';
+        } else {
+          alert(result2.error || 'Hubo un problema al degradar el usuario');
+        }
 
       } else {
         // Si el servidor envía una redirección desconocida.
