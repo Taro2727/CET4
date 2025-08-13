@@ -310,6 +310,9 @@ def verificar_codigo():
     elif 'email_para_verificacion' in session:
         email = session.get('email_para_verificacion')
         tipo = 'recuperacion'
+    elif 'email_para_rol_up_code' in session:
+        email= session.get('email_para_rol_up_code')
+        tipo = 'ascender'
     else:
         return jsonify({'error': 'Sesión inválida o expirada. Por favor, inicia el proceso de nuevo.'}), 400
 
@@ -360,6 +363,12 @@ def verificar_codigo():
         session.pop('email_del_usuario', None)
         conn.close()
         return jsonify({'exito': True, 'redirigir': '/actualizar'})
+    
+    elif tipo == 'ascender':
+       email_usu = session.get('email_usuario_up')
+       conn.close()
+       return jsonify({'exito': True, 'redirigir': '/upgradear'})
+        
 #----------------------------------------------------------------------------
 # verificar contraseña NUEVAAAAAA
 
@@ -902,38 +911,44 @@ def get_users():
 
     return jsonify(users)
 
-@app.route('/upgradear',methods=['POST'])
+@app.route('/upgradear', methods=['POST'])
 def ascender():
-    data = request.get_json()
-    id_usuario = data.get('id_usuario')
-    rol_usuario= data.get('rol_usuario')
+    id_usuario = session.get('id_usuario_up')
+    rol_usuario = session.get('rol_usuario_up')
+
     
     if not id_usuario or not rol_usuario:
         return jsonify({'success': False, 'error': 'No mandaste usuario'}), 401
     
-    # pasa de NORMAL ========> MODERADOR
-    if rol_usuario == 'normal':
-        try:
-            conn = mysql.connector.connect(**DB_CONFIG)
-            cursor = conn.cursor()
-            cursor.execute("update usuario set rol='moderador' where id_usu=%s",(id_usuario,))
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor()
+
+        # pasa de NORMAL ========> MODERADOR
+        if rol_usuario == 'normal':
+            cursor.execute("UPDATE usuario SET rol='moderador' WHERE id_usu=%s", (id_usuario,))
             conn.commit()
-        except Exception as e:
-            print(f"❌ Error al upgradear usuario {id_usuario}: {e}")
-            return jsonify({'success': False, 'error': str(e)}), 500
-    #pasa de MODERADOR ============> ADMINISTRADOR
-    elif rol_usuario == 'moderador':
-        try:
-            conn = mysql.connector.connect(**DB_CONFIG)
-            cursor = conn.cursor()
-            cursor.execute("update usuario set rol='admin' where id_usu=%s",(id_usuario,))
+            return jsonify({'success': True}), 200
+
+        # pasa de MODERADOR ============> ADMINISTRADOR
+        elif rol_usuario == 'moderador':
+            cursor.execute("UPDATE usuario SET rol='admin' WHERE id_usu=%s", (id_usuario,))
             conn.commit()
-        except Exception as e:
-            print(f"❌ Error al upgradear usuario {id_usuario}: {e}")
-            return jsonify({'success': False, 'error': str(e)}), 500
-    else:
-        print(f"❌ Error, rol invalido o no declarado {id_usuario}: {e}")
+            return jsonify({'success': True}), 200
+
+        else:
+            return jsonify({'success': False, 'error': f"Rol inválido: {rol_usuario}"}), 400
+
+    except Exception as e:
+        print(f"❌ Error al upgradear usuario {id_usuario}: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        try:
+            cursor.close()
+            conn.close()
+        except:
+            pass
+
 
 
 
@@ -1032,6 +1047,64 @@ def down():
     else:
         print(f"❌ Error no hay rol apto para degradar {id_usuario}: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
+
+#RUTAS DE ROLES OSEA DE LOS CODIGOS Q MANDAN CNDO QUERES CAMBIAR EL ROL DE ALGUIEN
+
+@app.route('/otp_roles', methods=['POST'])
+@limiter.limit("5 per minute")
+def cambiar_roles_ascender():
+    datos = request.get_json() #aca pide q rol es desde js con un json (hacer dssp)
+    if not datos:
+        return jsonify({'error': 'No se recibió JSON válido'}), 400
+
+    email_mail = 'foro.cet4@gmail.com'
+    rol_usuario = datos.get('rol_usuario')
+    email= datos.get('mail_usuario') #cambie esas 2 lineas pq decian cosas q el js no mandaba xd
+
+    session.pop('email_para_verificacion_registro', None)
+    session.pop('email_para_verificacion', None)
+
+    session['id_usuario_up'] = datos.get('id_usuario')
+    session['rol_usuario_up'] = datos.get('rol_usuario')
+    session['email_para_rol_up_code'] = email_mail #rol_up pq sube el rango/rol tiene q ser el mail de cet4 pq la verga esa dsps se manda al /veificar codigo y el codigo se manda a cet4 entonces va a verificar cet4
+    session['rol'] = rol_usuario
+    session['email_usuario_up'] = email
+
+    otp = ''.join(secrets.choice(string.digits) for _ in range(6))
+    expiracion = datetime.now(timezone.utc) + timedelta(minutes=5)
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor()
+
+        # --- CAMBIO IMPORTANTE ---
+        # 1. BORRAMOS cualquier código de 'ascender' anterior para este email.
+        # Esto garantiza que siempre trabajemos con el código más reciente.
+        cursor.execute("DELETE FROM codigos_verificacion WHERE email = %s AND tipo = 'ascender'", (email_mail,))
+
+        # 2. INSERTAMOS el nuevo código generado.
+        # Ya no necesitamos ON DUPLICATE KEY UPDATE porque siempre empezamos de cero.
+        cursor.execute("""
+            INSERT INTO codigos_verificacion (email, codigo, tipo, expiracion)
+            VALUES (%s, %s, %s, %s)
+        """, (email_mail, otp, 'ascender', expiracion))
+
+        conn.commit()
+
+        msg = Message("PETICION-DE-ASCENSION DE USUARIO",
+                sender=app.config['MAIL_USERNAME'],
+                recipients=[email_mail])
+        msg.body = f"Tu código de verificacion es: {otp}"
+        mail.send(msg)
+        return jsonify({'success': True}), 200
+    except Exception as e:
+        print("Error en otp_login:", e)
+        return jsonify({'error': 'No se pudo enviar el código'}), 500
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+
+
 
 if __name__ == "__main__":
     print("iniciando flask..")

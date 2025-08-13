@@ -19,15 +19,18 @@ async function cargar_usuarios() {
 
         // Se agrega la separación de divs pero sin cambiar la estructura visible inicial
         div.innerHTML = `
-            <button class="btn-eliminar" onclick="eliminarUsuario('${u.id_usu}')">🗑️</button>
-            ${u.rol === 'normal' ? `<button onclick="ascender('${u.id_usu}','${u.rol}')">↑</button>`  
-            : u.rol === 'moderador' ? `<button onclick="ascender('${u.id_usu}','${u.rol}')">↑</button> <button onclick="down('${u.id_usu}','${u.rol}')">↓</button>`  
-            : `<button onclick="down('${u.id_usu}','${u.rol}')">↓</button>`}
+           <button class="btn-eliminar" onclick="eliminarUsuario('${u.id_usu}')">🗑️</button>
+            ${u.rol === 'normal' 
+                ? `<button onclick="ascender('${u.id_usu}','${u.rol}','${u.email}')">↑</button>`  
+                : u.rol === 'moderador' 
+                    ? `<button onclick="ascender('${u.id_usu}','${u.rol}','${u.email}')">↑</button> <button onclick="down('${u.id_usu}','${u.rol}')">↓</button>`  
+                    : `<button onclick="down('${u.id_usu}','${u.rol}')">↓</button>`
+            }
             <span class="usuariooo"><strong>${u.nom_usu}</strong></span><br>
             <span class="usuariooo"><b>ID:</b> ${u.id_usu}</span><br>
             <span class="usuariooo"><b>Email:</b> ${u.email}</span><br>
-            <span class="usuariooo"><b>Rol:</b> ${u.rol}</span><br>
-        `  ;
+            <span class="usuariooo"><b>Rol:</b> ${u.rol}</span><br>`;
+
         
             //EXPLICACION LINEAS 23 24 Y 25
             //    LINEA 23 "si el rol de usuario es NORMAL (? significa se cumple) entonces muetsra boton de upgradear"
@@ -77,6 +80,7 @@ async function cargar_usuarios() {
 //---FUNCIONES DE ELIMINACIÓN DE COMENTARIOS Y RESPUESTAS---
 async function eliminarUsuario(id_usuario,rol_usuario) {
     if (!confirm("¿Seguro que quieres eliminar este usuario?")) return;
+    console.log({ id_usuario, rol_usuario, mail_usuario });
     const response = await fetch('/eliminar_usuario', {
         method: 'POST',
         headers: {
@@ -92,25 +96,28 @@ async function eliminarUsuario(id_usuario,rol_usuario) {
         alert(result.error || "No se pudo eliminar.");
 }
 }
-async function ascender(id_usuario,rol_usuario) {
+async function ascender(id_usuario,rol_usuario,mail_usuario) {
     if (!confirm("¿Seguro que quieres ascemnder este usuario?")) return;
-    const response = await fetch('/upgradear', {
+    sessionStorage.setItem('id_usuario_up', id_usuario);
+    sessionStorage.setItem('rol_usuario_up', rol_usuario);
+    const response = await fetch('/otp_roles', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': csrfToken
         },
-        body: JSON.stringify({ id_usuario,rol_usuario })
+        body: JSON.stringify({ id_usuario,rol_usuario,mail_usuario })
     });
     const result = await response.json();
     if (result.success) {
-        await cargar_usuarios();
+        alert('Código OTP enviado al mail');
+        window.location.href = '/IngresarCodigo';
     } else {
         alert(result.error || "No se pudo upgradear.");
 }
 }
 //falta agregar q le pase el rol para q dependiendo del rol haga una cosa o otra en el ap.py
-async function down(id_usuario,rol_usuario) {
+async function down(id_usuario,rol_usuario,mail_usuario) {
     if (!confirm("¿Seguro que quieres degradar a este usuario?")) return;
     const response = await fetch('/down', {
         method: 'POST',
@@ -118,7 +125,7 @@ async function down(id_usuario,rol_usuario) {
             'Content-Type': 'application/json',
             'X-CSRFToken': csrfToken
         },
-        body: JSON.stringify({ id_usuario,rol_usuario })
+        body: JSON.stringify({ id_usuario,rol_usuario,mail_usuario })
     });
     const result = await response.json();
     if (result.success) {
