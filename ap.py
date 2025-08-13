@@ -345,21 +345,12 @@ def mis_notificaciones_data():
     try:
         conn = mysql.connector.connect(**DB_CONFIG)
         cursor = conn.cursor(dictionary=True)
-        usuario_id = current_user.id
-        
+        id_usu = current_user.id
+
         # Obtener notificaciones
-        cursor.execute("""
-            SELECT id_notif, tipo, mensaje AS contenido, fecha AS fecha_creacion, leida
-            FROM notificaciones
-            WHERE id_usu = %s
-            ORDER BY fecha DESC
-        """, (usuario_id,))
+        query = "SELECT id_notif, tipo, mensaje, fecha, leida FROM notificaciones WHERE id_usu = %s ORDER BY fecha DESC"
+        cursor.execute(query, (id_usu,))
         notificaciones = cursor.fetchall()
-
-        # Marcar notificaciones como leídas
-        cursor.execute("UPDATE notificaciones SET leida = TRUE WHERE id_usu = %s", (usuario_id,))
-        conn.commit()
-
         cursor.close()
         conn.close()
 
@@ -372,6 +363,24 @@ def mis_notificaciones_data():
     except Exception as e:
         print(f"Error inesperado en mis_notificaciones_data: {e}")
         return jsonify({'success': False, 'error': 'Error inesperado'}), 500
+
+# @app.route('/test_notificacion') #ruta para probar si las notificaciones funcionan
+# @login_required
+# def test_notificacion():
+#     try:
+#         conn = mysql.connector.connect(**DB_CONFIG)
+#         cursor = conn.cursor(dictionary=True)
+#         cursor.execute("SELECT suscripcion_json FROM suscripcion_push WHERE id_usu = %s", (current_user.id,))
+#         subs = cursor.fetchall()
+#         for sub in subs:
+#             notif_push(sub['suscripcion_json'], {
+#                 "title": "🚀 Notificación de prueba",
+#                 "body": "¡Hola Cata! Esto es solo un test para verificar que todo funciona."
+#             })
+#         return jsonify({"success": True})
+#     except Exception as e:
+#         return jsonify({"success": False, "error": str(e)})
+
 
 #ACA RUTASS PROVISORIAS (2FA)
 
