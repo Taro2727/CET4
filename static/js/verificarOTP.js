@@ -87,6 +87,30 @@ document.getElementById('otp').addEventListener('submit', async (e) => {
           alert(result2.error || 'Hubo un problema al degradar el usuario');
         }
 
+      } else if (destino === '/eliminar_usuario'){
+        console.log("eliminando usuario usando datos guardados en session del servidor");
+
+        const res2 = await fetch('/eliminar_usuario', {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': csrfToken,
+            'Content-Type': 'application/json' 
+          }
+          // No enviamos body porque el backend tomará los datos de session
+        });
+
+        if (!res2.ok) {
+          alert('Error en la petición para degradar el usuario.');
+          return;
+        }
+
+        const result2 = await res2.json();
+        if (result2.success) {
+          alert('¡Usuario degradado con éxito!');
+          window.location.href = '/paneladmin';
+        } else {
+          alert(result2.error || 'Hubo un problema al degradar el usuario');
+        }
       } else {
         // Si el servidor envía una redirección desconocida.
         alert('Respuesta desconocida del servidor.');

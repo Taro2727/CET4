@@ -470,6 +470,9 @@ def verificar_codigo():
     elif 'email_para_rol_down_code' in session:
         email= session.get('email_para_rol_down_code')
         tipo='degradar'
+    elif 'email_para_eliminar_code' in session:
+        email= session.get('email_para_eliminar_code')
+        tipo='eliminar'
     else:
         return jsonify({'error': 'Sesión inválida o expirada. Por favor, inicia el proceso de nuevo.'}), 400
 
@@ -530,6 +533,11 @@ def verificar_codigo():
         email_usu= session.get('email_usuario_down')
         conn.close()
         return jsonify({'exito': True, 'redirigir': '/down'})
+    
+    elif tipo == 'eliminar':
+        conn.close()
+        return jsonify({'exito': True, 'redirigir': '/eliminar_usuario'})
+
         
 #----------------------------------------------------------------------------
 # verificar contraseña NUEVAAAAAA
@@ -1164,8 +1172,7 @@ def ascender():
 
 @app.route('/eliminar_usuario', methods=['POST'])
 def eliminarusuario():
-    datos_js = request.get_json()
-    id_usuario = datos_js.get('id_usuario')
+    id_usuario = session.get('id_usuario_eliminar')
 
     if not id_usuario:
         return jsonify({'success': False, 'error': 'No mandaste usuario'}), 401
@@ -1386,6 +1393,61 @@ def cambiar_roles_down():
             cursor.close()
             conn.close()
 
+@app.route('/otp_eliminar', methods=['POST'])
+@limiter.limit("5 per minute")
+def otp_eliminar():
+    datos = request.get_json() #aca pide q rol es desde js con un json (hacer dssp)
+    if not datos:
+        return jsonify({'error': 'No se recibió JSON válido'}), 400
+
+    email_mail = 'foro.cet4@gmail.com'
+    rol_usuario = datos.get('rol_usuario') #<--- nose si sirve ahr
+    email= datos.get('mail_usuario') # <-------- esa no sirve xq "eliminar_usuario" no trabaja con mail, sino con id_usu
+
+    session.pop('email_para_verificacion_registro', None)
+    session.pop('email_para_verificacion', None)
+
+    session['id_usuario_eliminar'] = datos.get('id_usuario')
+    session['rol_usuario_eliminar'] = datos.get('rol_usuario')  #<--- nose si sirve ahr
+    session['email_para_eliminar_code'] = email_mail #rol_up pq sube el rango/rol tiene q ser el mail de cet4 pq la verga esa dsps se manda al /veificar codigo y el codigo se manda a cet4 entonces va a verificar cet4
+    session['email_usuario_eliminar'] = email  #<--- nose si sirve ahr
+
+    session['rol'] = rol_usuario  #<--- nose si sirve ahr
+    
+
+    otp = ''.join(secrets.choice(string.digits) for _ in range(6))
+    expiracion = datetime.now(timezone.utc) + timedelta(minutes=5)
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor()
+
+        # --- CAMBIO IMPORTANTE ---
+        # 1. BORRAMOS cualquier código de 'degradar' anterior para este email.
+        # Esto garantiza que siempre trabajemos con el código más reciente.
+        cursor.execute("DELETE FROM codigos_verificacion WHERE email = %s AND tipo = 'eliminar'", (email_mail,))
+
+        # 2. INSERTAMOS el nuevo código generado.
+        # Ya no necesitamos ON DUPLICATE KEY UPDATE porque siempre empezamos de cero.
+        cursor.execute("""
+            INSERT INTO codigos_verificacion (email, codigo, tipo, expiracion)
+            VALUES (%s, %s, %s, %s)
+        """, (email_mail, otp, 'eliminar', expiracion))
+
+        conn.commit()
+
+        msg = Message("PETICION-DE-ELIMINACION-DE-USUARIO",
+                sender=app.config['MAIL_USERNAME'],
+                recipients=[email_mail])
+        msg.body = f"Tu código de verificacion es: {otp}"
+        mail.send(msg)
+        return jsonify({'success': True}), 200
+    except Exception as e:
+        print("Error en otp_login:", e)
+        return jsonify({'error': 'No se pudo enviar el código'}), 500
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
 
 if __name__ == "__main__":
     print("iniciando flask..")
