@@ -80,8 +80,8 @@ async function cargar_usuarios() {
 //---FUNCIONES DE ELIMINACIÓN DE COMENTARIOS Y RESPUESTAS---
 async function eliminarUsuario(id_usuario,rol_usuario) {
     if (!confirm("¿Seguro que quieres eliminar este usuario?")) return;
-    console.log({ id_usuario, rol_usuario, mail_usuario });
-    const response = await fetch('/eliminar_usuario', {
+    console.log({ id_usuario, rol_usuario });
+    const response = await fetch('/otp_eliminar', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -91,7 +91,8 @@ async function eliminarUsuario(id_usuario,rol_usuario) {
     });
     const result = await response.json();
     if (result.success) {
-        await cargar_usuarios();
+        alert('Código OTP enviado al mail');
+        window.location.href = '/IngresarCodigo';
     } else {
         alert(result.error || "No se pudo eliminar.");
 }
