@@ -106,7 +106,7 @@ document.getElementById('otp').addEventListener('submit', async (e) => {
 
         const result2 = await res2.json();
         if (result2.success) {
-          alert('¡Usuario degradado con éxito!');
+          alert('¡Usuario eliminado con éxito!');
           window.location.href = '/paneladmin';
         } else {
           alert(result2.error || 'Hubo un problema al degradar el usuario');
