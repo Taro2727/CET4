@@ -37,15 +37,28 @@ function renderizarNotificaciones(notificaciones) {
         const divNotificacion = document.createElement('div');
         divNotificacion.classList.add('notificacion-item');
         
+         // Asignar una clase CSS dependiendo del estado de 'leida'
+        if (notificacion.leida) {
+            divNotificacion.classList.add('leida');
+        } else {
+            divNotificacion.classList.add('nueva');
+        }
+
+        // Crear el cartelito "Nueva" si la notificación no ha sido leída
+        const labelLeida = notificacion.leida 
+            ? '' // Si está leída, el cartel está vacío
+            : '<span class="label-nueva">Nueva</span>';
+        
         divNotificacion.innerHTML = `
             <div class="notificacion-usuario">
                 <span class="usuario-nombre">Notificación</span>
+                ${labelLeida}
             </div>
             <div class="notificacion-contenido">
-                <p>${notificacion.contenido}</p>
+                <p>${notificacion.mensaje}</p>
             </div>
             <div class="notificacion-fecha">
-                <span class="fecha">${new Date(notificacion.fecha_creacion).toLocaleString()}</span>
+                <span class="fecha">${new Date(notificacion.fecha).toLocaleString()}</span>
             </div>
         `;
         

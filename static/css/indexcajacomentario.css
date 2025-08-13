@@ -937,3 +937,35 @@ input{
 .usuariooo{
   color:#fff;
 }
+/*AGREGUE ESTO PARA NOTIFICACIONES LEIDAS/NUEVAS HAY QUE CAMBIARLO A NUESTRO GUSTOOOO*/
+/* Estilo general de las notificaciones */
+.notificacion-item {
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: background-color 0.3s ease;
+}
+
+/* Estilo para las notificaciones LEÍDAS */
+.notificacion-item.leida {
+    background-color: #f0f0f0; /* Color gris claro */
+    color: #888; /* Texto más suave */
+}
+
+/* Estilo para las notificaciones NUEVAS (NO LEÍDAS) */
+.notificacion-item.nueva {
+    background-color: #e6f7ff; /* Color azul claro */
+    border-left: 5px solid #007bff; /* Barra lateral azul para destacar */
+}
+
+/* Estilo para la etiqueta "Nueva" */
+.label-nueva {
+    background-color: #007bff;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: bold;
+    margin-left: 10px;
+}
