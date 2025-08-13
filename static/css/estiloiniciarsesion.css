@@ -152,10 +152,23 @@ body {
 }
 
 /* Responsive */
+/* Ajuste tabletas */
 @media (max-width: 768px) {
   .main-wrapper {
     flex-direction: column;
     align-items: center;
+    gap: 20px;
+    padding: 20px 15px;
+  }
+
+  .login-container {
+    padding: 30px 20px;
+    max-width: 90%;
+    min-height: auto;
+  }
+
+  .login-container h1 {
+    font-size: 20px;
   }
 
   .burbuja {
@@ -164,10 +177,61 @@ body {
   }
 
   .mascota {
-    max-height: 200px;
+    max-height: 180px;
+  }
+}
+
+/* Ajuste móviles pequeños */
+@media (max-width: 480px) {
+  body {
+    font-size: 14px;
+  }
+
+  .main-wrapper {
+    gap: 15px;
+    padding: 15px 10px;
   }
 
   .login-container {
-    padding: 40px 25px;
+    padding: 20px 15px;
+    max-width: 100%;
+    border-radius: 8px;
+  }
+
+  .login-container h1 {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+
+  .login-container input,
+  .login-container button {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .login-container .links {
+    font-size: 12px;
+    margin-top: 8px;
+  }
+
+  .burbuja {
+    width: 140px;
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+
+  .mascota {
+    max-height: 150px;
+  }
+}
+
+/* Ajuste extra para muy pequeñas (ej. teléfonos compactos) */
+@media (max-width: 360px) {
+  .login-container h1 {
+    font-size: 16px;
+  }
+
+  .burbuja {
+    display: none; /* ocultar si el espacio es muy reducido */
   }
 }
