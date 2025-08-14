@@ -1158,18 +1158,26 @@ def paneladmin():
 
 
 
+# app.py
+
 @app.route('/api/users', methods=['GET', 'POST'])
 def get_users():
     conn = mysql.connector.connect(**DB_CONFIG)
     if not conn:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
 
-    cursor = conn.cursor(dictionary=True) # Usamos dictionary=True para obtener un diccionario por cada fila
-    query = "SELECT id_usu, nom_usu,email,rol FROM usuario"
-    
+    cursor = conn.cursor(dictionary=True)
+
     try:
-        cursor.execute(query)
-        users = cursor.fetchall() # Obtiene todas las filas como una lista de diccionarios
+        # Consulta SQL corregida para usar el nombre de tabla 'Baneo'
+        cursor.execute("""
+            SELECT
+                u.id_usu, u.nom_usu, u.email, u.rol, 
+                b.id_ban IS NOT NULL AS baneado
+            FROM usuario u
+            LEFT JOIN Baneo b ON u.id_usu = b.id_usu
+        """)
+        users = cursor.fetchall()
     except mysql.connector.Error as err:
         print(f"Error en la consulta: {err}")
         users = []
@@ -1178,6 +1186,57 @@ def get_users():
         conn.close()
 
     return jsonify(users)
+# @app.route('/api/bans', methods=['GET', 'POST'])
+# def get_bans():
+#     conn = mysql.connector.connect(**DB_CONFIG)
+#     if not conn:
+#         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+
+#     cursor = conn.cursor(dictionary=True) # Usamos dictionary=True para obtener un diccionario por cada fila
+#     query = "SELECT id_ban,id_usu,activo FROM baneo"
+    
+#     try:
+#         cursor.execute(query)
+#         users = cursor.fetchall() # Obtiene todas las filas como una lista de diccionarios
+#     except mysql.connector.Error as err:
+#         print(f"Error en la consulta: {err}")
+#         users = []
+#     finally:
+#         cursor.close()
+#         conn.close()
+
+#     return jsonify(users)
+
+
+# --- Nueva ruta para verificar el estado de baneo ---
+# @app.route('/api/ban_status/<int:id_user>', methods=['GET'])
+# @login_required
+# def get_ban_status():
+
+#     # Asegúrate de que solo un administrador pueda usar esta ruta
+#     if current_user.rol != 'admin':  #  es el rol de admin en tu código
+#         return jsonify({"error": "Acceso denegado"}), 403
+
+#     try:
+#         conn = mysql.connector.connect(**DB_CONFIG)
+#         cursor = conn.cursor(dictionary=True)
+
+#         # Consulta si hay un baneo activo para el usuario
+#         query = "SELECT activo FROM Baneo WHERE id_usu = %s AND activo = TRUE"
+#         cursor.execute(query, (id_usuario,))
+#         ban_status = cursor.fetchone()
+
+#         cursor.close()
+#         conn.close()
+
+#         # Si ban_status no es None, significa que hay un baneo activo
+#         is_banned = ban_status is not None
+        
+#         return jsonify({"is_banned": is_banned})
+
+#     except mysql.connector.Error as err:
+#         print(f"Error al obtener el estado de baneo: {err}")
+#         return jsonify({"error": "Error de base de datos"}), 500
 
 @app.route('/upgradear', methods=['POST'])
 def ascender():
