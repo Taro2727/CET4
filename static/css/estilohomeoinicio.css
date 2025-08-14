@@ -202,7 +202,7 @@ body {
 }
 
 /* Estilos para el cartelito de permitir notificaciones */
-/* .modal {
+.modal {
   display: none;
   position: fixed;
   bottom: 20px;
@@ -215,4 +215,4 @@ body {
 }
 .modal-content button {
   margin: 8px;
-} */
+}
