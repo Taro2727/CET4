@@ -568,7 +568,7 @@ def verificar_codigo():
     # --- Lógica de Prioridad para determinar el 'tipo' ---
     if 'email_para_configuracion' in session:
         email = session.get('email_para_configuracion')
-        tipo = 'configuracion'
+        tipo = 'config'
     elif 'email_para_rol_up_code' in session:
         email = session.get('email_para_rol_up_code')
         tipo = 'ascender'
@@ -640,7 +640,7 @@ def verificar_codigo():
         conn.close()
         return jsonify({'exito': True, 'redirigir': '/actualizar'})
     
-    elif tipo == 'configuracion':
+    elif tipo == 'config':
         try:
             nueva_pass_hasheada = session['nueva_pass_hasheada_config']
             conn_update = mysql.connector.connect(**DB_CONFIG)
