@@ -917,6 +917,7 @@ def agregar_comentario():
 def get_comentario():
     # CAMBIO: Eliminada la importación y conexión duplicada.
     id_mat = request.args.get('id_mat')
+    orden = request.args.get('orden', 'reciente')
     id_usu = current_user.id
     if not id_mat: # CAMBIO: Validación si no se pasa id_mat
         return jsonify({"success": False, "error": "ID de materia requerido"}), 400
@@ -925,18 +926,31 @@ def get_comentario():
         conn = mysql.connector.connect(**DB_CONFIG) # Usar DB_CONFIG
         # CAMBIO: Simplificado el if/else redundante.
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("""
-            SELECT p.id_post, p.titulo, p.cont, p.fecha, u.nom_usu AS usuario, p.id_usu, p.cont_likes,
-            EXISTS(
-                 SELECT 1 FROM likes_comentarios l
-                 WHERE l.id_post = p.id_post AND l.id_usu = %s
-               )AS likeado_por_usuario
+        query = """
+            SELECT p.id_post, p.titulo, p.cont, u.nom_usu AS usuario, p.fecha, 
+                   COUNT(l.id_like) AS cont_likes,
+                   EXISTS(SELECT 1 FROM likes_comentarios WHERE id_post = p.id_post AND id_usu = %s) AS likeado_por_usuario
             FROM preg p
             LEFT JOIN usuario u ON p.id_usu = u.id_usu
-            WHERE p.id_mat=%s
-            ORDER BY p.fecha DESC
-        """, (id_usu, id_mat)) 
+            LEFT JOIN likes_comentarios l ON p.id_post = l.id_post
+            WHERE p.id_mat = %s
+            GROUP BY p.id_post, p.titulo, p.cont, u.nom_usu, p.fecha
+        """
+
+        # Agregar ORDER BY basado en 'orden'
+        if orden == 'reciente':
+            query += " ORDER BY p.fecha DESC"
+        elif orden == 'antiguo':
+            query += " ORDER BY p.fecha ASC"
+        elif orden == 'mas-likes':
+            query += " ORDER BY cont_likes DESC, p.fecha DESC"  # Tiebreaker por fecha
+        elif orden == 'menos-likes':
+            query += " ORDER BY cont_likes ASC, p.fecha DESC"  # Tiebreaker por fecha
+        else:
+            query += " ORDER BY p.fecha DESC"  # Default
+        cursor.execute(query, (id_usu, id_mat))
         comentarios = cursor.fetchall()
+
         cursor.close()
         conn.close()
         return jsonify(comentarios)
@@ -1250,18 +1264,26 @@ def paneladmin():
 
 
 
+# app.py
+
 @app.route('/api/users', methods=['GET', 'POST'])
 def get_users():
     conn = mysql.connector.connect(**DB_CONFIG)
     if not conn:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
 
-    cursor = conn.cursor(dictionary=True) # Usamos dictionary=True para obtener un diccionario por cada fila
-    query = "SELECT id_usu, nom_usu,email,rol FROM usuario"
-    
+    cursor = conn.cursor(dictionary=True)
+
     try:
-        cursor.execute(query)
-        users = cursor.fetchall() # Obtiene todas las filas como una lista de diccionarios
+        # Consulta SQL corregida para usar el nombre de tabla 'Baneo'
+        cursor.execute("""
+            SELECT
+                u.id_usu, u.nom_usu, u.email, u.rol, 
+                b.id_ban IS NOT NULL AS baneado
+            FROM usuario u
+            LEFT JOIN Baneo b ON u.id_usu = b.id_usu
+        """)
+        users = cursor.fetchall()
     except mysql.connector.Error as err:
         print(f"Error en la consulta: {err}")
         users = []
@@ -1270,6 +1292,57 @@ def get_users():
         conn.close()
 
     return jsonify(users)
+# @app.route('/api/bans', methods=['GET', 'POST'])
+# def get_bans():
+#     conn = mysql.connector.connect(**DB_CONFIG)
+#     if not conn:
+#         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+
+#     cursor = conn.cursor(dictionary=True) # Usamos dictionary=True para obtener un diccionario por cada fila
+#     query = "SELECT id_ban,id_usu,activo FROM baneo"
+    
+#     try:
+#         cursor.execute(query)
+#         users = cursor.fetchall() # Obtiene todas las filas como una lista de diccionarios
+#     except mysql.connector.Error as err:
+#         print(f"Error en la consulta: {err}")
+#         users = []
+#     finally:
+#         cursor.close()
+#         conn.close()
+
+#     return jsonify(users)
+
+
+# --- Nueva ruta para verificar el estado de baneo ---
+# @app.route('/api/ban_status/<int:id_user>', methods=['GET'])
+# @login_required
+# def get_ban_status():
+
+#     # Asegúrate de que solo un administrador pueda usar esta ruta
+#     if current_user.rol != 'admin':  #  es el rol de admin en tu código
+#         return jsonify({"error": "Acceso denegado"}), 403
+
+#     try:
+#         conn = mysql.connector.connect(**DB_CONFIG)
+#         cursor = conn.cursor(dictionary=True)
+
+#         # Consulta si hay un baneo activo para el usuario
+#         query = "SELECT activo FROM Baneo WHERE id_usu = %s AND activo = TRUE"
+#         cursor.execute(query, (id_usuario,))
+#         ban_status = cursor.fetchone()
+
+#         cursor.close()
+#         conn.close()
+
+#         # Si ban_status no es None, significa que hay un baneo activo
+#         is_banned = ban_status is not None
+        
+#         return jsonify({"is_banned": is_banned})
+
+#     except mysql.connector.Error as err:
+#         print(f"Error al obtener el estado de baneo: {err}")
+#         return jsonify({"error": "Error de base de datos"}), 500
 
 @app.route('/upgradear', methods=['POST'])
 def ascender():
@@ -1590,6 +1663,26 @@ def otp_eliminar():
         if conn.is_connected():
             cursor.close()
             conn.close()
+@app.route('/ban')
+def ban():
+    data = request.get_json()
+    id_usuario= data.get('id_usuario')
+    if not data:
+        return jsonify({'error': 'No me llego el id del usuario del js panel (linea 1565)'}),400
+    
+    #pseudocodigo de la logica de la duracion
+    inicio='fecha de hoy'
+    duracion=3
+    fin=inicio + duracion
+
+    motivo=1
+#todo eson esta mal y falta logica (lo hago dsps)
+
+    conn = mysql.connector.connect(**DB_CONFIG)
+    cursor = conn.cursor()
+    cursor.execute('INSERT INTO baneo(id_usu, fecha_inicio ,duracion_dias ,motivo ,fecha_fin ,activo) VALUES (%S,%S,%S,%S,%S,%S)',(id_usuario,inicio,duracion,motivo,fin,1))
+
+
 
 if __name__ == "__main__":
     print("iniciando flask..")

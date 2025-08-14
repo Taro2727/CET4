@@ -26,7 +26,10 @@ async function cargar_usuarios() {
                     ? `<button onclick="ascender('${u.id_usu}','${u.rol}','${u.email}')">↑</button> <button onclick="down('${u.id_usu}','${u.rol}')">↓</button>`  
                     : `<button onclick="down('${u.id_usu}','${u.rol}')">↓</button>`
             }
-            <button class="btn-eliminar" onclick="ban(${u.id_usu})">⛔</button>
+           ${u.baneado
+                ? `<button class="btn-eliminar" onclick="desbanear(${u.id_usu})">✅</button>`
+                : `<button class="btn-eliminar" onclick="banear(${u.id_usu})">⛔</button>`
+            }
             <span class="usuariooo"><strong>${u.nom_usu}</strong></span><br>
             <span class="usuariooo"><b>ID:</b> ${u.id_usu}</span><br>
             <span class="usuariooo"><b>Email:</b> ${u.email}</span><br>
@@ -133,6 +136,23 @@ async function down(id_usuario,rol_usuario,mail_usuario) {
     if (result.success) {
         alert('Código OTP enviado al mail');
         window.location.href = '/IngresarCodigo';
+    } else {
+        alert(result.error || "No se pudo degradar.");
+}
+}
+async function banear(id_usuario){
+    if (!confirm("¿Seguro que quieres banear a este usuario?")) return;
+    const response = await fetch('/ban', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({ id_usuario })
+    });
+    const result = await response.json();
+    if (result.success) {
+        alert('ya se ha baneado');
     } else {
         alert(result.error || "No se pudo degradar.");
 }
