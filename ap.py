@@ -383,9 +383,6 @@ def notif_email(destinatario, asunto, cuerpo):
 def configuracion():
     return render_template('index/tuercabarralateral.html')
 
-
-# En ap.py
-
 @app.route('/guardar-configuracion', methods=['POST'])
 @login_required
 def guardar_configuracion():
@@ -393,11 +390,13 @@ def guardar_configuracion():
     Inicia el flujo de cambio de contraseña desde Configuración,
     limpiando la sesión para evitar conflictos.
     """
-    # --- LÍNEAS DE LIMPIEZA (LA SOLUCIÓN) ---
+    # --- LÍNEAS DE LIMPIEZA (LA SOLUCIÓN DEFINITIVA) ---
     # "Exorcizamos" cualquier sesión fantasma de otros procesos OTP
+    # para asegurar que este flujo se ejecute en un contexto limpio.
     session.pop('email_para_verificacion', None)
     session.pop('email_para_verificacion_registro', None)
-    # -------------------------------------------
+    session.pop('email_del_usuario', None)
+    # ----------------------------------------------------
 
     pass_actual = request.form.get('pass_actual')
     pass_nueva = request.form.get('pass_nueva')
@@ -427,9 +426,9 @@ def guardar_configuracion():
         return redirect(url_for('configuracion'))
 
     try:
-        # Usamos el tipo corto 'config' que ya habías implementado
         email_usuario = current_user.email
-        tipo_otp = 'config' # Asegurándonos de usar la versión corta
+        # Usamos el tipo corto para evitar problemas de tamaño, como ya habías hecho.
+        tipo_otp = 'config'
         
         otp = ''.join(secrets.choice(string.digits) for _ in range(6))
         expiracion = datetime.now(timezone.utc) + timedelta(minutes=5)
