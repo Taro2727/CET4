@@ -140,3 +140,20 @@ async function down(id_usuario,rol_usuario,mail_usuario) {
         alert(result.error || "No se pudo degradar.");
 }
 }
+async function banear(id_usuario){
+    if (!confirm("¿Seguro que quieres banear a este usuario?")) return;
+    const response = await fetch('/ban', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({ id_usuario })
+    });
+    const result = await response.json();
+    if (result.success) {
+        alert('ya se ha baneado');
+    } else {
+        alert(result.error || "No se pudo degradar.");
+}
+}

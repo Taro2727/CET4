@@ -1557,6 +1557,24 @@ def otp_eliminar():
         if conn.is_connected():
             cursor.close()
             conn.close()
+@app.route('/ban')
+def ban():
+    data = request.get_json()
+    id_usuario= data.get('id_usuario')
+    if not data:
+        return jsonify({'error': 'No me llego el id del usuario del js panel (linea 1565)'}),400
+    
+    inicio=1
+    fin=1
+    duracion=motivo 
+    motivo=1
+#todo eson esta mal y falta logica (lo hago dsps)
+
+    conn = mysql.connector.connect(**DB_CONFIG)
+    cursor = conn.cursor()
+    cursor.execute('INSERT INTO baneo(id_usu, fecha_inicio ,duracion_dias ,motivo ,fecha_fin ,activo) VALUES (%S,%S,%S,%S,%S,%S)',(id_usuario,inicio,duracion,motivo,fin,1))
+
+
 
 if __name__ == "__main__":
     print("iniciando flask..")
