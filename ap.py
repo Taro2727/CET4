@@ -555,24 +555,20 @@ def cambiar_contra():
 #------------------------------------------------
 # En ap.py
 
+# En ap.py, reemplaza tu función verificar_codigo COMPLETA por esta:
+
+# En ap.py, reemplaza tu función verificar_codigo COMPLETA por esta:
+
 @app.route('/verificar_codigo', methods=['POST'])
 @limiter.limit("5 per minute")
 def verificar_codigo():
     data = request.get_json()
     codigo_enviado = data.get('cod')
 
-    if 'email_para_verificacion_registro' in session:
-        email = session.get('email_para_verificacion_registro')
-        tipo = 'registro'
-    elif 'email_del_usuario' in session:
-        email = session.get('email_del_usuario')
-        tipo = 'login'
-    elif 'email_para_verificacion' in session:
-        email = session.get('email_para_verificacion')
-        tipo = 'recuperacion'
-    elif 'email_para_configuracion' in session:
+    # --- Lógica de Prioridad para determinar el 'tipo' ---
+    if 'email_para_configuracion' in session:
         email = session.get('email_para_configuracion')
-        tipo = 'config'
+        tipo = 'configuracion'
     elif 'email_para_rol_up_code' in session:
         email = session.get('email_para_rol_up_code')
         tipo = 'ascender'
@@ -582,6 +578,15 @@ def verificar_codigo():
     elif 'email_para_eliminar_code' in session:
         email = session.get('email_para_eliminar_code')
         tipo = 'eliminar'
+    elif 'email_para_verificacion_registro' in session:
+        email = session.get('email_para_verificacion_registro')
+        tipo = 'registro'
+    elif 'email_del_usuario' in session:
+        email = session.get('email_del_usuario')
+        tipo = 'login'
+    elif 'email_para_verificacion' in session:
+        email = session.get('email_para_verificacion')
+        tipo = 'recuperacion'
     else:
         return jsonify({'error': 'Sesión inválida o expirada. Por favor, inicia el proceso de nuevo.'}), 400
 
@@ -606,6 +611,7 @@ def verificar_codigo():
     conn.commit()
     session['otp_verificado'] = True
 
+    # --- Lógica de redirección después de la verificación ---
     if tipo == 'login':
         contraseña = session.get('contra_del_usuario')
         cursor.execute("SELECT * FROM usuario WHERE email=%s", (email,))
@@ -667,7 +673,10 @@ def verificar_codigo():
     elif tipo == 'eliminar':
         conn.close()
         return jsonify({'exito': True, 'redirigir': '/eliminar_usuario'})
-
+    
+    # Si algún tipo no tiene un manejo explícito (no debería pasar)
+    conn.close()
+    return jsonify({'error': 'Tipo de operación no manejada.'}), 500
         
 #----------------------------------------------------------------------------
 # verificar contraseña NUEVAAAAAA
