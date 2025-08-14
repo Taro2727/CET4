@@ -6,24 +6,35 @@
     <title>Configuración - Mi Foro</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/estilohomeoinicio.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/configuracion.css') }}">
-     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body>
     <main class="contenido-principal">
         <div class="contenedor-configuracion">
             <h1>Configuración</h1>
 
-            <form action="/guardar-configuracion" method="post">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form action="{{ url_for('guardar_configuracion') }}" method="post">
+                
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                 <section class="seccion-config">
                     <h2>Perfil de Usuario</h2>
                     <div class="campo-form">
                         <label for="nombre-usuario">Nombre de usuario:</label>
-                        <input type="text" id="nombre-usuario" name="nombre_usuario" value="TuUsuarioActual">
+                        <input type="text" id="nombre-usuario" name="nombre_usuario" value="{{ current_user.nom_usu }}">
                     </div>
                     <div class="campo-form">
                         <label for="email">Correo electrónico:</label>
-                        <input type="email" id="email" name="email" value="tu@correo.com">
+                        <input type="email" id="email" name="email" value="{{ current_user.email }}" readonly>
                     </div>
                 </section>
 
@@ -32,34 +43,26 @@
                 <section class="seccion-config">
                     <h2>Notificaciones</h2>
                     <div class="campo-check">
-                        <input type="checkbox" id="notif-email" name="notif_email" checked>
-                        <label for="notif-email">Recibir notificaciones por correo.</label>
-                    </div>
-                    <div class="campo-check">
-                        <input type="checkbox" id="notif-nuevopost" name="notif_nuevopost">
-                        <label for="notif-nuevopost">Notificarme cuando alguien responda a mis posts.</label>
-                    </div>
-                    <div class="campo-check">
-                        <input type="checkbox" id="notif-push" name="notif_push" checked>
-                        <label for="notif-push">Activar notificaciones push en el navegador.</label>
+                        <input type="checkbox" id="notif-push" name="notif_push">
+                        <label for="notif-push">Activar notificaciones push.</label>
                     </div>
                 </section>
 
                 <hr>
-
+                
                 <section class="seccion-config">
-                    <h2>Seguridad</h2>
+                    <h2>Cambiar Contraseña</h2>
                     <div class="campo-form">
                         <label for="pass-actual">Contraseña actual:</label>
-                        <input type="password" id="pass-actual" name="pass_actual">
+                        <input type="password" id="pass-actual" name="pass_actual" placeholder="Ingresa tu contraseña actual" required>
                     </div>
                     <div class="campo-form">
                         <label for="pass-nueva">Nueva contraseña:</label>
-                        <input type="password" id="pass-nueva" name="pass_nueva">
+                        <input type="password" id="pass-nueva" name="pass_nueva" placeholder="Ingresa tu nueva contraseña" required>
                     </div>
                     <div class="campo-form">
                         <label for="pass-confirmar">Confirmar nueva contraseña:</label>
-                        <input type="password" id="pass-confirmar" name="pass_confirmar">
+                        <input type="password" id="pass-confirmar" name="pass_confirmar" placeholder="Confirma tu nueva contraseña" required>
                     </div>
                 </section>
 
