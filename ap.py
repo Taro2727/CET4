@@ -1578,9 +1578,11 @@ def ban():
     if not data:
         return jsonify({'error': 'No me llego el id del usuario del js panel (linea 1565)'}),400
     
-    inicio=1
-    fin=1
-    duracion=motivo 
+    #pseudocodigo de la logica de la duracion
+    inicio='fecha de hoy'
+    duracion=3
+    fin=inicio + duracion
+
     motivo=1
 #todo eson esta mal y falta logica (lo hago dsps)
 
