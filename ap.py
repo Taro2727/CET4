@@ -417,7 +417,7 @@ def guardar_configuracion():
 
     try:
         email_usuario = current_user.email
-        tipo_otp = 'configuracion'
+        tipo_otp = 'config'
         otp = ''.join(secrets.choice(string.digits) for _ in range(6))
         expiracion = datetime.now(timezone.utc) + timedelta(minutes=5)
         
@@ -561,7 +561,7 @@ def verificar_codigo():
         tipo = 'recuperacion'
     elif 'email_para_configuracion' in session:
         email = session.get('email_para_configuracion')
-        tipo = 'configuracion'
+        tipo = 'config'
     elif 'email_para_rol_up_code' in session:
         email = session.get('email_para_rol_up_code')
         tipo = 'ascender'
