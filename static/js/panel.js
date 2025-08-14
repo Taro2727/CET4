@@ -26,6 +26,7 @@ async function cargar_usuarios() {
                     ? `<button onclick="ascender('${u.id_usu}','${u.rol}','${u.email}')">↑</button> <button onclick="down('${u.id_usu}','${u.rol}')">↓</button>`  
                     : `<button onclick="down('${u.id_usu}','${u.rol}')">↓</button>`
             }
+            <button class="btn-eliminar" onclick="ban(${u.id_usu})">⛔</button>
             <span class="usuariooo"><strong>${u.nom_usu}</strong></span><br>
             <span class="usuariooo"><b>ID:</b> ${u.id_usu}</span><br>
             <span class="usuariooo"><b>Email:</b> ${u.email}</span><br>
