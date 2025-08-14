@@ -4,19 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Configuración - Mi Foro</title>
-    <link rel="stylesheet" href="tuerca.css"> <link rel="stylesheet" href="configuracion.css"> 
+    <link rel="stylesheet" href="estilos.css">
+    <link rel="stylesheet" href="configuracion.css">
 </head>
 <body>
-    <aside class="barra-lateral">
-        <a href="tuercabarralateral.html" class="enlace-configuracion">
-            <img src="icono-tuerca.svg" alt="Configuración"> </a>
-        </aside>
-
     <main class="contenido-principal">
         <div class="contenedor-configuracion">
             <h1>Configuración</h1>
 
             <form action="/guardar-configuracion" method="post">
+
                 <section class="seccion-config">
                     <h2>Perfil de Usuario</h2>
                     <div class="campo-form">
@@ -40,6 +37,10 @@
                     <div class="campo-check">
                         <input type="checkbox" id="notif-nuevopost" name="notif_nuevopost">
                         <label for="notif-nuevopost">Notificarme cuando alguien responda a mis posts.</label>
+                    </div>
+                    <div class="campo-check">
+                        <input type="checkbox" id="notif-push" name="notif_push" checked>
+                        <label for="notif-push">Activar notificaciones push en el navegador.</label>
                     </div>
                 </section>
 
