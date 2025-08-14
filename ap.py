@@ -383,11 +383,22 @@ def notif_email(destinatario, asunto, cuerpo):
 def configuracion():
     return render_template('index/tuercabarralateral.html')
 
+
 # En ap.py
 
 @app.route('/guardar-configuracion', methods=['POST'])
 @login_required
 def guardar_configuracion():
+    """
+    Inicia el flujo de cambio de contraseña desde Configuración,
+    limpiando la sesión para evitar conflictos.
+    """
+    # --- LÍNEAS DE LIMPIEZA (LA SOLUCIÓN) ---
+    # "Exorcizamos" cualquier sesión fantasma de otros procesos OTP
+    session.pop('email_para_verificacion', None)
+    session.pop('email_para_verificacion_registro', None)
+    # -------------------------------------------
+
     pass_actual = request.form.get('pass_actual')
     pass_nueva = request.form.get('pass_nueva')
     pass_confirmar = request.form.get('pass_confirmar')
@@ -416,8 +427,10 @@ def guardar_configuracion():
         return redirect(url_for('configuracion'))
 
     try:
+        # Usamos el tipo corto 'config' que ya habías implementado
         email_usuario = current_user.email
-        tipo_otp = 'config'
+        tipo_otp = 'config' # Asegurándonos de usar la versión corta
+        
         otp = ''.join(secrets.choice(string.digits) for _ in range(6))
         expiracion = datetime.now(timezone.utc) + timedelta(minutes=5)
         
@@ -442,13 +455,12 @@ def guardar_configuracion():
         session['email_para_configuracion'] = email_usuario
         session['nueva_pass_hasheada_config'] = generate_password_hash(pass_nueva, method='pbkdf2:sha256')
         
-        # --- LÍNEA CORREGIDA ---
         return redirect(url_for('otp'))
         
     except Exception as e:
         flash(f'Error al enviar el código de verificación: {e}', 'danger')
         return redirect(url_for('configuracion'))
-        
+    
 # @app.route('/test_notificacion') #ruta para probar si las notificaciones funcionan
 # @login_required
 # def test_notificacion():
