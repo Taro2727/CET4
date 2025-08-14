@@ -378,9 +378,9 @@ def notif_email(destinatario, asunto, cuerpo):
         print("❌ Error al enviar email de notificación:", e)
 
 # ruta para la tuerca barra lateral
-@app.route('/tuercabarralateral.html')
+@app.route('/configuracion')
 @login_required
-def tuerca():
+def configuracion():
     return render_template('index/tuercabarralateral.html')
 # @app.route('/test_notificacion') #ruta para probar si las notificaciones funcionan
 # @login_required
