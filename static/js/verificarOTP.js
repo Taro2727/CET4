@@ -33,6 +33,9 @@ document.getElementById('otp').addEventListener('submit', async (e) => {
         // --- ESTA ES LA CONDICIÓN QUE FALTABA ---
         // No es necesario un alert, simplemente redirigimos.
         window.location.href = '/indexhomeoinicio';
+      } else if (destino === '/configuracion') {
+        alert('¡Contraseña actualizada con éxito!');
+        window.location.href = destino;
 
       } else if (destino === '/upgradear') {
         // Aquí mandas el POST real al backend

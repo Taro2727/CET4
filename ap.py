@@ -382,6 +382,73 @@ def notif_email(destinatario, asunto, cuerpo):
 @login_required
 def configuracion():
     return render_template('index/tuercabarralateral.html')
+
+# En ap.py
+
+@app.route('/guardar-configuracion', methods=['POST'])
+@login_required
+def guardar_configuracion():
+    pass_actual = request.form.get('pass_actual')
+    pass_nueva = request.form.get('pass_nueva')
+    pass_confirmar = request.form.get('pass_confirmar')
+
+    if not all([pass_actual, pass_nueva, pass_confirmar]):
+        flash('Debes completar todos los campos de contraseña.', 'danger')
+        return redirect(url_for('configuracion'))
+
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT contraseña FROM usuario WHERE id_usu = %s", (current_user.id,))
+        user_data = cursor.fetchone()
+        cursor.close()
+        conn.close()
+
+        if not user_data or not check_password_hash(user_data['contraseña'], pass_actual):
+            flash('La contraseña actual es incorrecta.', 'danger')
+            return redirect(url_for('configuracion'))
+    except Exception as e:
+        flash(f'Error al verificar tu identidad: {e}', 'danger')
+        return redirect(url_for('configuracion'))
+
+    if pass_nueva != pass_confirmar:
+        flash('La nueva contraseña y su confirmación no coinciden.', 'danger')
+        return redirect(url_for('configuracion'))
+
+    try:
+        email_usuario = current_user.email
+        tipo_otp = 'configuracion'
+        otp = ''.join(secrets.choice(string.digits) for _ in range(6))
+        expiracion = datetime.now(timezone.utc) + timedelta(minutes=5)
+        
+        conn_otp = mysql.connector.connect(**DB_CONFIG)
+        cursor_otp = conn_otp.cursor()
+        
+        cursor_otp.execute("DELETE FROM codigos_verificacion WHERE email = %s AND tipo = %s", (email_usuario, tipo_otp))
+        cursor_otp.execute("""
+            INSERT INTO codigos_verificacion (email, codigo, tipo, expiracion)
+            VALUES (%s, %s, %s, %s)
+        """, (email_usuario, otp, tipo_otp, expiracion))
+        conn_otp.commit()
+        cursor_otp.close()
+        conn_otp.close()
+
+        msg = Message("C-A-M-B-I-O--C-O-N-T-R-A-S-E-Ñ-A--C-O-N-F-I-G-U-R-A-C-I-O-N", 
+                      sender=app.config['MAIL_USERNAME'], 
+                      recipients=[email_usuario])
+        msg.body = f"Tu código de verificacion es: {otp}"
+        mail.send(msg)
+        
+        session['email_para_configuracion'] = email_usuario
+        session['nueva_pass_hasheada_config'] = generate_password_hash(pass_nueva, method='pbkdf2:sha256')
+        
+        # --- LÍNEA CORREGIDA ---
+        return redirect(url_for('otp'))
+        
+    except Exception as e:
+        flash(f'Error al enviar el código de verificación: {e}', 'danger')
+        return redirect(url_for('configuracion'))
+        
 # @app.route('/test_notificacion') #ruta para probar si las notificaciones funcionan
 # @login_required
 # def test_notificacion():
@@ -475,9 +542,10 @@ def cambiar_contra():
         return jsonify({'error': 'No se pudo enviar el código'}), 500
 
 #------------------------------------------------
+# En ap.py
+
 @app.route('/verificar_codigo', methods=['POST'])
 @limiter.limit("5 per minute")
-#@limiter.limit("1 per 15 minutes")
 def verificar_codigo():
     data = request.get_json()
     codigo_enviado = data.get('cod')
@@ -491,15 +559,18 @@ def verificar_codigo():
     elif 'email_para_verificacion' in session:
         email = session.get('email_para_verificacion')
         tipo = 'recuperacion'
+    elif 'email_para_configuracion' in session:
+        email = session.get('email_para_configuracion')
+        tipo = 'configuracion'
     elif 'email_para_rol_up_code' in session:
-        email= session.get('email_para_rol_up_code')
+        email = session.get('email_para_rol_up_code')
         tipo = 'ascender'
     elif 'email_para_rol_down_code' in session:
-        email= session.get('email_para_rol_down_code')
-        tipo='degradar'
+        email = session.get('email_para_rol_down_code')
+        tipo = 'degradar'
     elif 'email_para_eliminar_code' in session:
-        email= session.get('email_para_eliminar_code')
-        tipo='eliminar'
+        email = session.get('email_para_eliminar_code')
+        tipo = 'eliminar'
     else:
         return jsonify({'error': 'Sesión inválida o expirada. Por favor, inicia el proceso de nuevo.'}), 400
 
@@ -519,6 +590,7 @@ def verificar_codigo():
     if codigo_enviado != resultado['codigo']:
         conn.close()
         return jsonify({'error': 'Código incorrecto'}), 401
+    
     cursor.execute("DELETE FROM codigos_verificacion WHERE email = %s AND tipo = %s", (email, tipo))
     conn.commit()
     session['otp_verificado'] = True
@@ -551,8 +623,28 @@ def verificar_codigo():
         conn.close()
         return jsonify({'exito': True, 'redirigir': '/actualizar'})
     
+    elif tipo == 'configuracion':
+        try:
+            nueva_pass_hasheada = session['nueva_pass_hasheada_config']
+            conn_update = mysql.connector.connect(**DB_CONFIG)
+            cursor_update = conn_update.cursor()
+            cursor_update.execute("UPDATE usuario SET contraseña = %s WHERE email = %s", (nueva_pass_hasheada, email))
+            conn_update.commit()
+            cursor_update.close()
+            conn_update.close()
+            
+            session.pop('email_para_configuracion', None)
+            session.pop('nueva_pass_hasheada_config', None)
+            session.pop('otp_verificado', None)
+            
+            conn.close() 
+            return jsonify({'exito': True, 'redirigir': '/configuracion'})
+        except Exception as e:
+            conn.close()
+            return jsonify({'error': f'No se pudo actualizar la contraseña: {e}'}), 500
+
     elif tipo == 'ascender':
-       email_usu = session.get('email_usuario_up') #no se ocupa en teoria
+       email_usu = session.get('email_usuario_up')
        conn.close()
        return jsonify({'exito': True, 'redirigir': '/upgradear'})
     

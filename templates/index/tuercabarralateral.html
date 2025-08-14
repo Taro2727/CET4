@@ -6,6 +6,8 @@
     <title>Configuración - Mi Foro</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/estilohomeoinicio.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/configuracion.css') }}">
+     <meta name="csrf-token" content="{{ csrf_token() }}">
+</head>
 <body>
     <main class="contenido-principal">
         <div class="contenedor-configuracion">
