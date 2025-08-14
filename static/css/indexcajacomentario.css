@@ -969,3 +969,28 @@ input{
     font-weight: bold;
     margin-left: 10px;
 }
+
+/* Estilo para el menú de ordenar */
+
+.oculto {
+    display: none;
+}
+
+#menu-ordenar {
+    position: absolute; /* Para que aparezca como dropdown */
+    background-color: white;
+    border: 1px solid #ccc;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    z-index: 1000;
+}
+
+#menu-ordenar li {
+    padding: 8px;
+    cursor: pointer;
+}
+
+#menu-ordenar li:hover {
+    background-color: #f0f0f0;
+}

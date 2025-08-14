@@ -36,7 +36,14 @@
     </header>
     <!-- el section de abajo es para elegir entre las fuentes y los comentarios-->
     <section id="menues">
-      <button href="#" id="ordenar">&#11015; Ordenar por</button>
+    <div id="ordenar-btn">▾ Ordenar por</div>
+    <ul id="menu-ordenar" class="oculto">
+      <li data-orden="reciente">Más reciente</li>
+      <li data-orden="antiguo">Más antiguo</li>
+      <li data-orden="mas-likes">Más likes</li>
+      <li data-orden="menos-likes">Menos likes</li>
+    </ul>
+</section>
       <a href="/templates/index/ComentariosParaTodos.html">Comentarios</a>
       <a href="/fuentes/materias/1">Fuentes</a>
     </section>
@@ -47,6 +54,7 @@
         <textarea id="comentario" name="comentario" placeholder="Escribe tu comentario..." required></textarea>
         <input type="hidden" id="id_mat" name="id_mat" value="{{ id_mat }}">
         <button type="submit">Enviar</button>
+        <div class="comentario" data-timestamp="1691952000" data-likes=""></div>
       </form>
       <div id="commentsSection"></div> 
   </main>

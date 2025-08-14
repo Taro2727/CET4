@@ -825,6 +825,7 @@ def agregar_comentario():
 def get_comentario():
     # CAMBIO: Eliminada la importación y conexión duplicada.
     id_mat = request.args.get('id_mat')
+    orden = request.args.get('orden', 'reciente')
     id_usu = current_user.id
     if not id_mat: # CAMBIO: Validación si no se pasa id_mat
         return jsonify({"success": False, "error": "ID de materia requerido"}), 400
@@ -833,18 +834,31 @@ def get_comentario():
         conn = mysql.connector.connect(**DB_CONFIG) # Usar DB_CONFIG
         # CAMBIO: Simplificado el if/else redundante.
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("""
-            SELECT p.id_post, p.titulo, p.cont, p.fecha, u.nom_usu AS usuario, p.id_usu, p.cont_likes,
-            EXISTS(
-                 SELECT 1 FROM likes_comentarios l
-                 WHERE l.id_post = p.id_post AND l.id_usu = %s
-               )AS likeado_por_usuario
+        query = """
+            SELECT p.id_post, p.titulo, p.cont, u.nom_usu AS usuario, p.fecha, 
+                   COUNT(l.id_like) AS cont_likes,
+                   EXISTS(SELECT 1 FROM likes_comentarios WHERE id_post = p.id_post AND id_usu = %s) AS likeado_por_usuario
             FROM preg p
             LEFT JOIN usuario u ON p.id_usu = u.id_usu
-            WHERE p.id_mat=%s
-            ORDER BY p.fecha DESC
-        """, (id_usu, id_mat)) 
+            LEFT JOIN likes_comentarios l ON p.id_post = l.id_post
+            WHERE p.id_mat = %s
+            GROUP BY p.id_post, p.titulo, p.cont, u.nom_usu, p.fecha
+        """
+
+        # Agregar ORDER BY basado en 'orden'
+        if orden == 'reciente':
+            query += " ORDER BY p.fecha DESC"
+        elif orden == 'antiguo':
+            query += " ORDER BY p.fecha ASC"
+        elif orden == 'mas-likes':
+            query += " ORDER BY cont_likes DESC, p.fecha DESC"  # Tiebreaker por fecha
+        elif orden == 'menos-likes':
+            query += " ORDER BY cont_likes ASC, p.fecha DESC"  # Tiebreaker por fecha
+        else:
+            query += " ORDER BY p.fecha DESC"  # Default
+        cursor.execute(query, (id_usu, id_mat))
         comentarios = cursor.fetchall()
+
         cursor.close()
         conn.close()
         return jsonify(comentarios)

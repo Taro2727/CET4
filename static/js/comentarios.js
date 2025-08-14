@@ -1,3 +1,5 @@
+
+let criterioActual = 'reciente';
 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
 const usuarioActual = document.querySelector('meta[name="usuario-id"]').content;
 const rolUsuarioActual = document.querySelector('meta[name="usuario-rol"]').content;
@@ -6,9 +8,39 @@ window.onload = async function () {
     await cargarComentarios();
 };
 
+    const ordenarBtn = document.getElementById('ordenar-btn');
+    const menuOrdenar = document.getElementById('menu-ordenar');
+
+    if (ordenarBtn && menuOrdenar) {
+        ordenarBtn.addEventListener('click', () => {
+            menuOrdenar.classList.toggle('oculto');
+        });
+
+        menuOrdenar.addEventListener('click', (e) => {
+            if (e.target.tagName === 'LI') {
+                // Obtenemos el nuevo criterio del atributo data-orden
+                const nuevoCriterio = e.target.dataset.orden;
+                
+                // Si el criterio es diferente al actual, recargamos
+                if (nuevoCriterio !== criterioActual) {
+                    criterioActual = nuevoCriterio;
+                    cargarComentarios(); // Volvemos a llamar a la función para recargar y ordenar
+                }
+                
+                menuOrdenar.classList.add('oculto'); // Ocultamos el menú
+            }
+        });
+    }
+
+        document.addEventListener('click', (e) => {
+            if (!ordenarBtn.contains(e.target) && !menuOrdenar.contains(e.target)) {
+                menuOrdenar.classList.add('oculto');
+            }
+        });
+
 async function cargarComentarios() {
     const id_mat = document.getElementById('id_mat').value;
-    const response = await fetch('/get_comentario?id_mat='+encodeURIComponent(id_mat)+ '&t=' + Date.now());
+    const response = await fetch('/get_comentario?id_mat=' + encodeURIComponent(id_mat) + '&orden=' + encodeURIComponent(criterioActual) + '&t=' + Date.now());
     const comentarios = await response.json();
     const section = document.getElementById('commentsSection');
     section.innerHTML = ''; // Limpia la sección antes de recargar
