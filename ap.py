@@ -423,7 +423,6 @@ def guardar_configuracion():
 
     try:
         email_usuario = current_user.email
-        # Usamos el tipo corto para evitar problemas de tamaño, como ya habías hecho.
         tipo_otp = 'config'
         
         otp = ''.join(secrets.choice(string.digits) for _ in range(6))
@@ -549,19 +548,13 @@ def cambiar_contra():
         return jsonify({'error': 'No se pudo enviar el código'}), 500
 
 #------------------------------------------------
-# En ap.py
-
-# En ap.py, reemplaza tu función verificar_codigo COMPLETA por esta:
-
-# En ap.py, reemplaza tu función verificar_codigo COMPLETA por esta:
-
 @app.route('/verificar_codigo', methods=['POST'])
 @limiter.limit("5 per minute")
 def verificar_codigo():
     data = request.get_json()
     codigo_enviado = data.get('cod')
 
-    # --- Lógica de Prioridad para determinar el 'tipo' ---
+    # Lógica de Prioridad para determinar el 'tipo'
     if 'email_para_configuracion' in session:
         email = session.get('email_para_configuracion')
         tipo = 'config'
@@ -607,12 +600,11 @@ def verificar_codigo():
     conn.commit()
     session['otp_verificado'] = True
 
-    # --- Lógica de redirección después de la verificación ---
+    # Lógica de redirección después de la verificación
     if tipo == 'login':
         contraseña = session.get('contra_del_usuario')
         cursor.execute("SELECT * FROM usuario WHERE email=%s", (email,))
         usuario_data = cursor.fetchone()
-
         if usuario_data and check_password_hash(usuario_data['contraseña'], contraseña):
             user = User(usuario_data['id_usu'], usuario_data['nom_usu'], usuario_data['email'], usuario_data['contraseña'], usuario_data['rol'])
             login_user(user, remember=True)
@@ -624,18 +616,15 @@ def verificar_codigo():
         else:
             conn.close()
             return jsonify({'error': 'La contraseña guardada es incorrecta.'}), 401
-
     elif tipo == 'registro':
         session.pop('email_del_usuario', None)
         conn.close()
         return jsonify({'exito': True, 'redirigir': '/crearcuenta'})
-
     elif tipo == 'recuperacion':
         session['email_para_cambio'] = email
         session.pop('email_del_usuario', None)
         conn.close()
         return jsonify({'exito': True, 'redirigir': '/actualizar'})
-    
     elif tipo == 'config':
         try:
             nueva_pass_hasheada = session['nueva_pass_hasheada_config']
@@ -645,32 +634,26 @@ def verificar_codigo():
             conn_update.commit()
             cursor_update.close()
             conn_update.close()
-            
             session.pop('email_para_configuracion', None)
             session.pop('nueva_pass_hasheada_config', None)
             session.pop('otp_verificado', None)
-            
             conn.close() 
             return jsonify({'exito': True, 'redirigir': '/configuracion'})
         except Exception as e:
             conn.close()
             return jsonify({'error': f'No se pudo actualizar la contraseña: {e}'}), 500
-
     elif tipo == 'ascender':
        email_usu = session.get('email_usuario_up')
        conn.close()
        return jsonify({'exito': True, 'redirigir': '/upgradear'})
-    
     elif tipo == 'degradar':
         email_usu= session.get('email_usuario_down')
         conn.close()
         return jsonify({'exito': True, 'redirigir': '/down'})
-    
     elif tipo == 'eliminar':
         conn.close()
         return jsonify({'exito': True, 'redirigir': '/eliminar_usuario'})
     
-    # Si algún tipo no tiene un manejo explícito (no debería pasar)
     conn.close()
     return jsonify({'error': 'Tipo de operación no manejada.'}), 500
         
