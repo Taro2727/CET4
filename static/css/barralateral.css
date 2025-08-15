@@ -31,7 +31,7 @@
     font-size: 45px;
     cursor: pointer;
     margin-left: 0.2em;
-    z-index: 1100;
+    z-index: 0;
     position: fixed;
     justify-content: left;
     align-items: top;
