@@ -387,16 +387,12 @@ def configuracion():
 @login_required
 def guardar_configuracion():
     """
-    Inicia el flujo de cambio de contraseña desde Configuración,
-    limpiando la sesión para evitar conflictos.
+    Inicia el flujo de cambio de contraseña desde Configuración.
     """
-    # --- LÍNEAS DE LIMPIEZA (LA SOLUCIÓN DEFINITIVA) ---
-    # "Exorcizamos" cualquier sesión fantasma de otros procesos OTP
-    # para asegurar que este flujo se ejecute en un contexto limpio.
+    # Limpia sesiones viejas para evitar conflictos
     session.pop('email_para_verificacion', None)
     session.pop('email_para_verificacion_registro', None)
     session.pop('email_del_usuario', None)
-    # ----------------------------------------------------
 
     pass_actual = request.form.get('pass_actual')
     pass_nueva = request.form.get('pass_nueva')
@@ -427,8 +423,7 @@ def guardar_configuracion():
 
     try:
         email_usuario = current_user.email
-        # Usamos el tipo corto para evitar problemas de tamaño, como ya habías hecho.
-        tipo_otp = 'config'
+        tipo_otp = 'config'  
         
         otp = ''.join(secrets.choice(string.digits) for _ in range(6))
         expiracion = datetime.now(timezone.utc) + timedelta(minutes=5)
@@ -553,11 +548,6 @@ def cambiar_contra():
         return jsonify({'error': 'No se pudo enviar el código'}), 500
 
 #------------------------------------------------
-# En ap.py
-
-# En ap.py, reemplaza tu función verificar_codigo COMPLETA por esta:
-
-# En ap.py, reemplaza tu función verificar_codigo COMPLETA por esta:
 
 @app.route('/verificar_codigo', methods=['POST'])
 @limiter.limit("5 per minute")
@@ -565,10 +555,9 @@ def verificar_codigo():
     data = request.get_json()
     codigo_enviado = data.get('cod')
 
-    # --- Lógica de Prioridad para determinar el 'tipo' ---
     if 'email_para_configuracion' in session:
         email = session.get('email_para_configuracion')
-        tipo = 'configuracion'
+        tipo = 'config'
     elif 'email_para_rol_up_code' in session:
         email = session.get('email_para_rol_up_code')
         tipo = 'ascender'
@@ -640,15 +629,23 @@ def verificar_codigo():
         conn.close()
         return jsonify({'exito': True, 'redirigir': '/actualizar'})
     
-    elif tipo == 'configuracion':
+    elif tipo == 'config':
         try:
             nueva_pass_hasheada = session['nueva_pass_hasheada_config']
+            id_usuario_actual = current_user.id # Guardamos el ID antes de hacer logout
+            
             conn_update = mysql.connector.connect(**DB_CONFIG)
             cursor_update = conn_update.cursor()
             cursor_update.execute("UPDATE usuario SET contraseña = %s WHERE email = %s", (nueva_pass_hasheada, email))
             conn_update.commit()
             cursor_update.close()
             conn_update.close()
+            
+            # --- SOLUCIÓN DE SEGURIDAD PARA EL BUG DE LA SESIÓN ---
+            usuario_actualizado = load_user(id_usuario_actual)
+            logout_user()
+            login_user(usuario_actualizado)
+            # --- FIN DE LA SOLUCIÓN ---
             
             session.pop('email_para_configuracion', None)
             session.pop('nueva_pass_hasheada_config', None)
@@ -674,7 +671,7 @@ def verificar_codigo():
         conn.close()
         return jsonify({'exito': True, 'redirigir': '/eliminar_usuario'})
     
-    # Si algún tipo no tiene un manejo explícito (no debería pasar)
+    # Si algún tipo no tiene un manejo explícito
     conn.close()
     return jsonify({'error': 'Tipo de operación no manejada.'}), 500
         
@@ -834,6 +831,8 @@ def logout():
     return resp
 
 # --- Verificación de OTP ---
+# En ap.py
+
 @app.route('/otp_login', methods=['POST'])
 @limiter.limit("5 per minute")
 def otp_login():
@@ -841,43 +840,58 @@ def otp_login():
     email = datos.get('email')
     contraseña = datos.get('password')
 
-    session.pop('email_para_verificacion_registro', None)
-    session.pop('email_para_verificacion', None)
+    if not email or not contraseña:
+        return jsonify({'error': 'Email y contraseña son requeridos.'}), 400
 
-    session['email_del_usuario'] = email
-    session['contra_del_usuario'] = contraseña
-
-    otp = ''.join(secrets.choice(string.digits) for _ in range(6))
-    expiracion = datetime.now(timezone.utc) + timedelta(minutes=5)
     try:
         conn = mysql.connector.connect(**DB_CONFIG)
-        cursor = conn.cursor()
+        cursor = conn.cursor(dictionary=True)
 
-        # --- CAMBIO IMPORTANTE ---
-        # 1. BORRAMOS cualquier código de 'login' anterior para este email.
-        # Esto garantiza que siempre trabajemos con el código más reciente.
+        # --- INICIO DE LA CORRECCIÓN DE SEGURIDAD ---
+        # 1. Buscamos al usuario en la base de datos PRIMERO.
+        cursor.execute("SELECT * FROM usuario WHERE email = %s", (email,))
+        usuario_data = cursor.fetchone()
+
+        # 2. Verificamos si el usuario existe Y si la contraseña es correcta.
+        if not usuario_data or not check_password_hash(usuario_data['contraseña'], contraseña):
+            cursor.close()
+            conn.close()
+            # Devolvemos un error genérico para no dar pistas a atacantes.
+            return jsonify({'error': 'Email o contraseña incorrectos.'}), 401
+        
+        # --- FIN DE LA CORRECCIÓN ---
+
+        # Si llegamos hasta acá, significa que la contraseña es CORRECTA.
+        # Ahora sí, procedemos a enviar el OTP.
+        
+        session.pop('email_para_verificacion_registro', None)
+        session.pop('email_para_verificacion', None)
+        session['email_del_usuario'] = email
+        session['contra_del_usuario'] = contraseña
+
+        otp = ''.join(secrets.choice(string.digits) for _ in range(6))
+        expiracion = datetime.now(timezone.utc) + timedelta(minutes=5)
+        
         cursor.execute("DELETE FROM codigos_verificacion WHERE email = %s AND tipo = 'login'", (email,))
-
-        # 2. INSERTAMOS el nuevo código generado.
-        # Ya no necesitamos ON DUPLICATE KEY UPDATE porque siempre empezamos de cero.
         cursor.execute("""
             INSERT INTO codigos_verificacion (email, codigo, tipo, expiracion)
             VALUES (%s, %s, %s, %s)
         """, (email, otp, 'login', expiracion))
-
         conn.commit()
 
         msg = Message("I-N-I-C-I-O--S-E-S-I-O-N--C-E-T",
-                sender=app.config['MAIL_USERNAME'],
-                recipients=[email])
+                      sender=app.config['MAIL_USERNAME'],
+                      recipients=[email])
         msg.body = f"Tu código de verificacion es: {otp}"
         mail.send(msg)
+        
         return jsonify({'success': True}), 200
+
     except Exception as e:
         print("Error en otp_login:", e)
-        return jsonify({'error': 'No se pudo enviar el código'}), 500
+        return jsonify({'error': 'Ocurrió un error en el servidor.'}), 500
     finally:
-        if conn.is_connected():
+        if 'conn' in locals() and conn.is_connected():
             cursor.close()
             conn.close()
     
@@ -1011,7 +1025,7 @@ def responder():
 
     try:
         conn = mysql.connector.connect(**DB_CONFIG) # Usar DB_CONFIG
-        cursor = conn.cursor()
+        cursor = conn.cursor(dictionary=True)
         cursor.execute("SELECT id_usu FROM preg WHERE id_post = %s", (id_post,))
         post_author_data = cursor.fetchone()
         id_autor_post = post_author_data['id_usu'] if post_author_data else None

@@ -31,8 +31,8 @@
     font-size: 45px;
     cursor: pointer;
     margin-left: 0.2em;
-    z-index: 1100;
-    position: flex;
+    z-index: 0;
+    position: fixed;
     justify-content: left;
     align-items: top;
 }
@@ -88,7 +88,7 @@ a.separador3{
 
 @media (max-width: 1024px) {
     .elcostado {
-        width: 60%;
+        width: 15%;
         left: -60%;
     }
     .usuario, .ordenado img {
@@ -103,7 +103,7 @@ a.separador3{
 }
 @media (max-width: 600px) {
     .elcostado {
-        width: 80%;
+        width: 20%;
         left: -80%;
     }
     .cuerpo1 {
