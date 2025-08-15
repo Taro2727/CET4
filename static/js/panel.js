@@ -19,16 +19,39 @@ async function cargar_usuarios() {
 
         // Se agrega la separación de divs pero sin cambiar la estructura visible inicial
         div.innerHTML = `
-           <button class="btn-eliminar" onclick="eliminarUsuario('${u.id_usu}')">🗑️</button>
-            ${u.rol === 'normal' 
-                ? `<button onclick="ascender('${u.id_usu}','${u.rol}','${u.email}')">↑</button>`  
-                : u.rol === 'moderador' 
-                    ? `<button onclick="ascender('${u.id_usu}','${u.rol}','${u.email}')">↑</button> <button onclick="down('${u.id_usu}','${u.rol}')">↓</button>`  
-                    : `<button onclick="down('${u.id_usu}','${u.rol}')">↓</button>`
+           ${ 
+            u.rol==='normal' && (rolUsuarioActual==='moderador' || rolUsuarioActual==='admin')
+                ? `<button class="btn-eliminar" onclick="eliminarUsuario('${u.id_usu}')">🗑️</button>`
+                : u.rol==='moderador' && rolUsuarioActual==='admin'
+                    ? `<button class="btn-eliminar" onclick="eliminarUsuario('${u.id_usu}')">🗑️</button>`
+                    :u.rol==='admin' && rolUsuarioActual==='admin'
+                        ? `<button class="btn-eliminar" onclick="eliminarUsuario('${u.id_usu}')">🗑️</button>`
+                        :''
+            }
+            ${
+                u.rol === 'normal' && (rolUsuarioActual === 'admin' || rolUsuarioActual === 'moderador')
+                    ? `<button onclick="ascender('${u.id_usu}','${u.rol}','${u.email}')">↑</button>` 
+                    : u.rol === 'moderador' && rolUsuarioActual === 'admin'
+                        ? `<button onclick="ascender('${u.id_usu}','${u.rol}','${u.email}')">↑</button> <button onclick="down('${u.id_usu}','${u.rol}','${u.email}')">↓</button>` // Caso 2: Usuario moderador
+                        : u.rol === 'admin' && rolUsuarioActual === 'admin'
+                            ? `<button onclick="down('${u.id_usu}','${u.rol}','${u.email}')">↓</button>` 
+                            : '' 
             }
            ${u.baneado
-                ? `<button class="btn-eliminar" onclick="desbanear(${u.id_usu})">✅</button>`
-                : `<button class="btn-eliminar" onclick="banear(${u.id_usu})">⛔</button>`
+                ? (u.rol === 'normal' && (rolUsuarioActual === 'admin' || rolUsuarioActual === 'moderador')
+                    ? `<button class="btn-eliminar" onclick="desbanear(${u.id_usu})">✅</button>`
+                    :u.rol==='moderador' && rolUsuarioActual === 'admin'
+                        ? `<button class="btn-eliminar" onclick="desbanear(${u.id_usu})">✅</button>`
+                        :u.rol === 'admin' && rolUsuarioActual === 'admin'
+                            ? `<button class="btn-eliminar" onclick="desbanear(${u.id_usu})">✅</button>`
+                            :'')
+                :(u.rol === 'normal' && (rolUsuarioActual === 'admin' || rolUsuarioActual === 'moderador')
+                    ? `<button class="btn-eliminar" onclick="banear(${u.id_usu})">⛔</button>`
+                    :u.rol==='moderador' && rolUsuarioActual === 'admin'
+                        ? `<button class="btn-eliminar" onclick="banear(${u.id_usu})">⛔</button>`
+                        :u.rol === 'admin' && rolUsuarioActual === 'admin'
+                            ? `<button class="btn-eliminar" onclick="banear(${u.id_usu})">⛔</button>`
+                            :'')
             }
             <span class="usuariooo"><strong>${u.nom_usu}</strong></span><br>
             <span class="usuariooo"><b>ID:</b> ${u.id_usu}</span><br>
