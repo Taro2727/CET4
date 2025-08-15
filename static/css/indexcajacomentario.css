@@ -660,6 +660,17 @@ input{
   .buscador-logo2 {
     width: 90vw;
   }
+    .comentarios-header{
+    width: 90%;
+
+  }
+  .comentarios-header h1{
+    width: 100%;
+    font-size: 2rem;
+  }
+  .flechas{
+    font-size: 1rem
+  }
 
   .comentarios, .caja-comentario {
     width: 90vw;
@@ -712,7 +723,14 @@ input{
   .buscador-logo2 {
     width: 700px;
   }
+  .comentarios-header{
+    width: 90%;
 
+  }
+  .comentarios-header h1{
+    width: 100%;
+    font-size: 2rem;
+  }
   .comentarios, .caja-comentario {
     width: 700px;
   }
@@ -826,7 +844,7 @@ input{
 
   /* Comentarios y cajas */
   .comentarios, .caja-comentario {
-    width: 90vw;
+    width: 90%;
   }
 
   textarea {
@@ -882,7 +900,7 @@ input{
   }
 
   .comentarios, .caja-comentario {
-    width: 90vw;
+    width: 90%;
   }
 
   textarea {
@@ -901,7 +919,14 @@ input{
     width: 12%;
     height: 100vh;
   }
+    .comentarios-header{
+    width: 90%;
 
+  }
+  .comentarios-header h1{
+    width: 100%;
+    font-size: 2rem;
+  }
   .usuario,
   .casa1,
   .campana2,
