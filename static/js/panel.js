@@ -183,7 +183,7 @@ async function desbanear(id_usuario) {
         alert('desbaneado ');
         window.location.href = '/paneladmin';
     } else {
-        alert(result.error || "No se pudo degradar.");
+        alert(result.error || "no se pudo desbanear.");
 }
 }
 

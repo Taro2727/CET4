@@ -1747,18 +1747,42 @@ def ban():
         if conn and conn.is_connected():
             conn.close()
 
-app.route('/unban')
+@app.route('/unban', methods=['POST'])
 def unban():
-    data=request.get_json()
-    id_usuario= data.get('id_usuario')
+    data = request.get_json()
+    id_usuario = data.get('id_usuario')
+
     if not data:
-        return jsonify({'error': 'js no recibió el id'}),500
-    conn = mysql.connector.connect(**DB_CONFIG)
-    cursor = conn.cursor()
-    cursor.execute('UPDATE Baneo SET activo=0 WHERE id_usu=%s',(id_usuario,))
-    conn.commit()
-    cursor.close()
-    conn.close()
+        return jsonify({'error': 'No se recibió el ID del usuario.'}), 400
+
+    conn = None
+    cursor = None
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor()
+        
+        # Usamos el marcador de posición %s para seguridad
+        cursor.execute('DELETE FROM Baneo WHERE id_usu = %s', (id_usuario,))
+        conn.commit()
+
+        return jsonify({'success': True, 'mensaje': 'Usuario desbaneado correctamente.'}), 200
+
+    except mysql.connector.Error as err:
+        # Este 'except' captura errores específicos de MySQL
+        print(f"Error de base de datos: {err}")
+        if conn:
+            conn.rollback() # Deshace cualquier cambio pendiente
+        return jsonify({'error': f'Error en la base de datos: {err}'}), 500
+    except Exception as e:
+        # Este 'except' captura cualquier otro error inesperado
+        print(f"Ocurrió un error inesperado: {e}")
+        return jsonify({'error': 'Ocurrió un error interno del servidor.'}), 500
+    finally:
+        # Este bloque se ejecuta SIEMPRE para cerrar la conexión
+        if cursor:
+            cursor.close()
+        if conn and conn.is_connected():
+            conn.close()
 
 
 if __name__ == "__main__":
