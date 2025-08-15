@@ -196,16 +196,26 @@ button:hover {
 }
 
 @media (max-width: 500px) {
+  .comentarios{
+    margin-left: 1em;
+  }
   .sidebar {
     width: 40px;
   }
-
   .sidebar a {
     font-size: 18px;
   }
+  .comentarios-header h1{
+    width: 100%;
+    font-size: 2rem;
+  }
+  .comentarios-header{
+    width: 95%;
+  }
+  .flechas{
+    font-size: 0rem;
+  }
 }
-
-
 
 #titulo{
   margin-left: 0.5%;
