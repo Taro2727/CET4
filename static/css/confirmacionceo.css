@@ -78,3 +78,44 @@ input[type="button"]:active{
   background-color: #1e0963; /* Cambia el color de fondo al hacer clic */
   color: #ffffff;            /* (opcional) cambia también el color del texto */
 }
+
+@media (max-width: 600px){
+ .codigo-fondo{
+  width: 90%;
+  height: 200px;
+ }
+  input[type="text"] {
+    width: 70%; /* ancho de la caja de texto */
+    height: 70px;  /* alto de la caja de texto */
+    font-size: 30px;   /* tamaño de la letra que escribís adentro */
+    letter-spacing: 20px; 
+    margin-top: 50px;
+  }
+  input[type="button"] {
+    width: 150px;    /* ancho */
+    height: 40px;    /* alto */
+    font-size: 15px; /* tamaño del texxxt*/
+    position: relative; /*para que no este tan abajo*/
+    top: -50px;
+  }
+}
+@media (max-width: 800px){
+  .codigo-fondo{
+    width: 90%;
+    height: 250px;
+  }
+    input[type="text"] {
+      width: 70%; /* ancho de la caja de texto */
+      height: 80px;  /* alto de la caja de texto */
+      font-size: 40px;   /* tamaño de la letra que escribís adentro */
+      letter-spacing: 25px; 
+      margin-top: 50px;
+    }
+    input[type="button"] {
+      width: 180px;    /* ancho */
+      height: 45px;    /* alto */
+      font-size: 16px; /* tamaño del texxxt*/
+      position: relative; /*para que no este tan abajo*/
+      top: -50px;
+    }
+}
