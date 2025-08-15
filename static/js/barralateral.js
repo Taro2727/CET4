@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const adminBtn = document.createElement('a');
         adminBtn.classList.add('separador3');
         adminBtn.href = '/paneladmin';
-        adminBtn.innerHTML = `<img src="/static/utils/img/admin-icon.png" alt="Admin" class="admin-icon">`;
+        adminBtn.innerHTML = `<img src="/static/utils/img/iconoadmin.png"  class="opcion5">`;
 
         elcostado.insertBefore(adminBtn, elcostado.lastElementChild); // Lo pone antes de "cerrar sesión"
     }
