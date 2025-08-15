@@ -262,9 +262,9 @@ input{
 .comment {
   background-color:   #123;  /* el fondo de el separador*/
   border-radius: 15px;    /* lo redondea*/
-  padding: 12px;         /* espaciado */
-  margin-bottom: 20px;          /* el margen de elcoso*/
-  border: 1px solid #446;   /* el borde fino /aca lo pueden ajustar lolooooooooool */ 
+  padding: 12px;         /* espaciado */     
+  margin-bottom: 20px;          /* el margen de elcoso*/       
+  border: 1px solid #446;   /* el borde fino /aca lo pueden ajustar lolooooooooool */    
 }
    
 .usuario-comentario{
@@ -323,7 +323,7 @@ input{
 @media (max-width: 500px) {
   /* Barra lateral más delgada y que se pueda ocultar o colapsar si querés */
   .elcostado {
-    width: 60px;  /* más pequeño para móviles */
+    width: 60px;  /* más pequeño para móviles */ 
     height: 100vh;
     position: fixed;
     top: 0;
@@ -332,7 +332,7 @@ input{
     flex-direction: column;
     align-items: center;
     padding-top: 10px;
-    overflow-y: auto; /* para scroll si hay muchos íconos */
+    overflow-y: auto; /* para scroll si hay muchos íconos */  
     z-index: 1000;
   }
 
@@ -358,7 +358,7 @@ input{
     margin-top: 20px;
   }
 
-  /* Ajuste de márgenes para evitar espacios grandes */
+/* Ajuste de márgenes para evitar espacios grandes */  
   #titulo {
     width: 90%;
     margin-left: 5%;
@@ -379,7 +379,7 @@ input{
     width: 90vw;
   }
 
-  /* Comentarios y cajas */
+   /* Comentarios y cajas */
   .comentarios, .caja-comentario {
     width: 90vw;
   }
@@ -388,7 +388,7 @@ input{
     font-size: 13px;
   }
 
-  /* Botones */
+   /* Botones */
   button {
     font-size: 13px;
     padding: 5px 10px;
@@ -671,13 +671,13 @@ input{
 
   textarea {
     font-size: 15px;
-  }
+  } 
 }
 
 .texto-comentario
 .respuesta-comentario {
-  word-break: break-word;           /* fuerza quiebre incluso dentro de palabras largas */
-  white-space: pre-wrap;            /* conserva saltos de línea si los hubiera */
+  word-break: break-word;           /* fuerza quiebre incluso dentro de palabras largas */     
+  white-space: pre-wrap;            /* conserva saltos de línea si los hubiera */           
   line-height: 1.5;
   color:white;
 }
@@ -719,7 +719,7 @@ input{
 
 
 @media (max-width: 500px) {
-  /* Barra lateral más delgada y que se pueda ocultar o colapsar si querés */
+/* Barra lateral más delgada y que se pueda ocultar o colapsar si querés */
   .elcostado {
     width: 60px;  /* más pequeño para móviles */
     height: 100vh;
@@ -729,7 +729,7 @@ input{
     background-color: #080c34;
     flex-direction: column;
     align-items: center;
-    padding-top: 10px;
+    padding-top: 10px; 
     overflow-y: auto; /* para scroll si hay muchos íconos */
     z-index: 1000;
   }
@@ -756,7 +756,7 @@ input{
     margin-top: 20px;
   }
 
-  /* Ajuste de márgenes para evitar espacios grandes */
+/* Ajuste de márgenes para evitar espacios grandes */ 
   #titulo {
     width: 90%;
     margin-left: 5%;
@@ -777,7 +777,7 @@ input{
     width: 90vw;
   }
 
-  /* Comentarios y cajas */
+  /* Comentarios y cajas */ 
   .comentarios, .caja-comentario {
     width: 90vw;
   }
@@ -786,7 +786,7 @@ input{
     font-size: 13px;
   }
 
-  /* Botones */
+  /* Botones */ 
   button {
     font-size: 13px;
     padding: 5px 10px;
@@ -848,7 +848,7 @@ input{
   }
 }
 
-/* Desktop pequeño (hasta 1024px) */
+/* Desktop pequeño (hasta 1024px) */ 
 @media (max-width: 1024px) and (min-width: 769px) {
   .elcostado {
     width: 12%;
@@ -862,7 +862,7 @@ input{
   .grupo4,
   .opcion5 {
     width: 40px;
-    height: 40px;
+    height: 40px; 
     margin-top: 50px;
   }
 
