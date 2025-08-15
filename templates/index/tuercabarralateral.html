@@ -3,72 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configuración - Mi Foro</title>
+    <title>Configuración - CET 4</title>
+    
     <link rel="stylesheet" href="{{ url_for('static', filename='css/estilohomeoinicio.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/barralateral.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/configuracion.css') }}">
+    
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body>
-    <main class="contenido-principal">
-        <div class="contenedor-configuracion">
-            <h1>Configuración</h1>
 
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}">
-                            {{ message }}
+    <div id="toggle">
+        <span>&#9776;</span> </div>
+
+    <div class="elcostado ordenado">
+        <div id="out">
+            <span>&#9587;</span> </div>
+        <a class="separador3" href="{{ url_for('perfil') }}"><img src="/static/utils/img/usuario.png" alt="Perfil" class="usuario"></a>
+        <a class="separador3" href="{{ url_for('indexhomeoinicio') }}"><img src="/static/utils/img/casa-img1.png" alt="Inicio" class="casa1"></a>
+        <a class="separador3" href="{{ url_for('panelnotificaciones') }}"><img src="/static/utils/img/campana-img2.png" alt="Notificaciones" class="campana2"></a>
+        <a class="separador3" href="{{ url_for('comnos') }}"><img src="/static/utils/img/corazonlol.png" alt="Soporte" class="soporte3"></a>
+        <a class="separador3" href="#"><img src="/static/utils/img/grupo-img4.png" alt="Grupos" class="grupo4"></a>
+        <a class="separador3" href="{{ url_for('configuracion') }}"><img src="/static/utils/img/opciones-img5.png" alt="Configuracion" class="opcion5"></a>
+    </div>
+    <div class="cuerpo1">
+        <main class="contenido-principal">
+            <div class="contenedor-configuracion">
+                <h1>Configuración de la Cuenta</h1>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <form action="{{ url_for('guardar_configuracion') }}" method="post">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    
+                    <section class="seccion-config">
+                        <h2>Perfil de Usuario</h2>
+                        <div class="campo-form">
+                            <label for="nombre-usuario">Nombre de usuario:</label>
+                            <input type="text" id="nombre-usuario" name="nombre_usuario" value="{{ current_user.nom_usu }}">
                         </div>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
+                        <div class="campo-form">
+                            <label for="email">Correo electrónico:</label>
+                            <input type="email" id="email" name="email" value="{{ current_user.email }}" readonly>
+                        </div>
+                    </section>
+                    <hr>
+                    <section class="seccion-config">
+                        <h2>Cambiar Contraseña</h2>
+                        <div class="campo-form">
+                            <label for="pass-actual">Contraseña actual:</label>
+                            <input type="password" id="pass-actual" name="pass_actual" placeholder="Ingresa tu contraseña actual">
+                        </div>
+                        <div class="campo-form">
+                            <label for="pass-nueva">Nueva contraseña:</label>
+                            <input type="password" id="pass-nueva" name="pass_nueva" placeholder="Ingresa tu nueva contraseña">
+                        </div>
+                        <div class="campo-form">
+                            <label for="pass-confirmar">Confirmar nueva contraseña:</label>
+                            <input type="password" id="pass-confirmar" name="pass_confirmar" placeholder="Confirma tu nueva contraseña">
+                        </div>
+                    </section>
+                    <button type="submit" class="btn-guardar">Guardar Cambios</button>
+                </form>
+            </div>
+        </main>
+    </div>
 
-            <form action="{{ url_for('guardar_configuracion') }}" method="post">
-                
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-
-                <section class="seccion-config">
-                    <h2>Perfil de Usuario</h2>
-                    <div class="campo-form">
-                        <label for="nombre-usuario">Nombre de usuario:</label>
-                        <input type="text" id="nombre-usuario" name="nombre_usuario" value="{{ current_user.nom_usu }}">
-                    </div>
-                    <div class="campo-form">
-                        <label for="email">Correo electrónico:</label>
-                        <input type="email" id="email" name="email" value="{{ current_user.email }}" readonly>
-                    </div>
-                </section>
-
-                <hr>
-
-                <section class="seccion-config">
-                    <h2>Notificaciones</h2>
-                    <div class="campo-check">
-                        <input type="checkbox" id="notif-push" name="notif_push">
-                        <label for="notif-push">Activar notificaciones push.</label>
-                    </div>
-                </section>
-
-                <hr>
-                
-                <section class="seccion-config">
-                    <h2>Cambiar Contraseña</h2>
-                    <div class="campo-form">
-                        <label for="pass-actual">Contraseña actual:</label>
-                        <input type="password" id="pass-actual" name="pass_actual" placeholder="Ingresa tu contraseña actual" required>
-                    </div>
-                    <div class="campo-form">
-                        <label for="pass-nueva">Nueva contraseña:</label>
-                        <input type="password" id="pass-nueva" name="pass_nueva" placeholder="Ingresa tu nueva contraseña" required>
-                    </div>
-                    <div class="campo-form">
-                        <label for="pass-confirmar">Confirmar nueva contraseña:</label>
-                        <input type="password" id="pass-confirmar" name="pass_confirmar" placeholder="Confirma tu nueva contraseña" required>
-                    </div>
-                </section>
-
-                <button type="submit" class="btn-guardar">Guardar Cambios</button>
-            </form>
-        </div>
-    </main>
+    <script src="{{ url_for('static', filename='js/barralateral.js') }}"></script>
 </body>
 </html>
