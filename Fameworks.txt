@@ -1,0 +1,11 @@
+pip install Flask
+pip install mysql-connector-python
+pip install Werkzeug
+pip install Flask-WTF
+pip install Flask-Login
+pip install Flask-Mail
+pip install PyOTP
+pip install Flask-Talisman
+pip install better_profanity
+pip install Flask-Limiter
+pip install pywebpush

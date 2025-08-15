@@ -961,7 +961,7 @@ def get_comentario():
         # CAMBIO: Simplificado el if/else redundante.
         cursor = conn.cursor(dictionary=True)
         query = """
-            SELECT p.id_post, p.titulo, p.cont, u.nom_usu AS usuario, p.fecha, 
+            SELECT p.id_post, p.titulo, p.cont,p.id_usu, u.nom_usu AS usuario, p.fecha, 
                    COUNT(l.id_like) AS cont_likes,
                    EXISTS(SELECT 1 FROM likes_comentarios WHERE id_post = p.id_post AND id_usu = %s) AS likeado_por_usuario
             FROM preg p
