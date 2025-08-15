@@ -387,16 +387,12 @@ def configuracion():
 @login_required
 def guardar_configuracion():
     """
-    Inicia el flujo de cambio de contraseña desde Configuración,
-    limpiando la sesión para evitar conflictos.
+    Inicia el flujo de cambio de contraseña desde Configuración.
     """
-    # --- LÍNEAS DE LIMPIEZA (LA SOLUCIÓN DEFINITIVA) ---
-    # "Exorcizamos" cualquier sesión fantasma de otros procesos OTP
-    # para asegurar que este flujo se ejecute en un contexto limpio.
+    # Limpia sesiones viejas para evitar conflictos
     session.pop('email_para_verificacion', None)
     session.pop('email_para_verificacion_registro', None)
     session.pop('email_del_usuario', None)
-    # ----------------------------------------------------
 
     pass_actual = request.form.get('pass_actual')
     pass_nueva = request.form.get('pass_nueva')
