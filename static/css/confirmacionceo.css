@@ -27,9 +27,9 @@ p {
 
 /* Estilo del formulario */
 .codigo-fondo {
- background-image: url('../utils/img/codverificacion.png'); /* para la fto de zettino teniendo el coso*/
-position: relative;
-top: -40px;
+ background-image: url('/static/utils/img/verificacion.png'); /* para la fto de zettino teniendo el coso*/
+ position: relative;
+ top: -30px;
  background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -45,10 +45,10 @@ top: -40px;
 
 /* Estilo de los input de texto */
 input[type="text"] {
-  width:460px; /* ancho de la caja de texto */
-  height: 80px;  /* alto de la caja de texto */
+  width:480px; /* ancho de la caja de texto */
+  height: 90px;  /* alto de la caja de texto */
   font-family: monospace;   
-  font-size: 60px;   /* ttamaño de la letra que escribís adentrop */
+  font-size: 70px;   /* ttamaño de la letra que escribís adentrop */
   text-align: center;  /* Centra el texto dentro de la caja */
   letter-spacing: 35px; 
   border: none;   /* Elimina el borde por que esta por defecto */
