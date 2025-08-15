@@ -8,6 +8,10 @@
   <link rel="stylesheet" href="/static/css/barralateral.css"/>
   <link rel="stylesheet" href="/static/css/ApartadoFuentes.css"/>
   <meta name="csrf-token" content="{{ csrf_token() }}">
+  <meta name="is-authenticated" content="{{ is_authenticated | tojson }}">
+  <meta name="usuario-id" content="{{ current_user.id }}">
+  <meta name="usuario-rol" content="{{ current_user.rol }}">
+
 </head>
 <body>
   <div id="toggle">

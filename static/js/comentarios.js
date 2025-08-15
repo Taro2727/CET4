@@ -1,11 +1,23 @@
 
 let criterioActual = 'reciente';
+const IS_AUTHENTICATED = JSON.parse(document.querySelector('meta[name="is-authenticated"]').content);
 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
 const usuarioActual = document.querySelector('meta[name="usuario-id"]').content;
 const rolUsuarioActual = document.querySelector('meta[name="usuario-rol"]').content;
+
+const IdusuarioActual = usuarioActual ? usuarioActual.content : null;
 window.onload = async function () {
-    // Se mantiene la carga inicial de comentarios
+    const commentForm = document.getElementById('commentForm');
+    if (!IS_AUTHENTICATED) {
+        commentForm.style.display = 'none';
+        // Opcional: Mostrar un mensaje para iniciar sesión
+        const loginPrompt = document.createElement('p');
+        loginPrompt.innerHTML = 'Debes <a href="/iniciarsesion">iniciar sesión</a> para publicar una pregunta.';
+        commentForm.parentNode.insertBefore(loginPrompt, commentForm);
+    }
+    
     await cargarComentarios();
+
 };
 
     const ordenarBtn = document.getElementById('ordenar-btn');
@@ -53,35 +65,49 @@ async function cargarComentarios() {
         div.classList.add('comment');
 
         // Se agrega la separación de divs pero sin cambiar la estructura visible inicial
-        div.innerHTML = `
-        ${c.id_usu == usuarioActual || rolUsuarioActual == 'admin' ? `<button class="btn-eliminar" onclick="eliminarComentario('${c.id_post}')">🗑️</button>` : ''}
-            <span class="usuario-comentario"><strong>${c.usuario || "Anónimo"}</strong>:</span>
-            <br>
-            <span class="titulo-comentario"><b>${tituloSeguro}</b></span>
-            <span class="texto-comentario">${contenidoSeguro}</span>
-            <br>
+        let botonesHTML = '';
+       if (IS_AUTHENTICATED) {
+        botonesHTML = `
             <button class="btn-responder" onclick="responder('${c.id_post}', '${c.usuario || "Anónimo"}')">Responder</button>
             <button class="btn-ver-respuestas" onclick="mostrarRespuestas('${c.id_post}')">Ver respuestas</button>
-            <button class="btn-like ${c.likeado_por_usuario ? 'liked' : ''}" id="like-${c.id_post}">${c.likeado_por_usuario ? '❤️' : '♡'}</button>
+            <button class="btn-like ${c.likeado_por_usuario ? 'liked' : ''}" id="like-${c.id_post}">
+                ${c.likeado_por_usuario ? '❤️' : '♡'}
+            </button>
             <span id="contador-${c.id_post}" class="contador-likes">${c.cont_likes || 0}</span>
-            <div class="area-responder" id="area-responder-${c.id_post}"></div>
-            <div class="respuestas" id="respuestas-${c.id_post}" style="display: none;"></div>
-            
-        `  ;
+        `;
+        } else {
+            botonesHTML = `
+                <button class="btn-ver-respuestas" onclick="mostrarRespuestas('${c.id_post}')">Ver respuestas</button>
+                <button class="btn-like" id="like-${c.id_post}" disabled>♡</button>
+                <span id="contador-${c.id_post}" class="contador-likes">${c.cont_likes || 0}</span>
+            `;
+        }
+       div.innerHTML = `
+        ${c.id_usu == usuarioActual || rolUsuarioActual == 'admin' ? `<button class="btn-eliminar" onclick="eliminarComentario('${c.id_post}')">🗑️</button>` : ''}
+        <span class="usuario-comentario"><strong>${c.usuario || "Anónimo"}</strong>:</span>
+        <br>
+        <span class="titulo-comentario"><b>${tituloSeguro}</b></span>
+        <span class="texto-comentario">${contenidoSeguro}</span>
+        <br>
+        ${botonesHTML}
+        <div class="area-responder" id="area-responder-${c.id_post}"></div>
+        <div class="respuestas" id="respuestas-${c.id_post}" style="display: none;"></div>
+    `;
         
         section.appendChild(div);
         // Estas lineas de codigo hacen andar el corazon
-        const btnLike = document.getElementById(`like-${c.id_post}`);
-        const user_like = usuarioActual;
-        btnLike.addEventListener('click', async () => {
-            console.log("LIKE a enviar:", { comment_id: c.id_post});//user_like no se esta usandoooo
-            const res = await fetch('/api/like', {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json', 
-                    'X-CSRFToken': csrfToken 
-                },
-                body: JSON.stringify({ comment_id: c.id_post, })
+        if (IS_AUTHENTICATED) {
+            const btnLike = document.getElementById(`like-${c.id_post}`);
+            const user_like = IdusuarioActual;
+            btnLike.addEventListener('click', async () => {
+                console.log("LIKE a enviar:", { comment_id: c.id_post, user_id: user_like });
+                const res = await fetch('/api/like', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json', 
+                        'X-CSRFToken': csrfToken 
+                    },
+                    body: JSON.stringify({ comment_id: c.id_post, user_id: user_like })
             });
             const data = await res.json();
             const contador = document.getElementById(`contador-${c.id_post}`);
@@ -89,6 +115,9 @@ async function cargarComentarios() {
             btnLike.classList.toggle('liked', data.liked);
             btnLike.textContent = data.liked ? '❤️' : '♡';
     });
+        }
+    });
+}
 
 
         //-----------------------------------------
@@ -98,9 +127,6 @@ async function cargarComentarios() {
         // btnLike.textContent = btnLike.textContent === '♡' ? '♡' : '♡';
         // linea corazoncito 
         //-------------------------------------------------
-
-    });
-}
 
 // Se mantiene el nombre original de la función: "responder"
 function responder(id, usuario) {
@@ -165,6 +191,18 @@ async function mostrarRespuestas(id_post, forzarApertura = false) {
     if (respuestas.length) {
         respuestas.forEach(r => {
             const textoRtaSeguro = DOMPurify.sanitize(r.cont);
+            // LÓGICA CONDICIONAL PARA BOTONES DE RESPUESTA
+            let botonesRtaHTML = '';
+            if (IS_AUTHENTICATED) {
+                const puedeEliminarRta = r.id_usu == usuarioActual || rolUsuarioActual == 'admin';
+                botonesRtaHTML = `
+                    ${puedeEliminarRta ? `<button class="btn-eliminar" onclick="eliminarRespuesta('${r.id_com}')">🗑️</button>` : ''}
+                    <button class="btn-like ${r.likeado_por_usuario ? 'liked' : ''}" id="like-resp-${r.id_com}">${r.likeado_por_usuario ? '❤️' : '♡'}</button>
+                    <span id="contador-resp-${r.id_com}" class="contador-likes">${r.cont_likes || 0}</span>
+                `;
+            } else {
+                botonesRtaHTML = `<span class="likes-info">❤️ ${r.cont_likes || 0}</span>`;
+            }
             html += `
         <div class="respuesta-comentario">
             ${r.id_usu == usuarioActual || rolUsuarioActual == 'admin' ? `<button class="btn-eliminar" onclick="eliminarRespuesta('${r.id_com}')">🗑️</button>` : ''}
@@ -179,18 +217,19 @@ async function mostrarRespuestas(id_post, forzarApertura = false) {
         html = '<div class="respuesta">No hay respuestas aún.</div>';
     }
         divRespuestas.innerHTML = html;
-    setTimeout(() => {
-        respuestas.forEach(r => {
-            const btnLike = document.getElementById(`like-resp-${r.id_com}`);
-            if (btnLike) {
-                btnLike.onclick = async () => {
-                    const res = await fetch('/api/like_respuesta', {
-                        method: 'POST',
-                        headers: { 
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': csrfToken
-                        },
-                        body: JSON.stringify({ id_com: r.id_com })
+    if (IS_AUTHENTICATED) {
+        setTimeout(() => {
+            respuestas.forEach(r => {
+                const btnLike = document.getElementById(`like-resp-${r.id_com}`);
+                if (btnLike) {
+                    btnLike.onclick = async () => {
+                        const res = await fetch('/api/like_respuesta', {
+                            method: 'POST',
+                            headers: { 
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': csrfToken
+                            },
+                            body: JSON.stringify({ id_com: r.id_com })
                     });
                     const data = await res.json();
                     const contador = document.getElementById(`contador-resp-${r.id_com}`);
@@ -201,6 +240,7 @@ async function mostrarRespuestas(id_post, forzarApertura = false) {
             }
         });
     }, 0);
+}
 }
 
 
