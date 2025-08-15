@@ -1013,7 +1013,7 @@ def responder():
 
     try:
         conn = mysql.connector.connect(**DB_CONFIG) # Usar DB_CONFIG
-        cursor = conn.cursor()
+        cursor = conn.cursor(dictionary=True)
         cursor.execute("SELECT id_usu FROM preg WHERE id_post = %s", (id_post,))
         post_author_data = cursor.fetchone()
         id_autor_post = post_author_data['id_usu'] if post_author_data else None
