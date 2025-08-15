@@ -32,7 +32,7 @@
     cursor: pointer;
     margin-left: 0.2em;
     z-index: 1100;
-    position: flex;
+    position: fixed;
     justify-content: left;
     align-items: top;
 }
