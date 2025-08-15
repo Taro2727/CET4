@@ -9,16 +9,19 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/barralateral.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/configuracion.css') }}">
     
+    <meta name="usuario-rol" content="{{ current_user.rol or 'anonimo' }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body>
 
     <div id="toggle">
-        <span>&#9776;</span> </div>
+        <span>&#9776;</span>
+    </div>
 
     <div class="elcostado ordenado">
         <div id="out">
-            <span>&#9587;</span> </div>
+            <span>&#9587;</span>
+        </div>
         <a class="separador3" href="{{ url_for('perfil') }}"><img src="/static/utils/img/usuario.png" alt="Perfil" class="usuario"></a>
         <a class="separador3" href="{{ url_for('indexhomeoinicio') }}"><img src="/static/utils/img/casa-img1.png" alt="Inicio" class="casa1"></a>
         <a class="separador3" href="{{ url_for('panelnotificaciones') }}"><img src="/static/utils/img/campana-img2.png" alt="Notificaciones" class="campana2"></a>
@@ -34,16 +37,13 @@
                 {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
                         {% for category, message in messages %}
-                            <div class="alert alert-{{ category }}">
-                                {{ message }}
-                            </div>
+                            <div class="alert alert-{{ category }}">{{ message }}</div>
                         {% endfor %}
                     {% endif %}
                 {% endwith %}
 
                 <form action="{{ url_for('guardar_configuracion') }}" method="post">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    
                     <section class="seccion-config">
                         <h2>Perfil de Usuario</h2>
                         <div class="campo-form">
