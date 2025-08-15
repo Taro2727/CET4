@@ -130,7 +130,7 @@ h1 {
 }
 
 .flechas {
-  font-size: 30px;
+  font-size: 0px;
   color: #ccc;
   flex-wrap: wrap;
   gap: 80px;
@@ -669,7 +669,7 @@ input{
     font-size: 2rem;
   }
   .flechas{
-    font-size: 1rem
+    font-size: 0rem
   }
 
   .comentarios, .caja-comentario {
