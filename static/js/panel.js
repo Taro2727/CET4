@@ -33,53 +33,76 @@ async function cargar_usuarios() {
             <span class="usuariooo"><strong>${u.nom_usu}</strong></span><br>
             <span class="usuariooo"><b>ID:</b> ${u.id_usu}</span><br>
             <span class="usuariooo"><b>Email:</b> ${u.email}</span><br>
-            <span class="usuariooo"><b>Rol:</b> ${u.rol}</span><br>`;
+            <span class="usuariooo"><b>Rol:</b> ${u.rol}</span><br>
+            
+            
+            <div id="banForm-${u.id_usu}" class="ban-form-oculto">
+                <h4>Detalles del Baneo</h4>
+                <form onsubmit="formulariobaneo(event, '${u.id_usu}')">
+                    <textarea name="motivo" placeholder="Motivo del baneo" required></textarea>
+                    <input type="date" name="fecha_inicio" placeholder=" fecha de inicio" required>
+                    <input type="date" name="fecha_fin" placeholder=" fecha de fin" required>
+                    <div>
+                        <button type="submit">Confirmar Baneo</button>
+                        <button type="button" onclick="toggleBanForm('${u.id_usu}')">Cancelar</button>
+                    </div>
+                </form>
+            </div>
 
-        
+            `;
+
             //EXPLICACION LINEAS 23 24 Y 25
             //    LINEA 23 "si el rol de usuario es NORMAL (? significa se cumple) entonces muetsra boton de upgradear"
             //    LINEA 24 pero si no cumple con la linea 23 (: significa else if )"si el rol del usuario es MODERADOR entonces muestra dos botones upgradear y degradar "
             //    LINEA 25 peeeero si no se cumple ninguna significa q es admin, entonces solo muestra boton de degradar
+
         section.appendChild(div);
-        // Estas lineas de codigo hacen andar el corazon
-       
-
-
-        //-----------------------------------------
-        //esto iba abajo del 1er const
-        // btnLike.addEventListener('click',() => {
-        // btnLike.classList.toggle('liked');
-        // btnLike.textContent = btnLike.textContent === '♡' ? '♡' : '♡';
-        // linea corazoncito 
-        //-------------------------------------------------
-//<<<<<<<<<<<<<<<<<<<<<<<<<<AHIIIII<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     });
 }
+function toggleBanForm(userId) {
+    const form = document.getElementById(`banForm-${userId}`);
+    // Si el formulario ya está visible, lo oculta. Si no, lo muestra.
+    form.style.display = form.style.display === 'block' ? 'none' : 'block';
+}
 
-// Se mantiene sin cambios el formulario de envío de preguntas
-// document.getElementById('commentForm').addEventListener('submit', async function(e) {
-//     e.preventDefault();
+// Nueva función para manejar el envío del formulario con fetch
+async function formulariobaneo(event, userId) {
+    event.preventDefault(); // Evita que el formulario se envíe de la forma tradicional
 
-//     const titulo = document.getElementById('titulo').value;
-//     const comment = document.getElementById('comentario').value;
-//     const id_mat = document.getElementById('id_mat').value;
-//     const response = await fetch('/comentario/materias', {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json',
-//             'X-CSRFToken': csrfToken
-//         },
-//         body: JSON.stringify({ titulo, comment, id_mat })
-//     });
-//     const result = await response.json();
-//     if (result.success) {
-//         alert("¡Pregunta enviada!");
-//         document.getElementById('commentForm').reset();
-//         await cargarComentarios();
-//     } else {
-//         alert("Error al enviar la pregunta");
-//     }
-// });
+    const form = document.getElementById(`banForm-${userId}`);
+    const motivo = form.querySelector('textarea[name="motivo"]').value;
+    const fechaInicio = form.querySelector('input[name="fecha_inicio"]').value;
+    const fechaFin = form.querySelector('input[name="fecha_fin"]').value;
+
+    try {
+        const response = await fetch('/ban', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({
+                id_usuario: userId,
+                motivo: motivo,
+                fecha_inicio: fechaInicio,
+                fecha_fin: fechaFin
+            })
+        });
+
+        const result = await response.json();
+        if (result.exito) {
+            alert('Usuario baneado correctamente.');
+            toggleBanForm(userId); // Oculta el formulario
+            await cargar_usuarios(); // Recarga la lista
+        } else {
+            alert('Error al banear al usuario: ' + result.error);
+        }
+    } catch (e) {
+        alert('Ocurrió un error en la comunicación con el servidor.');
+    }
+}
+
+
 
 //---FUNCIONES DE ELIMINACIÓN DE COMENTARIOS Y RESPUESTAS---
 async function eliminarUsuario(id_usuario,rol_usuario) {
@@ -140,20 +163,27 @@ async function down(id_usuario,rol_usuario,mail_usuario) {
         alert(result.error || "No se pudo degradar.");
 }
 }
-async function banear(id_usuario){
-    if (!confirm("¿Seguro que quieres banear a este usuario?")) return;
-    const response = await fetch('/ban', {
+
+function banear(id_usuario){
+    toggleBanForm(id_usuario);
+}
+
+async function desbanear(id_usuario) {
+    if (!confirm("¿Seguro que quieres desbanear a este usuario?")) return;
+    const response = await fetch('/unban', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': csrfToken
         },
-        body: JSON.stringify({ id_usuario })
+        body: JSON.stringify({ id_usuario,})
     });
     const result = await response.json();
     if (result.success) {
-        alert('ya se ha baneado');
+        alert('desbaneado ');
+        window.location.href = '/paneladmin';
     } else {
         alert(result.error || "No se pudo degradar.");
 }
 }
+

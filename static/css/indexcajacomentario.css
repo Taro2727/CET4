@@ -994,3 +994,8 @@ input{
 #menu-ordenar li:hover {
     background-color: #f0f0f0;
 }
+
+/*ESTO LO AGREGÓ GAV (ES PARA ALGO DEL PANEL DE ADMINTRADOIR)*/
+.ban-form-oculto {
+  display: none;
+}

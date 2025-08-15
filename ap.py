@@ -1683,25 +1683,82 @@ def otp_eliminar():
         if conn.is_connected():
             cursor.close()
             conn.close()
-@app.route('/ban')
+@app.route('/ban',methods=['POST'])
 def ban():
     data = request.get_json()
     id_usuario= data.get('id_usuario')
+    inicio_str= data.get('fecha_inicio')#primero esta en string (str)
+    fin_str= data.get('fecha_fin')#primero esta en string (str)
+    motivo=data.get('motivo')
     if not data:
         return jsonify({'error': 'No me llego el id del usuario del js panel (linea 1565)'}),400
+
+    if not all([id_usuario, inicio_str, fin_str, motivo]):
+        return jsonify({'error': 'Faltan datos.'}), 400
     
-    #pseudocodigo de la logica de la duracion
-    inicio='fecha de hoy'
-    duracion=3
-    fin=inicio + duracion
+    print(f"Fecha de inicio recibida: {inicio_str}")
+    print(f"Fecha de fin recibida: {fin_str}")
 
-    motivo=1
-#todo eson esta mal y falta logica (lo hago dsps)
+    try:
+        # 1. Convierte las cadenas de texto a objetos datetime
+        fecha_inicio = datetime.strptime(inicio_str, '%Y-%m-%d')
+        fecha_fin = datetime.strptime(fin_str, '%Y-%m-%d')
 
+        if fecha_inicio > fecha_fin:
+            return jsonify({'error': 'La fecha de fin debe ser posterior a la de inicio.'}), 400
+
+        # 2. Realiza la resta entre los objetos datetime
+        duracion_delta = fecha_fin - fecha_inicio #Delta es el datetaim ahr de python
+
+        # 3. Obtén la duración en días (un número entero)
+        duracion_dias = duracion_delta.days
+
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor()
+        cursor.execute('INSERT INTO Baneo(id_usu, fecha_inicio ,duracion_dias ,motivo ,fecha_fin ,activo) VALUES (%s,%s,%s,%s,%s,%s)',(id_usuario,fecha_inicio,duracion_dias,motivo,fecha_fin,1))
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        #  Respuesta correcta en caso de éxito
+        return jsonify({'exito': True, 'mensaje': 'Usuario baneado correctamente.'}), 200
+    except ValueError:
+        # Este except captura el error si el formato de fecha es incorrecto
+        return jsonify({'error': 'Formato de fecha no válido. Use YYYY-MM-DD.'}), 400
+    
+    except mysql.connector.Error as err:
+        # Este except captura errores de la base de datos
+        print(f"Error de MySQL: {err}")
+        if conn:
+            conn.rollback()
+        return jsonify({'error': f'Error en la base de datos: {err}'}), 500
+    
+    except Exception as e:
+        # Este except captura cualquier otro error inesperado
+        print(f"Ocurrió un error inesperado: {e}")
+        if conn:
+            conn.rollback()
+        return jsonify({'error': 'Ocurrió un error interno del servidor.'}), 500
+    
+    finally:
+        # Este bloque se ejecuta SIEMPRE, ya sea que haya un error o no
+        if cursor:
+            cursor.close()
+        if conn and conn.is_connected():
+            conn.close()
+
+app.route('/unban')
+def unban():
+    data=request.get_json()
+    id_usuario= data.get('id_usuario')
+    if not data:
+        return jsonify({'error': 'js no recibió el id'}),500
     conn = mysql.connector.connect(**DB_CONFIG)
     cursor = conn.cursor()
-    cursor.execute('INSERT INTO baneo(id_usu, fecha_inicio ,duracion_dias ,motivo ,fecha_fin ,activo) VALUES (%S,%S,%S,%S,%S,%S)',(id_usuario,inicio,duracion,motivo,fin,1))
-
+    cursor.execute('UPDATE Baneo SET activo=0 WHERE id_usu=%s',(id_usuario,))
+    conn.commit()
+    cursor.close()
+    conn.close()
 
 
 if __name__ == "__main__":
