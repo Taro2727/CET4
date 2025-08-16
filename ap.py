@@ -222,7 +222,7 @@ def inicio():
 
 @app.route('/comunicatenosotros')
 def comnos():
-    return render_template('index/indexcentralayuda.html')
+    return render_template('index/centroayuda.html')
 
 #__________________________________
 #desde acá empieza el registro
