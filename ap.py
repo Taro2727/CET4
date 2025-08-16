@@ -1877,11 +1877,34 @@ def cambiar_avatar():
         print(f"Error inesperado: {e}")
         return jsonify({"success": False, "error": f"Error inesperado: {e}"}), 500
 
-@app.route('/cambiar_nombre')
+@app.route('/cambiar_nombre',methods=['POST'])
 def cambiar_nombre():
     data=request.get_json()
     nombre_nuevo=data.get('nombre')
     password_ingresada=data.get('password')
+    id_usuario=current_user.id
+    if not data:
+        return jsonify({'error':'faltan datos'}),500
+    try:
+        conn=mysql.connector.connect(**DB_CONFIG)
+        cursor=conn.cursor(dictionary=True)
+        cursor.execute('SELECT contraseña FROM usuario WHERE id_usu=%s',(id_usuario,))
+        contra=cursor.fetchone()
+        if not contra or not check_password_hash(contra['contraseña'], password_ingresada):
+            conn.commit()
+            cursor.close()
+            conn.close()
+            return jsonify({'error':'contraseña incorrecta'}),500     
+               
+        cursor.execute('UPDATE usuario SET nom_usu=%s WHERE id_usu=%s ',(nombre_nuevo,id_usuario))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return jsonify({'success':'nombre cambiado'})
+
+    except Exception as e:
+        print(f"Error inesperado: {e}")
+        return jsonify({"success": False, "error": f"Error inesperado: {e}"}), 500
 
 
 
