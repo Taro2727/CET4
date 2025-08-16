@@ -11,6 +11,7 @@ body {
     background-color: #0c1b32;
     color: white;
     overflow: hidden;
+
 }
 
 /* empieza la bARra de busqueda  */
@@ -58,7 +59,8 @@ body {
 }
 
 .avatar {
-    background-color: #282828;
+   
+    background-color: #fff;
     width: 15rem;
     height: 15rem;
     border-radius: 50%;
@@ -87,9 +89,9 @@ body {
 }
 
 .action-buttons button {
-    background-color: #272727;
+    background-color: #555096;
     color: #fff;
-    border: 0.2px solid #555;
+    border: 0.2px solid #ffffff;
     font-size: 1.2rem;
     padding: 0.8em 1.5em;
     border-radius: 10px;
@@ -97,11 +99,14 @@ body {
 }
 
 .caja-comentarios1 {
-    flex: 1 1 100%;
+      width: 100%; 
     border-radius: 10px;
-    border: 0.2vh solid #0f2f5e;
+   
+    border: 0.2vh solid #ccc; 
     padding: 1em;
     min-height: 6em;
+ 
+    text-align: center;
 }
 
 /* --- Responsive tablet --- */
