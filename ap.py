@@ -726,11 +726,16 @@ def iniciarsesion():
 # def crearcuenta():
 #     return render_template('index/indexcrearcuenta.html')
 
-@app.route('/indexhomeoinicio') #ruta para la página de inicio
+@app.route('/indexhomeoinicio')
 def indexhomeoinicio():
-    if not current_user.is_authenticated:
-        return redirect(url_for('iniciarsesion'))  # O a otra vista pública
+    if not current_user.is_authenticated and not session.get('guest'):
+        return redirect(url_for('iniciarsesion'))
     return render_template('index/indexhomeoinicio.html') 
+
+@app.route('/entrar_como_invitado')
+def entrar_como_invitado():
+    session['guest'] = True
+    return redirect(url_for('indexhomeoinicio'))
 
 #desde aca se elige la modalidad
 @app.route('/programacion') #ruta para la página de programación
@@ -905,7 +910,9 @@ def comentario_materia(id_mat):
         materias = cursor.fetchone()
         cursor.close()
         conn.close()
-        return render_template('index/ComentariosParaTodos.html', id_mat=id_mat, materias=materias, usuario_rol=current_user.rol)
+
+        usuario_rol=current_user.rol if current_user.is_authenticated else None #para obtener el rol
+        return render_template('index/ComentariosParaTodos.html', id_mat=id_mat, materias=materias, usuario_rol=usuario_rol, is_authenticated=current_user.is_authenticated )
     except mysql.connector.Error as err:
         print(f"Error al obtener materia: {err}")
         flash("Error al cargar la materia.", 'danger')
@@ -952,7 +959,7 @@ def get_comentario():
     # CAMBIO: Eliminada la importación y conexión duplicada.
     id_mat = request.args.get('id_mat')
     orden = request.args.get('orden', 'reciente')
-    id_usu = current_user.id
+    
     if not id_mat: # CAMBIO: Validación si no se pasa id_mat
         return jsonify({"success": False, "error": "ID de materia requerido"}), 400
 
@@ -960,10 +967,16 @@ def get_comentario():
         conn = mysql.connector.connect(**DB_CONFIG) # Usar DB_CONFIG
         # CAMBIO: Simplificado el if/else redundante.
         cursor = conn.cursor(dictionary=True)
-        query = """
+        if current_user.is_authenticated:
+            query_likeado="EXISTS(SELECT 1 FROM likes_comentarios WHERE id_post = p.id_post AND id_usu = %s) AS likeado_por_usuario"
+            params = (current_user.id, id_mat)
+        else:
+            query_likeado = "FALSE AS likeado_por_usuario"
+            params = (id_mat,)
+        query = f"""
             SELECT p.id_post, p.titulo, p.cont, u.nom_usu AS usuario, p.fecha, 
                    COUNT(l.id_like) AS cont_likes,
-                   EXISTS(SELECT 1 FROM likes_comentarios WHERE id_post = p.id_post AND id_usu = %s) AS likeado_por_usuario
+                   {query_likeado}
             FROM preg p
             LEFT JOIN usuario u ON p.id_usu = u.id_usu
             LEFT JOIN likes_comentarios l ON p.id_post = l.id_post
@@ -982,9 +995,8 @@ def get_comentario():
             query += " ORDER BY cont_likes ASC, p.fecha DESC"  # Tiebreaker por fecha
         else:
             query += " ORDER BY p.fecha DESC"  # Default
-        cursor.execute(query, (id_usu, id_mat))
+        cursor.execute(query, params)
         comentarios = cursor.fetchall()
-
         cursor.close()
         conn.close()
         return jsonify(comentarios)
@@ -1013,7 +1025,7 @@ def responder():
 
     try:
         conn = mysql.connector.connect(**DB_CONFIG) # Usar DB_CONFIG
-        cursor = conn.cursor()
+        cursor = conn.cursor(dictionary=True)
         cursor.execute("SELECT id_usu FROM preg WHERE id_post = %s", (id_post,))
         post_author_data = cursor.fetchone()
         id_autor_post = post_author_data['id_usu'] if post_author_data else None
@@ -1056,18 +1068,21 @@ def get_respuestas(id_post):
     try:
         conn = mysql.connector.connect(**DB_CONFIG) # Usar DB_CONFIG
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("""
+        if current_user.is_authenticated:
+            query_likeado = "EXISTS(SELECT 1 FROM likes_rta WHERE id_com = r.id_com AND id_usu = %s) AS likeado_por_usuario"
+            params = (current_user.id, id_post)
+        else:
+            query_likeado = "FALSE AS likeado_por_usuario"
+            params = (id_post,)
+        cursor.execute(f"""
             SELECT r.id_com, r.cont, u.nom_usu AS usuario, r.id_usu,
             (SELECT COUNT(*) FROM likes_rta lr WHERE lr.id_com = r.id_com) AS cont_likes,
-            EXISTS(
-                SELECT 1 FROM likes_rta lr2
-                WHERE lr2.id_com = r.id_com AND lr2.id_usu = %s
-            ) AS likeado_por_usuario
-        FROM rta r
-        LEFT JOIN usuario u ON r.id_usu = u.id_usu
-        WHERE r.id_post = %s
-        ORDER BY r.id_com ASC
-        """, (current_user.id, id_post))
+            {query_likeado}
+            FROM rta r
+            LEFT JOIN usuario u ON r.id_usu = u.id_usu
+            WHERE r.id_post = %s
+            ORDER BY r.id_com ASC
+        """, params)
         respuestas = cursor.fetchall()
         cursor.close()
         conn.close()
