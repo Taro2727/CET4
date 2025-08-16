@@ -208,3 +208,13 @@ button:hover {
     display: none;
   }
 }
+
+.iniciosesion a{
+
+  color: #76baff;
+  
+
+}
+.iniciosesion{
+  text-align: center;
+}
