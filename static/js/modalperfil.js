@@ -45,15 +45,6 @@ async function MostrarAvatar() {
     } else {
         alert(result.error || "No se pudo cambiar");
 }
-  //condicional del menu de opciones
-  if (valorSeleccionado === 1){
 
-  }else if(valorSeleccionado === 2){
-
-  }else if(valorSeleccionado === 3){
-
-  }else{
-
-  }
   
 }//llave principal de la funcion MostrarAvatar
