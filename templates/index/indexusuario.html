@@ -48,35 +48,26 @@
   <div id="modal1" class="profile-modal">
       <div class="content-modal">
         <button class="closeModalBtn">&times;</button>
-        <div class="avatar-modal" id="avatarPreview"></div>
-        <span class="texto-modal"><h2>{{ current_user.nom_usu }}</h2></span>
-        <select name="miSelect" id="avatarSelect" class="avatar-select">
-
         <div class="avatar-modal" id="avatarPreview" style="background-image: url('/static/utils/img/avatar{{ current_user.avatar }}.jpg');"></div>
-        <select name="miSelect" id="avatarSelect" onchange="MostrarAvatar()">
+        <span class="texto-modal"><h2>{{ current_user.nom_usu }}</h2></span>
+        <select name="miSelect" class="avatar-select" id="avatarSelect" onchange="MostrarAvatar()">
           <option value="#">selecciona opcion</option>
           <option value=1>Opción 1</option>
           <option value=2>Opción 2</option>
           <option value=3>Opción 3</option>
           </select>
-          
-          <div class="user-info-modal">
-          <form id="loginForm" autocomplete="off">
-        
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-          
+          <form id="loginForm" class="login-form1" autocomplete="off">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <br>
-          <div>
+          <div class="user-info-modal1">
           <label for="email" class="texto-modal">nuevo nombre de usuario</label>
           <input type="email" id="email" name="email" placeholder="INGRESE SU CORREO ELECTRONICO" required />
           </div>
-          <br>
-          <div>
+          <div class="user-info-modal2">
           <label for="password" class="texto-modal">Contraseña</label>
           <input type="password" id="password" name="password" placeholder="CONTRASEÑA" required />
           </div>
-        <button type="submit" id="init">Cambiar</button>
-        
+        <button class="terminar-modal" type="submit" id="init">Cambiar</button>
         <div id="mensaje" class="mensaje"></div>
       </form>
       </div>
