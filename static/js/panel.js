@@ -63,8 +63,10 @@ async function cargar_usuarios() {
                 <h4>Detalles del Baneo</h4>
                 <form onsubmit="formulariobaneo(event, '${u.id_usu}')">
                     <textarea name="motivo" placeholder="Motivo del baneo" required></textarea>
-                    <input type="date" name="fecha_inicio" placeholder=" fecha de inicio" required>
-                    <input type="date" name="fecha_fin" placeholder=" fecha de fin" required>
+                    <span class="desde">Desde</span>
+                    <input type="date" class="fechas" name="fecha_inicio" placeholder=" fecha de inicio" required>
+                    <span class="desde">Hasta</span>
+                    <input type="date" class="fechas" name="fecha_fin" placeholder=" fecha de fin" required>
                     <div>
                         <button type="submit">Confirmar Baneo</button>
                         <button type="button" onclick="toggleBanForm('${u.id_usu}')">Cancelar</button>

@@ -1,0 +1,35 @@
+h4{
+    color: white;
+}
+
+.fechas::placeholder{
+    color:black;
+}
+input.fechas{
+    color:black;
+}
+.desde{
+    color: white;
+    display: block;
+
+}
+
+.fechas{
+    display: block;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+div.comment{
+    width: 35rem;
+}
+@media(max-width: 1024px) and (min-width: 724px) {
+    div.comment {
+        width: 25rem;
+    }
+}
+@media(max-width: 724px) {
+    div.comment {
+        width: 15rem;
+    }
+}

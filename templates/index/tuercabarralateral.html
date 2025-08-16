@@ -51,9 +51,11 @@
                             <input type="text" id="nombre-usuario" name="nombre_usuario" value="{{ current_user.nom_usu }}" readonly>
                         </div>
                         <div class="campo-form">
-                            <label for="email">Correo electrónico:</label>
+                        <div class="correo">
+                            <label for="email">Correo electrónico: </label>
                             <input type="email" id="email" name="email" value="{{ current_user.email }}" readonly>
                         </div>
+                         </div>
                     </section>
                     <hr>
                     <section class="seccion-config">
@@ -63,12 +65,16 @@
                             <input type="password" id="pass-actual" name="pass_actual" placeholder="Ingresa tu contraseña actual">
                         </div>
                         <div class="campo-form">
+                         <div class="ncontraseña">
                             <label for="pass-nueva">Nueva contraseña:</label>
                             <input type="password" id="pass-nueva" name="pass_nueva" placeholder="Ingresa tu nueva contraseña">
                         </div>
+                        </div>
                         <div class="campo-form">
+                        <div class="ccontraseña">
                             <label for="pass-confirmar">Confirmar nueva contraseña:</label>
                             <input type="password" id="pass-confirmar" name="pass_confirmar" placeholder="Confirma tu nueva contraseña">
+                        </div>
                         </div>
                     </section>
                     <button type="submit" class="btn-guardar">Guardar Cambios</button>
