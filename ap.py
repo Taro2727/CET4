@@ -1880,7 +1880,8 @@ def cambiar_avatar():
 @app.route('/cambiar_nombre')
 def cambiar_nombre():
     data=request.get_json()
-    
+    nombre_nuevo=data.get('nombre')
+    password_ingresada=data.get('password')
 
 
 
