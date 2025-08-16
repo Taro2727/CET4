@@ -3,20 +3,20 @@
     max-width: 800px;
     margin: 3rem auto;
     padding: 2.5rem;
-    background-color: #fff;
+    background-color: #131e2e;
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
 }
 
 .contenedor-configuracion h1 {
     text-align: center;
-    color: #2c3e50;
+    color: #ffffff;
     margin-bottom: 2.5rem;
     font-weight: 600;
 }
 
 .seccion-config h2 {
-    color: #34495e;
+    color: #ffffff;
     border-bottom: 2px solid #ecf0f1;
     padding-bottom: 12px;
     margin-bottom: 30px;
@@ -27,7 +27,7 @@
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
-    color: #555;
+    color: #ffffff;
 }
 
 .campo-form input[type="text"],
@@ -35,31 +35,46 @@
 .campo-form input[type="password"] {
     width: 100%;
     padding: 12px;
-    border: 1px solid #bdc3c7;
+    border: 1px solid #22307e;
     border-radius: 5px;
     box-sizing: border-box;
+    margin-top: 10px;
 }
-
 .btn-guardar {
     display: block;
     width: 100%;
     padding: 15px;
-    background-color: #3498db;
+    background-color: #2a4061;
     color: white;
     border: none;
     border-radius: 5px;
     font-size: 1.2rem;
     cursor: pointer;
     transition: background-color 0.3s;
+    margin-top: 45px;
 }
 
 .btn-guardar:hover {
-    background-color: #2980b9;
+    background-color: #1a1341;
 }
 
 hr {
     border: 0;
     height: 1px;
-    background-color: #ecf0f1;
+    background-color: transparent;
     margin: 40px 0;
+}
+.alert-danger{
+    color:white;
+}
+.correo{
+ padding-top: 15px; 
+}
+
+.ncontraseña{
+ padding-top: 15px;     
+}
+
+.ccontraseña{
+ padding-top: 15px;      
 }
