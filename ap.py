@@ -1042,7 +1042,7 @@ def responder():
                     "body": f"{current_user.nom_usu} ha respondido a tu pregunta."
                 }
                 notif_push(sub['suscripcion_json'], notif)
-                guardar_notificacion(id_autor_post, "respuesta", f"{current_user.nom_usu} respondió tu pregunta.")
+                guardar_notificacion(id_autor_post, "mensaje", f"{current_user.nom_usu} respondió tu pregunta.")
                 cursor.execute("SELECT email FROM usuario WHERE id_usu = %s", (id_autor_post,))
                 email_data = cursor.fetchone()
                 if email_data:
@@ -1140,7 +1140,7 @@ def like_comment():
                         "body": f"{current_user.nom_usu} ha dado like a tu comentario",
                     }
                     notif_push(sub['suscripcion_json'], notif)
-                    guardar_notificacion(id_autor_data, "like", f"{current_user.nom_usu} dio like a tu comentario.")
+                    guardar_notificacion(id_autor_data, "mensaje", f"{current_user.nom_usu} dio like a tu comentario.")
                     cursor.execute("SELECT email FROM usuario WHERE id_usu = %s", (id_autor_data,))
                     email_data = cursor.fetchone()
                     if email_data:
@@ -1201,7 +1201,7 @@ def like_rta():
                         "body": f"{current_user.nom_usu} le ha dado like a tu pregunta."
                     }
                     notif_push(sub['suscripcion_json'], notificacion_payload)
-                    guardar_notificacion(id_autor_post, "like", f"{current_user.nom_usu} dio like a tu comentario.")
+                    guardar_notificacion(id_autor_post, "mensaje", f"{current_user.nom_usu} dio like a tu comentario.")
                     cursor.execute("SELECT email FROM usuario WHERE id_usu = %s", (id_autor_post,))
                     email_data = cursor.fetchone()
                     if email_data:
