@@ -59,6 +59,21 @@
                     </section>
                     <hr>
                     <section class="seccion-config">
+                        <div class="notif-item">
+                            <label class="switch-label">
+                                <input type="checkbox" id="push-toggle-btn">
+                                <span class="slider"></span>
+                            </label>
+                            <span>Notificaciones Push:</span>
+                            <span id="push-status" class="status-off">Desactivadas</span>
+                        </div>
+                        <div class="notif-item">
+                            <label class="switch-label">
+                                <input type="checkbox" id="email-toggle"> <span class="slider"></span>
+                            </label>
+                            <span>Notificaciones Email:</span>
+                            <span id="email-status" class="status-off">Desactivadas</span>
+                        </div>
                         <h2>Cambiar Contraseña</h2>
                         <div class="campo-form">
                             <label for="pass-actual">Contraseña actual:</label>
@@ -83,6 +98,7 @@
         </main>
     </div>
 
+    <script src="{{ url_for('static', filename='js/notificaciones.js') }}"></script>
     <script src="{{ url_for('static', filename='js/barralateral.js') }}"></script>
 </body>
 </html>
