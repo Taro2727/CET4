@@ -45,26 +45,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Obtiene los elementos del DOM
-    const modal = document.getElementById('myModal');
-    const btn = document.getElementById('openModalBtn');
-    const span = document.getElementsByClassName("close-btn")[0];
+// document.addEventListener('DOMContentLoaded', () => {
+//     // Obtiene los elementos del DOM
+//     const modal = document.getElementById('myModal');
+//     const btn = document.getElementById('openModalBtn');
+//     const span = document.getElementsByClassName("close-btn")[0];
 
-    // Cuando el usuario hace clic en el botón, se abre el modal
-    btn.onclick = function() {
-        modal.style.display = "flex"; // Usa "flex" para centrar el modal
-    }
+//     // Cuando el usuario hace clic en el botón, se abre el modal
+//     btn.onclick = function() {
+//         modal.style.display = "flex"; // Usa "flex" para centrar el modal
+//     }
 
-    // Cuando el usuario hace clic en <span> (x), se cierra el modal
-    span.onclick = function() {
-        modal.style.display = "none";
-    }
+//     // Cuando el usuario hace clic en <span> (x), se cierra el modal
+//     span.onclick = function() {
+//         modal.style.display = "none";
+//     }
 
-    // Cuando el usuario hace clic en cualquier lugar fuera del modal, se cierra
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    }
-});
+//     // Cuando el usuario hace clic en cualquier lugar fuera del modal, se cierra
+//     window.onclick = function(event) {
+//         if (event.target == modal) {
+//             modal.style.display = "none";
+//         }
+//     }
+// });
