@@ -152,23 +152,28 @@ def verificar_otp(secreto, codigo, intervalo=600):
 
 #------------------------------------
 #funcion reutilizable para enviar notificaciones push
-def notif_push(subscription_info, message_body):
+def notif_push(subscription_info, message_body, id_usu=None):
+    VAPID_CLAIMS = {"sub": "mailto:soportes.zettinno.cet@gmail.com"}
     """
     Función para enviar una notificación push.
     """
     try:
         webpush(
-            subscription_info=json.loads(subscription_info), # Decodifica el JSON de la BD
-            data=json.dumps(message_body),
+            subscription_info=subscription_info,
+            data=json.dumps(message_body),  # <-- CORREGIDO
             vapid_private_key=VAPID_PRIVATE_KEY,
             vapid_claims=VAPID_CLAIMS
         )
-        print("Notificación enviada.")
+        print("Notificación enviada con éxito.")
     except WebPushException as ex:
-        print(f"Error al enviar notificación: {ex}")
-        # Si la suscripción no es válida (código 410), deberías borrarla de la BD
-        if ex.response.status_code == 410:
-            print("Suscripción expirada o no válida. Se recomienda eliminarla.")
+        print("❌ Error al enviar notificación:", ex)
+        # Si la suscripción ha expirado o no es válida (código 410 Gone),
+        # es una buena práctica eliminarla de la base de datos.
+        if ex.response and ex.response.status_code == 410:
+            print("Suscripción expirada. Se recomienda eliminarla.")
+        # No relanzamos el error para no detener el flujo si falla una sola notificación
+    except Exception as e:
+        print("❌ Error inesperado en notif_push:", e)
 #------------------------------------
 
 # --- Inicializar Flask-Login ---
@@ -367,6 +372,18 @@ def mis_notificaciones_data():
     
 def notif_email(destinatario, asunto, cuerpo):
     try:
+        # Verificar preferencia antes de enviar
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT notif_email FROM usuario WHERE email = %s", (destinatario,))
+        row = cursor.fetchone()
+        cursor.close()
+        conn.close()
+
+        if not row or not row['notif_email']:
+            print("📧 Usuario con email", destinatario, "tiene desactivadas las notificaciones por correo.")
+            return  # No enviar
+
         msg = Message(
             subject=asunto,
             sender=app.config['MAIL_USERNAME'],
@@ -374,9 +391,35 @@ def notif_email(destinatario, asunto, cuerpo):
             body=cuerpo
         )
         mail.send(msg)
-        print("📧 Email de notificación enviado a", destinatario)
+        print("📧 Email enviado a", destinatario)
     except Exception as e:
         print("❌ Error al enviar email de notificación:", e)
+
+@app.route('/eliminar-suscripcion', methods=['POST'])
+def eliminar_suscripcion():
+    data = request.get_json(silent=True) or {}
+    # Espera al menos el endpoint de la suscripción
+    endpoint = data.get('endpoint')
+    if not endpoint:
+        return jsonify({'success': False, 'error': 'Falta endpoint de suscripción'}), 400
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor()
+        # Buscamos y eliminamos la suscripción que contenga ese endpoint
+        # El uso de JSON_EXTRACT es más preciso, pero LIKE funciona si la estructura es consistente.
+        # Esta consulta busca el endpoint dentro del JSON almacenado como texto.
+        cursor.execute(
+            "DELETE FROM suscripcion_push WHERE id_usu = %s AND suscripcion_json LIKE %s",
+            (current_user.id, f'%"{endpoint}"%')
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
+        print(f"Suscripción eliminada para el endpoint: {endpoint}")
+        return jsonify({'success': True})
+    except mysql.connector.Error as err:
+        print(f"Error al eliminar suscripción: {err}")
+        return jsonify({'success': False, 'error': 'Error de base de datos'}), 500
 
 # ruta para la tuerca barra lateral
 @app.route('/configuracion')
@@ -455,23 +498,89 @@ def guardar_configuracion():
     except Exception as e:
         flash(f'Error al enviar el código de verificación: {e}', 'danger')
         return redirect(url_for('configuracion'))
+
+@app.route('/toggle-email-notifications', methods=['POST'])
+@login_required
+def toggle_email_notifications():
+    data = request.get_json()
+    enable = data.get('enable')
+
+    if enable is None:
+        return jsonify({'success': False, 'error': 'Falta el estado enable'}), 400
+
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor()
+
+        # Guardar preferencia en la tabla usuario
+        cursor.execute("UPDATE usuario SET notif_email = %s WHERE id_usu = %s", (enable, current_user.id))
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return jsonify({'success': True})
+    except mysql.connector.Error as err:
+        print(f"Error al actualizar notificaciones email: {err}")
+        return jsonify({'success': False, 'error': 'Error de base de datos'}), 500
     
-# @app.route('/test_notificacion') #ruta para probar si las notificaciones funcionan
-# @login_required
-# def test_notificacion():
-#     try:
-#         conn = mysql.connector.connect(**DB_CONFIG)
-#         cursor = conn.cursor(dictionary=True)
-#         cursor.execute("SELECT suscripcion_json FROM suscripcion_push WHERE id_usu = %s", (current_user.id,))
-#         subs = cursor.fetchall()
-#         for sub in subs:
-#             notif_push(sub['suscripcion_json'], {
-#                 "title": "🚀 Notificación de prueba",
-#                 "body": "¡Hola Cata! Esto es solo un test para verificar que todo funciona."
-#             })
-#         return jsonify({"success": True})
-#     except Exception as e:
-#         return jsonify({"success": False, "error": str(e)})
+@app.route('/toggle-push-notifications', methods=['POST'])
+@login_required
+def toggle_push_notifications():
+    data = request.get_json()
+    enable = data.get('enable')
+
+    if enable is None:
+        return jsonify({'success': False, 'error': 'Falta el estado enable'}), 400
+
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor()
+        cursor.execute("UPDATE usuario SET notif_push = %s WHERE id_usu = %s", (enable, current_user.id))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return jsonify({'success': True})
+    except mysql.connector.Error as err:
+        print(f"Error al actualizar notificaciones push: {err}")
+        return jsonify({'success': False, 'error': 'Error de base de datos'}), 500
+    
+@app.route('/mis-preferencias-notif', methods=['GET'])
+@login_required
+def mis_preferencias_notif():
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT notif_email, notif_push FROM usuario WHERE id_usu = %s", (current_user.id,))
+        prefs = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        return jsonify({'success': True, 'prefs': prefs})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/test_notificacion') #ruta para probar si las notificaciones funcionan
+@login_required
+def test_notificacion():
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor()
+        cursor.execute("SELECT suscripcion_json FROM suscripcion_push WHERE id_usu = %s", (current_user.id,))
+        subs = cursor.fetchall()
+        for sub in subs:
+            suscripcion_info_json = sub[0]
+            print("Datos de suscripción leídos de la DB:", suscripcion_info_json) # <--- Agrega esta línea
+            try:
+                notif_push(json.loads(suscripcion_info_json), {
+                    "title": "🚀 Notificación de prueba",
+                    "body": "¡Hola! Esto es solo un test para verificar que todo funciona."
+                })
+            except Exception as e:
+                print(f"Error: Datos de suscripción en la DB no son JSON válidos para el usuario {current_user.id}")
+    except Exception as e:
+        print(f"Error en la ruta de prueba: {e}")
+        # AQUI AGREGAMOS LA RESPUESTA DE ERROR QUE FALTABA
+        return jsonify({"success": False, "error": str(e)})
 
 
 #ACA RUTASS PROVISORIAS (2FA)
@@ -1042,7 +1151,8 @@ def responder():
                     "title": "💬 ¡Nueva Respuesta!",
                     "body": f"{current_user.nom_usu} ha respondido a tu pregunta."
                 }
-                notif_push(sub['suscripcion_json'], notif)
+                suscripcion_dict = json.loads(sub['suscripcion_json'])
+                notif_push(suscripcion_dict, notif) # <-- CORREGIDO
                 guardar_notificacion(id_autor_post, "mensaje", f"{current_user.nom_usu} respondió tu pregunta.")
                 cursor.execute("SELECT email FROM usuario WHERE id_usu = %s", (id_autor_post,))
                 email_data = cursor.fetchone()
@@ -1140,7 +1250,8 @@ def like_comment():
                         "title": "Nuevo like en tu comentario",
                         "body": f"{current_user.nom_usu} ha dado like a tu comentario",
                     }
-                    notif_push(sub['suscripcion_json'], notif)
+                    suscripcion_dict = json.loads(sub['suscripcion_json'])
+                    notif_push(suscripcion_dict, notif) # <-- CORREGIDO
                     guardar_notificacion(id_autor_data, "mensaje", f"{current_user.nom_usu} dio like a tu comentario.")
                     cursor.execute("SELECT email FROM usuario WHERE id_usu = %s", (id_autor_data,))
                     email_data = cursor.fetchone()
@@ -1201,7 +1312,8 @@ def like_rta():
                         "title": "👍 ¡Nuevo Like!",
                         "body": f"{current_user.nom_usu} le ha dado like a tu pregunta."
                     }
-                    notif_push(sub['suscripcion_json'], notificacion_payload)
+                    suscripcion_dict = json.loads(sub['suscripcion_json'])
+                    notif_push(suscripcion_dict, notificacion_payload) # <-- CORREGIDO
                     guardar_notificacion(id_autor_post, "mensaje", f"{current_user.nom_usu} dio like a tu comentario.")
                     cursor.execute("SELECT email FROM usuario WHERE id_usu = %s", (id_autor_post,))
                     email_data = cursor.fetchone()

@@ -8,8 +8,10 @@
 /* Fondo y fuente general */
 body {
     font-family: 'Segoe UI', sans-serif;
-    background-color: #0c1b32;
     color: white;
+    background: linear-gradient(to top, #020c25 0%, #082c54 50%);
+    width: 100%;
+    min-height: 100vh;
 }
 
 /* empieza la bARra de busqueda  */

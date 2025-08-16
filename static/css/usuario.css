@@ -13,6 +13,14 @@ body {
 
 }
 
+#toggle{
+    position: absolute;
+    align-items: left;
+    justify-content: top;
+    width: 100%;
+    margin-top: -5%;
+}
+
 /* empieza la bARra de busqueda  */
 ::placeholder {
   color: #fff;
@@ -115,6 +123,7 @@ body {
     border: 1px solid #345678;
     border-radius: 10px;
     padding: 10px;
+    width: 100%;
 }
 .perfil-comentario-header{
     background-color:#131e2e;
@@ -131,6 +140,7 @@ body {
     border-radius: 10px;
     padding-bottom: 1em;
     padding: 10px;
+    width: 100%;
 }
 
 .perfil-comentario-fecha{
@@ -153,7 +163,8 @@ body {
 }
 
 .content-modal {
-  background-color: #fff;
+  background-color: #21394f;
+  background: linear-gradient(to top, #020c25 0%, #21394f 25%);
   margin: 5% auto;         /* menos margen superior */
   padding: 30px;
   border-radius: 15px;
@@ -163,11 +174,11 @@ body {
   text-align: center;
   box-shadow: 0 5px 15px rgba(0,0,0,0.4);
   display: flex;
-flex-direction: column;
+  flex-direction: column;
 }
 
 .texto-modal{
-    color:black;
+    color:rgb(255, 255, 255);
 }
 
 .modal-avatar{
@@ -190,13 +201,16 @@ flex-direction: column;
     height: 2rem;
     font-size: 1.5rem;
 }
-
+.avatar-select-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 .avatar-select{
     width: 5rem;
     height: 2.5rem;
     border-radius: 5px;
     border: 1px solid #ccc;
-    margin-left: 45%;
     margin-top: 1em;
 }
 
@@ -216,9 +230,7 @@ flex-direction: column;
     display:flex;
     flex-direction: column;
     width: 20rem;
-    margin-top: 1em;
-
-    
+    margin-top: 1em; 
 }
 #init{
     border-radius: 10px;
@@ -253,7 +265,7 @@ flex-direction: column;
         height: 12rem;
     }
     .perfil-comentario-header{
-    width: 50%;
+        width: 50%;
 }
 }
 
@@ -316,14 +328,14 @@ flex-direction: column;
         font-size: 0.9rem;
     }
     .perfil-comentario-header{
-    width: 100%;
-}
-.user-info-modal1{
-    width: 100%;
-}
-.user-info-modal2{
-    width: 100%;  
-}
+        width: 100%;
+    }
+        .user-info-modal1{
+        width: 100%;
+    }
+    .user-info-modal2{
+        width: 100%;  
+    }
 }
 
 
