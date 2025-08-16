@@ -179,12 +179,13 @@ login_manager.login_message = "Por favor, inicia sesión para acceder a esta pá
 
 # --- Clase User para Flask-Login ---
 class User(UserMixin):
-    def __init__(self, id_usu, nom_usu, email, contraseña_hash, rol):
+    def __init__(self, id_usu, nom_usu, email, contraseña_hash, rol,avatar):
         self.id = id_usu # Flask-Login espera que el ID se acceda a través de .id
         self.nom_usu = nom_usu
         self.email = email
         self.contraseña_hash = contraseña_hash
         self.rol = rol
+        self.avatar = avatar
 
     # Método requerido por Flask-Login para obtener el ID unico del usuario
     def get_id(self):
@@ -197,12 +198,12 @@ def load_user(user_id):
     try:
         conn = mysql.connector.connect(**DB_CONFIG)
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT id_usu, nom_usu, email, contraseña, rol FROM usuario WHERE id_usu = %s", (user_id,))
+        cursor.execute("SELECT id_usu, nom_usu, email, contraseña, rol, avatar FROM usuario WHERE id_usu = %s", (user_id,))
         user_data = cursor.fetchone()
         cursor.close()
         conn.close()
         if user_data:
-            return User(user_data['id_usu'], user_data['nom_usu'], user_data['email'], user_data['contraseña'], user_data['rol'])
+            return User(user_data['id_usu'], user_data['nom_usu'], user_data['email'], user_data['contraseña'], user_data['rol'],user_data['avatar'])
         return None
     except mysql.connector.Error as err:
         print(f"Error al cargar usuario de DB: {err}")
@@ -1042,7 +1043,7 @@ def responder():
                     "body": f"{current_user.nom_usu} ha respondido a tu pregunta."
                 }
                 notif_push(sub['suscripcion_json'], notif)
-                guardar_notificacion(id_autor_post, "respuesta", f"{current_user.nom_usu} respondió tu pregunta.")
+                guardar_notificacion(id_autor_post, "mensaje", f"{current_user.nom_usu} respondió tu pregunta.")
                 cursor.execute("SELECT email FROM usuario WHERE id_usu = %s", (id_autor_post,))
                 email_data = cursor.fetchone()
                 if email_data:
@@ -1140,7 +1141,7 @@ def like_comment():
                         "body": f"{current_user.nom_usu} ha dado like a tu comentario",
                     }
                     notif_push(sub['suscripcion_json'], notif)
-                    guardar_notificacion(id_autor_data, "like", f"{current_user.nom_usu} dio like a tu comentario.")
+                    guardar_notificacion(id_autor_data, "mensaje", f"{current_user.nom_usu} dio like a tu comentario.")
                     cursor.execute("SELECT email FROM usuario WHERE id_usu = %s", (id_autor_data,))
                     email_data = cursor.fetchone()
                     if email_data:
@@ -1201,7 +1202,7 @@ def like_rta():
                         "body": f"{current_user.nom_usu} le ha dado like a tu pregunta."
                     }
                     notif_push(sub['suscripcion_json'], notificacion_payload)
-                    guardar_notificacion(id_autor_post, "like", f"{current_user.nom_usu} dio like a tu comentario.")
+                    guardar_notificacion(id_autor_post, "mensaje", f"{current_user.nom_usu} dio like a tu comentario.")
                     cursor.execute("SELECT email FROM usuario WHERE id_usu = %s", (id_autor_post,))
                     email_data = cursor.fetchone()
                     if email_data:
@@ -1854,6 +1855,27 @@ def get_mis_comentarios():
         print(f"Error inesperado al obtener comentarios del perfil: {e}")
         return jsonify({"success": False, "error": f"Error inesperado: {e}"}), 500
 
+@app.route('/cambiar_avatar', methods=['POST'])
+def cambiar_avatar():
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "No se recibieron datos"}), 400
+
+    id_usuario = current_user.id
+    valor = data.get('valorSeleccionado')
+
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor()
+        cursor.execute('UPDATE usuario SET avatar=%s WHERE id_usu=%s', (valor, id_usuario))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return jsonify({"success": True})
+        
+    except Exception as e:
+        print(f"Error inesperado: {e}")
+        return jsonify({"success": False, "error": f"Error inesperado: {e}"}), 500
 
 
 if __name__ == "__main__":
