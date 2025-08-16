@@ -1877,6 +1877,12 @@ def cambiar_avatar():
         print(f"Error inesperado: {e}")
         return jsonify({"success": False, "error": f"Error inesperado: {e}"}), 500
 
+@app.route('/cambiar_nombre')
+def cambiar_nombre():
+    data=request.get_json()
+    
+
+
 
 if __name__ == "__main__":
     print("iniciando flask..")

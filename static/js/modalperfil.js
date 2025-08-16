@@ -48,3 +48,32 @@ async function MostrarAvatar() {
 
   
 }//llave principal de la funcion MostrarAvatar
+
+
+//aca esta la funcion de cambiar nombre de usuario
+document.getElementById("init").addEventListener("submit", async function(event) {
+  event.preventDefault();
+
+  const nombre = document.getElementById("new-name").value;
+  const password = document.getElementById("password").value;
+  const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+  const respuesta = await fetch("/cambiar_nombre", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrfToken
+    },
+    body: JSON.stringify({ nombre, password })
+  });
+
+  const resultado = await respuesta.json();
+
+  if (resultado.success) {
+    // Redirige a la página para ingresar el código OTP
+    window.location.href = '/perfil';
+  } else {
+    document.getElementById("mensaje").textContent = resultado.error || "No se pudo enviar el código OTP.";
+  }
+  
+  
+});
