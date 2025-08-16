@@ -50,12 +50,16 @@
         <button class="closeModalBtn">&times;</button>
         <div class="avatar-modal" id="avatarPreview" style="background-image: url('/static/utils/img/avatar{{ current_user.avatar }}.jpg');"></div>
         <span class="texto-modal"><h2>{{ current_user.nom_usu }}</h2></span>
+
+        <div class="avatar-select-container">
         <select name="miSelect" class="avatar-select" id="avatarSelect" onchange="MostrarAvatar()">
           <option value="#">selecciona opcion</option>
           <option value=1>Opción 1</option>
           <option value=2>Opción 2</option>
           <option value=3>Opción 3</option>
           </select>
+          </div>
+
           <form id="loginForm" class="login-form1" autocomplete="off">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <br>
