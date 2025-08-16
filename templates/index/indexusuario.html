@@ -47,30 +47,29 @@
   <div id="modal1" class="profile-modal">
       <div class="content-modal">
         <button class="closeModalBtn">&times;</button>
-
         <div class="avatar-modal" id="avatarPreview"></div>
-        <select name="miSelect" id="avatarSelect">
+        <span class="texto-modal"><h2>{{ current_user.nom_usu }}</h2></span>
+        <select name="miSelect" id="avatarSelect" class="avatar-select">
           <option value=1>Opción 1</option>
           <option value=2>Opción 2</option>
           <option value=3>Opción 3</option>
           </select>
           
           <div class="user-info-modal">
-          <span class="texto-modal"><h2>{{ current_user.nom_usu }}</h2></span>
           <form id="loginForm" autocomplete="off">
         
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           
           <br>
-        
+          <div>
           <label for="email" class="texto-modal">nuevo nombre de usuario</label>
           <input type="email" id="email" name="email" placeholder="INGRESE SU CORREO ELECTRONICO" required />
-          
+          </div>
           <br>
-        
+          <div>
           <label for="password" class="texto-modal">Contraseña</label>
           <input type="password" id="password" name="password" placeholder="CONTRASEÑA" required />
-
+          </div>
         <button type="submit" id="init">Cambiar</button>
         
         <div id="mensaje" class="mensaje"></div>
@@ -78,7 +77,6 @@
       </div>
     </div>
   </div>
-
   <script src="/static/js/modalperfil.js"></script>  
   <script src="/static/js/perfil.js"></script>
   <script src="/static/js/comentarios.js"></script>
