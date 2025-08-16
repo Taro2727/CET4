@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const btnNoPermitir = document.getElementById('btn-no-permitir');
 
         const yaActivadas = localStorage.getItem('notificaciones_activadas');
-        if (yaActivadas !== 'true') {
+        if (yaActivadas == null) {
             modal.style.display = 'block'; 
         }
 
