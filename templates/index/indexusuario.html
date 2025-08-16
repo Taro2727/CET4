@@ -29,7 +29,7 @@
         <a class="separador3" href="/configuracion"><img src="/static/utils/img/hotultimointento.png" alt="salida" class="opcion6"></a>
     </div> 
   <div class="profile-container">
-    <div class="avatar"></div>
+    <div class="avatar" style="background-image: url('/static/utils/img/avatar{{ current_user.avatar }}.jpg');"></div>
     <div class="user-info">
       <h2>{{ current_user.nom_usu }}</h2>
     </div>
@@ -49,8 +49,9 @@
       <div class="content-modal">
         <button class="closeModalBtn">&times;</button>
 
-        <div class="avatar-modal" id="avatarPreview"></div>
+        <div class="avatar-modal" id="avatarPreview" style="background-image: url('/static/utils/img/avatar{{ current_user.avatar }}.jpg');"></div>
         <select name="miSelect" id="avatarSelect" onchange="MostrarAvatar()">
+          <option value="#">selecciona opcion</option>
           <option value=1>Opción 1</option>
           <option value=2>Opción 2</option>
           <option value=3>Opción 3</option>
