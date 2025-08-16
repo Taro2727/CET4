@@ -8,7 +8,8 @@
     <link rel="stylesheet" href="/static/css/barralateral.css">
     <meta name="usuario-id" content="{{ current_user.id or 'null' }}">
     <meta name="usuario-rol" content="{{ current_user.rol or 'anonimo' }}">
-  
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
 </head>
 <body>
 <div id="toggle">
@@ -49,7 +50,7 @@
         <button class="closeModalBtn">&times;</button>
 
         <div class="avatar-modal" id="avatarPreview"></div>
-        <select name="miSelect" id="avatarSelect">
+        <select name="miSelect" id="avatarSelect" onchange="MostrarAvatar()">
           <option value=1>Opción 1</option>
           <option value=2>Opción 2</option>
           <option value=3>Opción 3</option>

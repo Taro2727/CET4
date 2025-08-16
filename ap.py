@@ -1854,6 +1854,27 @@ def get_mis_comentarios():
         print(f"Error inesperado al obtener comentarios del perfil: {e}")
         return jsonify({"success": False, "error": f"Error inesperado: {e}"}), 500
 
+@app.route('/cambiar_avatar', methods=['POST'])
+def cambiar_avatar():
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "No se recibieron datos"}), 400
+
+    id_usuario = current_user.id
+    valor = data.get('valorSeleccionado')
+
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor()
+        cursor.execute('UPDATE usuario SET avatar=%s WHERE id_usu=%s', (valor, id_usuario))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return jsonify({"success": True})
+        
+    except Exception as e:
+        print(f"Error inesperado: {e}")
+        return jsonify({"success": False, "error": f"Error inesperado: {e}"}), 500
 
 
 if __name__ == "__main__":
