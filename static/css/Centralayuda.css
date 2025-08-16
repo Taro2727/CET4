@@ -100,7 +100,7 @@ body {
 
 .card img {
   margin-bottom: 10px;
-    width: 50%;
+  width: 50%;
   height: 200px;
 }
 
@@ -112,6 +112,12 @@ body {
 
 .card p {
   font-size: 0.95rem;
+}
+
+.card-link{
+  display: block;
+  text-decoration: none;
+  color: inherit;
 }
 
 /* Footer */

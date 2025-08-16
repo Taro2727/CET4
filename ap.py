@@ -184,12 +184,13 @@ login_manager.login_message = "Por favor, inicia sesión para acceder a esta pá
 
 # --- Clase User para Flask-Login ---
 class User(UserMixin):
-    def __init__(self, id_usu, nom_usu, email, contraseña_hash, rol):
+    def __init__(self, id_usu, nom_usu, email, contraseña_hash, rol,avatar):
         self.id = id_usu # Flask-Login espera que el ID se acceda a través de .id
         self.nom_usu = nom_usu
         self.email = email
         self.contraseña_hash = contraseña_hash
         self.rol = rol
+        self.avatar = avatar
 
     # Método requerido por Flask-Login para obtener el ID unico del usuario
     def get_id(self):
@@ -202,12 +203,12 @@ def load_user(user_id):
     try:
         conn = mysql.connector.connect(**DB_CONFIG)
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT id_usu, nom_usu, email, contraseña, rol FROM usuario WHERE id_usu = %s", (user_id,))
+        cursor.execute("SELECT id_usu, nom_usu, email, contraseña, rol, avatar FROM usuario WHERE id_usu = %s", (user_id,))
         user_data = cursor.fetchone()
         cursor.close()
         conn.close()
         if user_data:
-            return User(user_data['id_usu'], user_data['nom_usu'], user_data['email'], user_data['contraseña'], user_data['rol'])
+            return User(user_data['id_usu'], user_data['nom_usu'], user_data['email'], user_data['contraseña'], user_data['rol'],user_data['avatar'])
         return None
     except mysql.connector.Error as err:
         print(f"Error al cargar usuario de DB: {err}")
@@ -1964,6 +1965,57 @@ def get_mis_comentarios():
         return jsonify({"success": False, "error": f"Error de base de datos: {err}"}), 500
     except Exception as e:
         print(f"Error inesperado al obtener comentarios del perfil: {e}")
+        return jsonify({"success": False, "error": f"Error inesperado: {e}"}), 500
+
+@app.route('/cambiar_avatar', methods=['POST'])
+def cambiar_avatar():
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "No se recibieron datos"}), 400
+
+    id_usuario = current_user.id
+    valor = data.get('valorSeleccionado')
+
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor()
+        cursor.execute('UPDATE usuario SET avatar=%s WHERE id_usu=%s', (valor, id_usuario))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return jsonify({"success": True})
+        
+    except Exception as e:
+        print(f"Error inesperado: {e}")
+        return jsonify({"success": False, "error": f"Error inesperado: {e}"}), 500
+
+@app.route('/cambiar_nombre',methods=['POST'])
+def cambiar_nombre():
+    data=request.get_json()
+    nombre_nuevo=data.get('nombre')
+    password_ingresada=data.get('password')
+    id_usuario=current_user.id
+    if not data:
+        return jsonify({'error':'faltan datos'}),500
+    try:
+        conn=mysql.connector.connect(**DB_CONFIG)
+        cursor=conn.cursor(dictionary=True)
+        cursor.execute('SELECT contraseña FROM usuario WHERE id_usu=%s',(id_usuario,))
+        contra=cursor.fetchone()
+        if not contra or not check_password_hash(contra['contraseña'], password_ingresada):
+            conn.commit()
+            cursor.close()
+            conn.close()
+            return jsonify({'error':'contraseña incorrecta'}),500     
+               
+        cursor.execute('UPDATE usuario SET nom_usu=%s WHERE id_usu=%s ',(nombre_nuevo,id_usuario))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return jsonify({'success':'nombre cambiado'})
+
+    except Exception as e:
+        print(f"Error inesperado: {e}")
         return jsonify({"success": False, "error": f"Error inesperado: {e}"}), 500
 
 

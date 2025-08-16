@@ -8,7 +8,8 @@
     <link rel="stylesheet" href="/static/css/barralateral.css">
     <meta name="usuario-id" content="{{ current_user.id or 'null' }}">
     <meta name="usuario-rol" content="{{ current_user.rol or 'anonimo' }}">
-  
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
 </head>
 <body>
 <div id="toggle">
@@ -28,7 +29,7 @@
         <a class="separador3" href="/configuracion"><img src="/static/utils/img/hotultimointento.png" alt="salida" class="opcion6"></a>
     </div> 
   <div class="profile-container">
-    <div class="avatar"></div>
+    <div class="avatar" style="background-image: url('/static/utils/img/avatar{{ current_user.avatar }}.jpg');"></div>
     <div class="user-info">
       <h2>{{ current_user.nom_usu }}</h2>
     </div>
@@ -47,41 +48,33 @@
   <div id="modal1" class="profile-modal">
       <div class="content-modal">
         <button class="closeModalBtn">&times;</button>
-
-        <div class="avatar-modal" id="avatarPreview"></div>
-        <select name="miSelect" id="avatarSelect">
+        <div class="avatar-modal" id="avatarPreview" style="background-image: url('/static/utils/img/avatar{{ current_user.avatar }}.jpg');"></div>
+        <span class="texto-modal"><h2>{{ current_user.nom_usu }}</h2></span>
+        <select name="miSelect" class="avatar-select" id="avatarSelect" onchange="MostrarAvatar()">
+          <option value="#">selecciona opcion</option>
           <option value=1>Opción 1</option>
           <option value=2>Opción 2</option>
           <option value=3>Opción 3</option>
           </select>
-          
-          <div class="user-info-modal">
-          <span class="texto-modal"><h2>{{ current_user.nom_usu }}</h2></span>
-          <form id="loginForm" autocomplete="off">
-        
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-          
+          <form id="loginForm" class="login-form1" autocomplete="off">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <br>
-        
-          <label for="email" class="texto-modal">nuevo nombre de usuario</label>
-          <input type="email" id="email" name="email" placeholder="INGRESE SU CORREO ELECTRONICO" required />
-          
-          <br>
-        
+          <div class="user-info-modal1">
+          <label for="new-name" class="texto-modal">Nuevo nombre de usuario</label>
+          <input type="text" id="new-name" name="new-name" placeholder="Ingrese su nuevo nombre de usuario" required />
+          </div>
+          <div class="user-info-modal2">
           <label for="password" class="texto-modal">Contraseña</label>
           <input type="password" id="password" name="password" placeholder="CONTRASEÑA" required />
-
-        <button type="submit" id="init">Cambiar</button>
-        
+          </div>
+        <button class="terminar-modal" type="submit" id="init">Cambiar</button>
         <div id="mensaje" class="mensaje"></div>
       </form>
       </div>
     </div>
   </div>
-
   <script src="/static/js/modalperfil.js"></script>  
   <script src="/static/js/perfil.js"></script>
-  <script src="/static/js/comentarios.js"></script>
   <script src="/static/js/barralateral.js"></script>
 </body>
 </html>

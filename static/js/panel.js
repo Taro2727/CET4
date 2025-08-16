@@ -132,7 +132,6 @@ async function formulariobaneo(event, userId) {
 //---FUNCIONES DE ELIMINACIÓN DE COMENTARIOS Y RESPUESTAS---
 async function eliminarUsuario(id_usuario,rol_usuario) {
     if (!confirm("¿Seguro que quieres eliminar este usuario?")) return;
-    console.log({ id_usuario, rol_usuario });
     const response = await fetch('/otp_eliminar', {
         method: 'POST',
         headers: {
