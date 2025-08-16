@@ -2,7 +2,7 @@
 let criterioActual = 'reciente';
 const IS_AUTHENTICATED = JSON.parse(document.querySelector('meta[name="is-authenticated"]').content);
 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-const usuarioActual = document.querySelector('meta[name="usuario-id"]').content;
+const usuarioActual = parseInt(document.querySelector('meta[name="usuario-id"]').content);
 const rolUsuarioActual = document.querySelector('meta[name="usuario-rol"]').content;
 
 const IdusuarioActual = usuarioActual ? usuarioActual.content : null;
@@ -82,8 +82,9 @@ async function cargarComentarios() {
                 <span id="contador-${c.id_post}" class="contador-likes">${c.cont_likes || 0}</span>
             `;
         }
+        console.log('Comparando:', Number(c.id_usu), Number(usuarioActual), rolUsuarioActual);
        div.innerHTML = `
-        ${c.id_usu == usuarioActual || rolUsuarioActual == 'admin' ? `<button class="btn-eliminar" onclick="eliminarComentario('${c.id_post}')">🗑️</button>` : ''}
+        ${Number(c.id_usu) === Number(usuarioActual) || rolUsuarioActual == 'admin' ? `<button class="btn-eliminar" onclick="eliminarComentario('${c.id_post}')">🗑️</button>` : ''}
         <span class="usuario-comentario"><strong>${c.usuario || "Anónimo"}</strong>:</span>
         <br>
         <span class="titulo-comentario"><b>${tituloSeguro}</b></span>
