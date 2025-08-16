@@ -264,3 +264,13 @@ body {
 .modal-avatar{
     background-color: #0c1b32;
 }
+
+.avatar-modal {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  margin: 0 auto 20px auto;
+  background-size: cover;
+  background-position: center;
+  background-color: #d900ff; /* color por defecto */
+}
