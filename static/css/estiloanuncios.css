@@ -6,11 +6,17 @@
 .text2{
     font-family: 'Segoe UI', sans-serif;
     background-color: rgb(172, 172, 206);
-    padding: 50px;
-   border-radius: 40px;
-margin: 40px;
-text-align: center;
-color:rgb(255, 255, 255);
+
+  
+
+background: #0b1443;
+  color: rgb(255, 255, 255);
+  text-align: center;
+  padding: 1rem 2rem;
+  
+    background-image: linear-gradient(to right, #362950, #30234e); 
+    background-image: radial-gradient(circle, #bfb6e9, #5b5ca5); 
+
 }
 .header {
   background: #0b1443;
@@ -42,3 +48,5 @@ body {
   padding: 0;
   box-sizing: border-box;
   }
+
+  
