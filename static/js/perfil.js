@@ -26,8 +26,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 <span class="perfil-comentario-titulo">${c.titulo}</span>
                                 <span class="perfil-comentario-materia"> en ${c.nom_mat}</span>
                             </div>
+                            <div class="perfil-comentario-texto">
                             <p class="perfil-comentario-cont">${c.cont}</p>
                             <span class="perfil-comentario-fecha">Publicado el ${fechaFormato}</span>
+                            </div>
                         </div>
                     `;
                 });
