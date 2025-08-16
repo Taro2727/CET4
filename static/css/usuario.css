@@ -59,7 +59,7 @@ body {
 
 .avatar {
    
-    background-color: #fff;
+    background-color: #d900ff;
     width: 15rem;
     height: 15rem;
     border-radius: 50%;
@@ -150,16 +150,18 @@ body {
   background-color: rgba(0,0,0,0.5); /* efecto de fondo */
 }
 
-.content-modal{
+.content-modal {
   background-color: #fff;
-  margin: 15% auto;
-  padding: 20px;
-  border-radius: 10px;
-  width: 50%;
-  max-width: 400px;
+  margin: 5% auto;         /* menos margen superior */
+  padding: 30px;
+  border-radius: 15px;
+  width: 70%;              /* más ancho */
+  max-width: 900px;        /* ahora puede expandirse bastante */
+  min-height: 400px;       /* asegurás altura mínima */
   text-align: center;
-  box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.4);
 }
+
 
 
 /* --- Responsive tablet --- */
@@ -253,4 +255,12 @@ body {
     width: 100%;
 }
 
+}
+
+.texto-modal{
+    color:black;
+}
+
+.modal-avatar{
+    background-color: #0c1b32;
 }
