@@ -975,14 +975,14 @@ def get_comentario():
             query_likeado = "FALSE AS likeado_por_usuario"
             params = (id_mat,)
         query = f"""
-            SELECT p.id_post, p.titulo, p.cont, u.nom_usu AS usuario, p.fecha, 
+            SELECT p.id_post, p.titulo, p.cont,p.id_usu, u.nom_usu AS usuario, p.fecha, 
                    COUNT(l.id_like) AS cont_likes,
                    {query_likeado}
             FROM preg p
             LEFT JOIN usuario u ON p.id_usu = u.id_usu
             LEFT JOIN likes_comentarios l ON p.id_post = l.id_post
             WHERE p.id_mat = %s
-            GROUP BY p.id_post, p.titulo, p.cont, u.nom_usu, p.fecha
+            GROUP BY p.id_post, p.titulo, p.cont,p.id_usu, u.nom_usu, p.fecha
         """
 
         # Agregar ORDER BY basado en 'orden'
