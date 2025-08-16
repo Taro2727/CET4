@@ -1812,6 +1812,48 @@ def unban():
             cursor.close()
         if conn and conn.is_connected():
             conn.close()
+app.route('/perfil')
+def perfil():
+    render_template('/index/indexusuario.html')
+    orden = request.args.get('orden', 'reciente')
+    
+
+
+@app.route('/get_mis_comentarios')
+@login_required
+def get_mis_comentarios():
+    """
+    Obtiene los comentarios del usuario actualmente logueado.
+    """
+    try:
+        id_usu = current_user.id
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor(dictionary=True)
+        
+        # Consulta para obtener los comentarios del usuario logueado
+        query = """
+            SELECT p.id_post, p.titulo, p.cont, u.nom_usu, p.fecha, m.nom_mat
+            FROM preg p
+            JOIN usuario u ON p.id_usu = u.id_usu
+            JOIN materias m ON p.id_mat = m.id_mat
+            WHERE p.id_usu = %s
+            ORDER BY p.fecha DESC
+        """
+        cursor.execute(query, (id_usu,))
+        comentarios = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+        
+        return jsonify({"success": True, "comentarios": comentarios})
+
+    except mysql.connector.Error as err:
+        print(f"Error al obtener comentarios del perfil: {err}")
+        return jsonify({"success": False, "error": f"Error de base de datos: {err}"}), 500
+    except Exception as e:
+        print(f"Error inesperado al obtener comentarios del perfil: {e}")
+        return jsonify({"success": False, "error": f"Error inesperado: {e}"}), 500
+
 
 
 if __name__ == "__main__":
