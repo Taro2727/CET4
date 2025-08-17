@@ -1,11 +1,15 @@
 /* Estilos generales del cuerpo */
 body {
     font-family: Arial, sans-serif;
+    /* FONDO: Aplicamos el degradado oscuro de tu archivo CSS */
+    color: #ffffff; /* TEXTO: Cambiamos el color del texto a blanco para que se lea bien */
     background: linear-gradient(135deg, #1c1c1c 0%, #0d0d0d 100%);
     color: #ffffff;
     margin: 0;
-    padding: 20px;
     text-align: center;
+    background: linear-gradient(to top, #020c25 0%, #082c54 50%);
+    width: 100%;
+    min-height: 120vh;
 }
 
 /* Estilo del encabezado */
@@ -14,15 +18,19 @@ header {
 }
 
 header h1 {
+    margin-top: 1em;
     font-size: 2.5em;
+    /* ACENTO: Usamos el degradado violeta para el título */
+    background: linear-gradient(45deg, #ffffff, #ffffff);
     background: linear-gradient(45deg, #8e2de2, #4a00e0);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    text-fill-color: transparent;
 }
 
 header p {
+    margin-top: 1em;
+    color: #ffffff; /* Un gris claro para el subtítulo */
     color: #a0a0a0;
     font-size: 1.2em;
 }
@@ -38,6 +46,8 @@ header p {
 
 /* Estilo para cada tarjeta de miembro */
 .team-member {
+    /* FONDO DE TARJETA: Usamos el fondo sutil de tu archivo */
+    background-color: #123;;
     background-color: #1c1c1c;
     padding: 20px;
     border-radius: 10px;
