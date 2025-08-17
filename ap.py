@@ -717,7 +717,7 @@ def verificar_codigo():
         usuario_data = cursor.fetchone()
 
         if usuario_data and check_password_hash(usuario_data['contraseña'], contraseña):
-            user = User(usuario_data['id_usu'], usuario_data['nom_usu'], usuario_data['email'], usuario_data['contraseña'], usuario_data['rol'])
+            user = User(usuario_data['id_usu'], usuario_data['nom_usu'], usuario_data['email'], usuario_data['contraseña'], usuario_data['rol'],usuario_data['avatar'])
             login_user(user, remember=True)
             session.pop('email_del_usuario', None)
             session.pop('contra_del_usuario', None)
