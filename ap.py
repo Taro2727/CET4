@@ -467,7 +467,7 @@ def guardar_configuracion():
 
     try:
         email_usuario = current_user.email
-        tipo_otp = 'config'  
+        tipo_otp = 7 
         
         otp = ''.join(secrets.choice(string.digits) for _ in range(6))
         expiracion = datetime.now(timezone.utc) + timedelta(minutes=5)
