@@ -138,6 +138,8 @@ app.config.update(
 mail = Mail(app)
 
 #------------------------------------
+
+
 def check_ban(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -145,18 +147,33 @@ def check_ban(f):
             try:
                 conn = mysql.connector.connect(**DB_CONFIG)
                 cursor = conn.cursor(dictionary=True)
-                cursor.execute("SELECT id_ban FROM Baneo WHERE id_usu = %s AND activo = TRUE", (current_user.id,))
+                cursor.execute("""
+                    SELECT id_ban, fecha_fin 
+                    FROM Baneo 
+                    WHERE id_usu = %s AND activo = TRUE
+                """, (current_user.id,))
                 ban = cursor.fetchone()
-                cursor.close()
-                conn.close()
 
                 if ban:
-                    logout_user()  # 👈 Cierra la sesión
-                    return render_template("index/baneado.html")  # 👈 Muestra la página como invitado
+                    hoy = datetime.now()
+                    if hoy < ban['fecha_fin']:
+                        # Baneo ==> activo
+                        cursor.close()
+                        conn.close()
+                        logout_user()
+                        return render_template("index/baneado.html")
+                    else:
+                        # Baneo vencido ==> borrar
+                        cursor.execute('DELETE FROM Baneo WHERE id_usu = %s', (current_user.id,))
+                        conn.commit()
+
+                cursor.close()
+                conn.close()
             except Exception as e:
                 print("Error al verificar baneo:", e)
         return f(*args, **kwargs)
     return decorated_function
+
 #----F-U-N-C-I-O-N-E-S--P-Y-O-T-P----
 #.....despues las podemos usar.......
 
