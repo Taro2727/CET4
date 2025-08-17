@@ -12,6 +12,7 @@ body{
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    background:url('/static/util/img/lobo_cartel_sin_fondo.png');
 }
 
 .texto-baneado{
