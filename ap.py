@@ -626,12 +626,12 @@ def cambiar_contra():
     if not hay_usuario:
         session.pop('email_para_verificacion', None)
         session['email_para_verificacion_registro'] = email
-        tipo_otp = 'registro'
+        tipo_otp = 3
         asunto_mail = "R-E-G-I-S-T-R-O--C-E-T"
     else:
         session.pop('email_para_verificacion_registro', None)
         session['email_para_verificacion'] = email
-        tipo_otp = 'recuperacion'
+        tipo_otp = 1
         asunto_mail = "R-E-E-S-T-A-B-L-E-C-E-R--C-O-N-T-R-A-S-E-Ñ-A"
 
     otp = ''.join(secrets.choice(string.digits) for _ in range(6))
@@ -1690,14 +1690,14 @@ def cambiar_roles_ascender():
         # --- CAMBIO IMPORTANTE ---
         # 1. BORRAMOS cualquier código de 'ascender' anterior para este email.
         # Esto garantiza que siempre trabajemos con el código más reciente.
-        cursor.execute("DELETE FROM codigos_verificacion WHERE email = %s AND tipo = 'ascender'", (email_mail,))
+        cursor.execute("DELETE FROM codigos_verificacion WHERE email = %s AND tipo = 4", (email_mail,))
 
         # 2. INSERTAMOS el nuevo código generado.
         # Ya no necesitamos ON DUPLICATE KEY UPDATE porque siempre empezamos de cero.
         cursor.execute("""
             INSERT INTO codigos_verificacion (email, codigo, tipo, expiracion)
             VALUES (%s, %s, %s, %s)
-        """, (email_mail, otp, 'ascender', expiracion))
+        """, (email_mail, otp, 4, expiracion))
 
         conn.commit()
 
