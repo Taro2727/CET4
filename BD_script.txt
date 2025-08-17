@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.30, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.18, for Win64 (x86_64)
 --
--- Host: localhost    Database: cet4
+-- Host: yamanote.proxy.rlwy.net    Database: railway
 -- ------------------------------------------------------
--- Server version 8.0.30
+-- Server version	9.4.0
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -16,33 +16,77 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `Baneo`
+--
+
+DROP TABLE IF EXISTS `Baneo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `Baneo` (
+  `id_ban` int NOT NULL AUTO_INCREMENT,
+  `id_usu` int NOT NULL,
+  `fecha_inicio` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `duracion_dias` int NOT NULL,
+  `motivo` varchar(255) DEFAULT NULL,
+  `fecha_fin` timestamp NULL DEFAULT NULL,
+  `activo` tinyint(1) DEFAULT '1',
+  PRIMARY KEY (`id_ban`),
+  KEY `id_usu` (`id_usu`),
+  CONSTRAINT `Baneo_ibfk_1` FOREIGN KEY (`id_usu`) REFERENCES `usuario` (`id_usu`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Baneo`
+--
+
+LOCK TABLES `Baneo` WRITE;
+/*!40000 ALTER TABLE `Baneo` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Baneo` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `codigos_verificacion`
 --
--- NOTA: Esta es la nueva tabla solicitada
---
-CREATE TABLE codigos_verificacion (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    email VARCHAR(255) NOT NULL,
-    codigo VARCHAR(10) NOT NULL,
-    tipo ENUM('registro', 'login', 'recuperacion') NOT NULL,
-    expiracion DATETIME NOT NULL
-);
 
+DROP TABLE IF EXISTS `codigos_verificacion`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `codigos_verificacion` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `email` varchar(255) NOT NULL,
+  `codigo` varchar(10) NOT NULL,
+  `tipo` int DEFAULT NULL,
+  `expiracion` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_tipo_codigo` (`tipo`),
+  CONSTRAINT `fk_tipo_codigo` FOREIGN KEY (`tipo`) REFERENCES `tipos_codigo` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=235 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `codigos_verificacion`
+--
+
+LOCK TABLES `codigos_verificacion` WRITE;
+/*!40000 ALTER TABLE `codigos_verificacion` DISABLE KEYS */;
+/*!40000 ALTER TABLE `codigos_verificacion` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `cursos`
 --
 
 DROP TABLE IF EXISTS `cursos`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cursos` (
-  `id_cur` int NOT NULL AUTO_INCREMENT,
-  `nom_cur` varchar(20) NOT NULL,
-  `id_mod` int DEFAULT NULL,
-  PRIMARY KEY (`id_cur`),
-  KEY `fk_cursos_modalidad` (`id_mod`),
-  CONSTRAINT `fk_cursos_modalidad` FOREIGN KEY (`id_mod`) REFERENCES `modalidad` (`id_mod`)
+  `id_cur` int NOT NULL AUTO_INCREMENT,
+  `nom_cur` varchar(20) NOT NULL,
+  `id_mod` int DEFAULT NULL,
+  PRIMARY KEY (`id_cur`),
+  KEY `fk_cursos_modalidad` (`id_mod`),
+  CONSTRAINT `fk_cursos_modalidad` FOREIGN KEY (`id_mod`) REFERENCES `modalidad` (`id_mod`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -61,18 +105,18 @@ UNLOCK TABLES;
 --
 
 DROP TABLE IF EXISTS `likes_comentarios`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `likes_comentarios` (
-  `id_like` int NOT NULL AUTO_INCREMENT,
-  `id_post` int DEFAULT NULL,
-  `id_usu` int DEFAULT NULL,
-  PRIMARY KEY (`id_like`),
-  KEY `id_post` (`id_post`),
-  KEY `id_usu` (`id_usu`),
-  CONSTRAINT `likes_comentarios_ibfk_1` FOREIGN KEY (`id_post`) REFERENCES `preg` (`id_post`),
-  CONSTRAINT `likes_comentarios_ibfk_2` FOREIGN KEY (`id_usu`) REFERENCES `usuario` (`id_usu`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `id_like` int NOT NULL AUTO_INCREMENT,
+  `id_post` int DEFAULT NULL,
+  `id_usu` int DEFAULT NULL,
+  PRIMARY KEY (`id_like`),
+  KEY `id_post` (`id_post`),
+  KEY `id_usu` (`id_usu`),
+  CONSTRAINT `likes_comentarios_ibfk_1` FOREIGN KEY (`id_post`) REFERENCES `preg` (`id_post`),
+  CONSTRAINT `likes_comentarios_ibfk_2` FOREIGN KEY (`id_usu`) REFERENCES `usuario` (`id_usu`)
+) ENGINE=InnoDB AUTO_INCREMENT=114 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -81,6 +125,7 @@ CREATE TABLE `likes_comentarios` (
 
 LOCK TABLES `likes_comentarios` WRITE;
 /*!40000 ALTER TABLE `likes_comentarios` DISABLE KEYS */;
+INSERT INTO `likes_comentarios` VALUES (69,42,36),(97,56,45),(98,41,35),(99,57,48),(100,42,45),(101,42,35),(104,56,36),(105,58,35),(106,57,35),(108,59,48),(109,64,35),(110,65,48),(111,67,35),(112,68,35),(113,69,35);
 /*!40000 ALTER TABLE `likes_comentarios` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -89,16 +134,18 @@ UNLOCK TABLES;
 --
 
 DROP TABLE IF EXISTS `likes_rta`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `likes_rta` (
-  `id_like_rta` int NOT NULL AUTO_INCREMENT,
-  `id_com` int NOT NULL,
-  `id_usu` int NOT NULL,
-  PRIMARY KEY (`id_like_rta`),
-  CONSTRAINT `likes_rta_ibfk_1` FOREIGN KEY (`id_com`) REFERENCES `rta` (`id_com`),
-  CONSTRAINT `likes_rta_ibfk_2` FOREIGN KEY (`id_usu`) REFERENCES `usuario` (`id_usu`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `id_like_rta` int NOT NULL AUTO_INCREMENT,
+  `id_com` int NOT NULL,
+  `id_usu` int NOT NULL,
+  PRIMARY KEY (`id_like_rta`),
+  KEY `likes_rta_ibfk_1` (`id_com`),
+  KEY `likes_rta_ibfk_2` (`id_usu`),
+  CONSTRAINT `likes_rta_ibfk_1` FOREIGN KEY (`id_com`) REFERENCES `rta` (`id_com`),
+  CONSTRAINT `likes_rta_ibfk_2` FOREIGN KEY (`id_usu`) REFERENCES `usuario` (`id_usu`)
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -107,6 +154,7 @@ CREATE TABLE `likes_rta` (
 
 LOCK TABLES `likes_rta` WRITE;
 /*!40000 ALTER TABLE `likes_rta` DISABLE KEYS */;
+INSERT INTO `likes_rta` VALUES (12,51,35),(13,53,35),(14,54,35);
 /*!40000 ALTER TABLE `likes_rta` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -115,15 +163,15 @@ UNLOCK TABLES;
 --
 
 DROP TABLE IF EXISTS `materias`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `materias` (
-  `id_mat` int NOT NULL AUTO_INCREMENT,
-  `nom_mat` varchar(30) NOT NULL,
-  `id_cur` int DEFAULT NULL,
-  PRIMARY KEY (`id_mat`),
-  KEY `fk_materias_cursos` (`id_cur`),
-  CONSTRAINT `fk_materias_cursos` FOREIGN KEY (`id_cur`) REFERENCES `cursos` (`id_cur`)
+  `id_mat` int NOT NULL AUTO_INCREMENT,
+  `nom_mat` varchar(30) NOT NULL,
+  `id_cur` int DEFAULT NULL,
+  PRIMARY KEY (`id_mat`),
+  KEY `fk_materias_cursos` (`id_cur`),
+  CONSTRAINT `fk_materias_cursos` FOREIGN KEY (`id_cur`) REFERENCES `cursos` (`id_cur`)
 ) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -142,12 +190,12 @@ UNLOCK TABLES;
 --
 
 DROP TABLE IF EXISTS `modalidad`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `modalidad` (
-  `id_mod` int NOT NULL AUTO_INCREMENT,
-  `nom_mod` varchar(50) NOT NULL,
-  PRIMARY KEY (`id_mod`)
+  `id_mod` int NOT NULL AUTO_INCREMENT,
+  `nom_mod` varchar(50) NOT NULL,
+  PRIMARY KEY (`id_mod`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -162,26 +210,56 @@ INSERT INTO `modalidad` VALUES (1,'Programacion'),(2,'informatica');
 UNLOCK TABLES;
 
 --
+-- Table structure for table `notificaciones`
+--
+
+DROP TABLE IF EXISTS `notificaciones`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `notificaciones` (
+  `id_notif` int NOT NULL AUTO_INCREMENT,
+  `id_usu` int NOT NULL,
+  `tipo` enum('info','alerta','mensaje') NOT NULL DEFAULT 'info',
+  `mensaje` varchar(255) NOT NULL,
+  `fecha` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `leida` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id_notif`),
+  KEY `id_usu` (`id_usu`),
+  CONSTRAINT `notificaciones_ibfk_1` FOREIGN KEY (`id_usu`) REFERENCES `usuario` (`id_usu`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `notificaciones`
+--
+
+LOCK TABLES `notificaciones` WRITE;
+/*!40000 ALTER TABLE `notificaciones` DISABLE KEYS */;
+INSERT INTO `notificaciones` VALUES (5,35,'info','Catalina respondió tu pregunta.','2025-08-13 14:23:37',0),(6,35,'info','Juan dio like a tu comentario.','2025-08-13 14:23:37',0),(7,35,'info','Catalina respondió tu pregunta.','2025-08-13 14:43:05',0),(9,35,'mensaje','catabaggio dio like a tu comentario.','2025-08-16 17:03:09',0),(10,35,'mensaje','catabaggio respondió tu pregunta.','2025-08-16 20:14:44',0),(11,35,'mensaje','catabaggio respondió tu pregunta.','2025-08-16 20:19:42',0),(12,35,'mensaje','catabaggio dio like a tu comentario.','2025-08-16 21:39:29',0),(13,48,'mensaje','catabaggio dio like a tu comentario.','2025-08-16 21:41:47',0),(14,48,'mensaje','catabaggio dio like a tu comentario.','2025-08-16 22:35:04',0),(15,48,'mensaje','catabaggio dio like a tu comentario.','2025-08-16 22:38:13',0),(16,36,'mensaje','Milanesa respondió tu pregunta.','2025-08-17 13:52:00',0);
+/*!40000 ALTER TABLE `notificaciones` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `preg`
 --
 
 DROP TABLE IF EXISTS `preg`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `preg` (
-  `id_post` int NOT NULL AUTO_INCREMENT,
-  `titulo` varchar(100) NOT NULL,
-  `cont` text NOT NULL,
-  `fecha` datetime DEFAULT CURRENT_TIMESTAMP,
-  `id_usu` int DEFAULT NULL,
-  `id_mat` int DEFAULT NULL,
-  `cont_likes` int DEFAULT 0,
-  PRIMARY KEY (`id_post`),
-  KEY `fk_post_usuario` (`id_usu`),
-  KEY `fk_post_materias` (`id_mat`),
-  CONSTRAINT `fk_post_materias` FOREIGN KEY (`id_mat`) REFERENCES `materias` (`id_mat`),
-  CONSTRAINT `fk_post_usuario` FOREIGN KEY (`id_usu`) REFERENCES `usuario` (`id_usu`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `id_post` int NOT NULL AUTO_INCREMENT,
+  `titulo` varchar(100) NOT NULL,
+  `cont` text NOT NULL,
+  `fecha` datetime DEFAULT CURRENT_TIMESTAMP,
+  `id_usu` int DEFAULT NULL,
+  `id_mat` int DEFAULT NULL,
+  `cont_likes` int DEFAULT '0',
+  PRIMARY KEY (`id_post`),
+  KEY `fk_post_usuario` (`id_usu`),
+  KEY `fk_post_materias` (`id_mat`),
+  CONSTRAINT `fk_post_materias` FOREIGN KEY (`id_mat`) REFERENCES `materias` (`id_mat`),
+  CONSTRAINT `fk_post_usuario` FOREIGN KEY (`id_usu`) REFERENCES `usuario` (`id_usu`)
+) ENGINE=InnoDB AUTO_INCREMENT=72 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -190,7 +268,7 @@ CREATE TABLE `preg` (
 
 LOCK TABLES `preg` WRITE;
 /*!40000 ALTER TABLE `preg` DISABLE KEYS */;
-INSERT INTO `preg` VALUES (1,'hola','hola','2025-06-19 22:59:02',10,3),(2,'hola','hola','2025-06-20 01:16:21',10,2),(3,'hola','hola','2025-06-20 01:16:46',10,4),(4,'hola','hola','2025-06-20 02:09:38',10,1);
+INSERT INTO `preg` VALUES (35,'aaaaa','hola\n','2025-08-05 00:22:52',35,1,0),(36,'<b>Hola</b><script>alert(\'XSS\')</script>','<b>Hola</b><script>alert(\'XSS\')</script>\n','2025-08-05 00:24:11',35,1,0),(37,'****','****','2025-08-05 01:54:39',35,1,0),(38,'❤❤❤❤ la que lee','holaa odio a todos los ped0filos','2025-08-05 02:05:15',35,1,1),(39,'❤❤❤❤ la que lee','odio a todos los pedofilos','2025-08-05 02:05:45',35,1,0),(41,'❤❤❤❤','****','2025-08-05 02:51:47',35,1,2),(42,'❤❤❤❤','❤❤❤❤ ❤❤❤❤','2025-08-05 02:52:46',35,1,6),(45,'aaa','aaa','2025-08-06 19:52:02',36,6,0),(46,'aaa','aaaa','2025-08-06 19:52:44',36,6,0),(56,'123123','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.','2025-08-12 21:57:58',45,1,2),(57,'prueba de noti','1123','2025-08-13 22:19:02',35,1,2),(58,'ajajja','jajajja','2025-08-15 16:57:27',36,1,1),(59,'❤❤❤❤','❤❤❤❤','2025-08-15 18:16:18',35,1,1),(63,'Pruebas','Probando...','2025-08-15 21:35:33',50,1,0),(64,'gg','gg','2025-08-15 22:12:54',36,1,1),(65,'aa','aa','2025-08-16 21:32:17',35,1,1),(66,'hola','chau','2025-08-16 21:40:41',36,14,0),(67,'aa','aa','2025-08-16 21:41:09',48,1,1),(68,'aa','aa','2025-08-16 22:33:52',48,1,1),(69,'aa','aa','2025-08-16 22:37:47',48,1,1),(70,' Te odio gavi','Me estan sobrexplotando porfavorayudenmne','2025-08-16 22:53:52',45,1,0),(71,'prueba','hola','2025-08-16 23:02:08',36,1,0);
 /*!40000 ALTER TABLE `preg` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -198,19 +276,23 @@ UNLOCK TABLES;
 -- Table structure for table `rta`
 --
 
+DROP TABLE IF EXISTS `rta`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `rta` (
   `id_com` int NOT NULL AUTO_INCREMENT,
   `cont` text NOT NULL,
   `fecha` datetime DEFAULT CURRENT_TIMESTAMP,
   `id_post` int DEFAULT NULL,
   `id_usu` int DEFAULT NULL,
-  `cont_likes_rta` int DEFAULT 0,
+  `cont_likes_rta` int DEFAULT '0',
   PRIMARY KEY (`id_com`),
-  KEY `fk_rta_preg` (`id_post`),
-  KEY `fk_rta_usuario` (`id_usu`),
-  CONSTRAINT `fk_rta_preg` FOREIGN KEY (`id_post`) REFERENCES `preg` (`id_post`),
-  CONSTRAINT `fk_rta_usuario` FOREIGN KEY (`id_usu`) REFERENCES `usuario` (`id_usu`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `fk_com_post` (`id_post`),
+  KEY `fk_com_postusu` (`id_usu`),
+  CONSTRAINT `fk_com_post` FOREIGN KEY (`id_post`) REFERENCES `preg` (`id_post`),
+  CONSTRAINT `fk_com_postusu` FOREIGN KEY (`id_usu`) REFERENCES `usuario` (`id_usu`)
+) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `rta`
@@ -218,8 +300,59 @@ CREATE TABLE `rta` (
 
 LOCK TABLES `rta` WRITE;
 /*!40000 ALTER TABLE `rta` DISABLE KEYS */;
-INSERT INTO `rta` VALUES (1,'hola','2025-06-19 22:59:10',1,10),(2,'hola','2025-06-20 01:16:27',2,10),(3,'hola','2025-06-20 01:16:52',3,10);
+INSERT INTO `rta` VALUES (35,'bbbb','2025-08-06 19:53:00',46,36,0),(49,'hola','2025-08-15 22:41:46',64,36,0),(50,'xd','2025-08-15 22:42:15',64,36,0),(51,'no se tendria que enviar al email','2025-08-16 18:55:47',59,35,0),(52,'ahora se tendria que enviar','2025-08-16 18:56:39',59,35,0),(53,'tendria q llegar a todos lados','2025-08-16 20:14:41',59,48,0),(54,'solo push\n','2025-08-16 20:19:39',57,48,0),(56,'llego noti?','2025-08-17 13:51:58',71,61,0);
 /*!40000 ALTER TABLE `rta` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `suscripcion_push`
+--
+
+DROP TABLE IF EXISTS `suscripcion_push`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `suscripcion_push` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `id_usu` int NOT NULL,
+  `suscripcion_json` text NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id_usu` (`id_usu`),
+  CONSTRAINT `suscripcion_push_ibfk_1` FOREIGN KEY (`id_usu`) REFERENCES `usuario` (`id_usu`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `suscripcion_push`
+--
+
+LOCK TABLES `suscripcion_push` WRITE;
+/*!40000 ALTER TABLE `suscripcion_push` DISABLE KEYS */;
+INSERT INTO `suscripcion_push` VALUES (8,50,'{\"endpoint\": \"https://wns2-bl2p.notify.windows.com/w/?token=BQYAAACeJHUXC0T9OofDJ4iVRXH%2bfrC2dJ0gECIXj4QF8WOrAtFsSfCS1r%2f0%2b4XXZmBM%2f5V%2f2Hvad1ZCKEPyujJscaWfU7KHLPWVeF%2bJYE8Ul8WVjVTowQpoLyBs1%2boH%2bQS5v3gxJWOdBghzb907JvJlta2nJjmINlzNhCs%2bYz2RVVfMW3q0bgZQ9aWrGmeWSFraQQK1OHyp%2boICJUv0V8zPw8fZq1oxLB1laLQNQPU4gCQKJ7Az6HPnGEo7G1rNqQR8TxsdUiJSIY5nfsbiUhKA5tSzzNu9fVL7VhRXLQpb%2bsJVujPAhS0%2bbkf7v5k2wKfZBko%3d\", \"expirationTime\": null, \"keys\": {\"p256dh\": \"BEHvrGdIWOWYlz8RO7TtzWasW6ohUUhrmK_As32BO-P0cxbO73pxVkq4qATnKFy_GhwK0yn-CMpa7xuCux35KK8\", \"auth\": \"oR6e_p_0TST468yDF6a5Ug\"}}'),(20,48,'{\"endpoint\": \"https://fcm.googleapis.com/fcm/send/dqL-Io9o7CQ:APA91bG1Z8ddU79XE42Uy84VvXnp44xFI7Df5QB8DrkxGJzpe7R9Ilh2ISMeArje5L0vcNNspK12sJKwYOIdyeVLaxSZZAL-4DUGCRVbv5hBmB3Krj4qSExftsGozE0Rcb3K7pbMNtHK\", \"expirationTime\": null, \"keys\": {\"p256dh\": \"BBjsnmi_UxkmU5eYibHKVDqN5YGat7lqZ9rb1wa455Fc_6ijl05B80Oe60zNWJKEfs5zm9HRctBij_X0OQi58Jc\", \"auth\": \"8CUOrEblG06QC5iC-OTevw\"}}'),(21,35,'{\"endpoint\": \"https://wns2-bl2p.notify.windows.com/w/?token=BQYAAADKytHRKBScphs13uqLfC82a79FipGACvBal9%2bk2jUKFkSF5S1VThJo4RsbHLILx3JI15voUQwDfrEubgOeV8UFrnZHkFQNY0tRZ%2bQwQEQDCDotvzEVfhN%2f%2fu%2btgWLl7LfqSWZTBe1qil3KA3oMhox%2b8nsPs%2f%2fEMkUHysz%2bPPQsDNd6EI%2bSNKS80CLNoqFTtMINCfTydwqbCzjNsbhwnUCOadCpB2%2fElztvvsgx9pkkjXPRtF1Jq1svPNSNmvP7sYiIdKiNoh%2fu5eePHratKzToF0teM%2fUXiHqB8xVsd%2byub71Vg2kSzJLioaXpz1JmsenUo8duyLvuk91Yg%2bDr1y%2bA\", \"expirationTime\": null, \"keys\": {\"p256dh\": \"BCxaAKvmH-3g0YjltKeA9ElagaQO-aJnKHrmpGl0nOC99OgCZgNSTErUlMe9M9mj7Nw1vw1YsIvIApSJFH1wElE\", \"auth\": \"Mll_dsLtHN89nhqZlEpwhQ\"}}'),(22,36,'{\"endpoint\": \"https://wns2-bl2p.notify.windows.com/w/?token=BQYAAAAFHSAjf%2fwqB%2bxK3NO8F383gZHOH%2fluowNWOlmXCBEkMzPmcT99kJabTW%2f68N2Aer%2fAeuP5vLn02tyb%2bGNqEztwkzwdYTiD%2bqW78A0LPzLgnuL2dVjTHdoKM01K2fCDPEpdn8S4pql4kvDxr2kPfUO1U40asn%2bNfms2z1JVuBjIry3%2byTc7YoFqf5mwGhDOyVHZ8rY4JXRVNzvASn3BeuiU9CjDoNCOkBHQNf5uYW6Lcmp1srJowiyos5iSYeeNVSVxyR57hB3S4IR%2f%2fDpWhVf%2fTRbWKmJX9TOVomp7Ip87b9X9P2HwT%2bMRRX6fpoPcMeY%3d\", \"expirationTime\": null, \"keys\": {\"p256dh\": \"BG8KCPf249R58TXrZ-GXd7WTFLUO9LEJHNABuVY-w94uVJ61lkc__RTSnN5RGB1ivwTFtFWh5UVObhwDjVDeVBM\", \"auth\": \"K1w4oDBhIHTsnK-SYixU3w\"}}');
+/*!40000 ALTER TABLE `suscripcion_push` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `tipos_codigo`
+--
+
+DROP TABLE IF EXISTS `tipos_codigo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `tipos_codigo` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nom_tipo` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tipos_codigo`
+--
+
+LOCK TABLES `tipos_codigo` WRITE;
+/*!40000 ALTER TABLE `tipos_codigo` DISABLE KEYS */;
+INSERT INTO `tipos_codigo` VALUES (1,'recuperacion'),(2,'login'),(3,'registro'),(4,'ascender'),(5,'degradar'),(6,'eliminar'),(7,'config');
+/*!40000 ALTER TABLE `tipos_codigo` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -227,17 +360,21 @@ UNLOCK TABLES;
 --
 
 DROP TABLE IF EXISTS `usuario`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `usuario` (
-  `id_usu` int NOT NULL AUTO_INCREMENT,
-  `nom_usu` varchar(30) NOT NULL,
-  `email` varchar(50) NOT NULL,
-  `contraseña` varchar(255) NOT NULL,
-  `rol` ENUM('normal','moderador','admin') NOT NULL
-  PRIMARY KEY (`id_usu`),
-  UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `id_usu` int NOT NULL AUTO_INCREMENT,
+  `nom_usu` varchar(30) NOT NULL,
+  `email` varchar(50) NOT NULL,
+  `contraseña` varchar(255) NOT NULL,
+  `rol` enum('normal','moderador','admin') NOT NULL,
+  `avatar` int DEFAULT '1',
+  `notif_email` tinyint(1) NOT NULL DEFAULT '1',
+  `notif_push` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id_usu`),
+  UNIQUE KEY `email` (`email`),
+  UNIQUE KEY `nom_usu` (`nom_usu`)
+) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -246,7 +383,7 @@ CREATE TABLE `usuario` (
 
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-INSERT INTO `usuario` VALUES (1,'TaylorSwift123','chau@gmail.com','hola'),(3,'hola','chauchi@gmail.com','hola'),(4,'intento123','iasgd@gmail.com','miedo'),(5,'pepeargento','hahga@gmail.com','hola'),(9,'monicaragento','moni@gmail.com','123'),(10,'holacata','holacata@gmail.com','scrypt:32768:8:1$FxEKA7RuWjQP7mHn$3c09ce82352e340954075b8d5b58e31395fa44085bcf459bf58f84e6c96d70ef8ad89c91abb204f0d4b8b9ba2005aa58d51b84f7da03f746444448c712f838f7');
+INSERT INTO `usuario` VALUES (35,'catabaggio','cataluzguaschvives@gmail.com','scrypt:32768:8:1$JCJQKhnhVg1WXJTR$154d59d3ef7fc9675d45465405fbaa4d7b48f14ac489fc2919235913edb9726cd3bde533f2f574d2fd0b2c9d461f0975cf3a89cdec82e5b1b81b3c447820415e','admin',1,0,1),(36,'Gaaav','clqstlg@gmail.com','scrypt:32768:8:1$jV22bCfGGLlZgpYW$13a384bfa0300fb75c96c31a4cba90c3ea909f6536739af1f907807bd23146c043f78eae153225815b9415f1dc5722d2e342c5750074ae0b64f2cefa46a55adb','normal',2,1,1),(45,'Francoteee19','franrodriguez7422@gmail.com','scrypt:32768:8:1$TFy2otikNATuf3ME$fdecbcd06c458172a5e70f71a57631ae082a64817af8943b6986146daf40c6fae6b2c6b12af5798672ba5cdc4c1016fe3abc078cc7aa7d61f8556d54a782e3f6','normal',1,1,1),(48,'catabaggio2','baggiiox@gmail.com','scrypt:32768:8:1$C0rRvZECFOkxLN2y$d7799071c4258adbac50c8336d789904e06c8508d49e96b2a6a72a1cbb6367232231b3a2d3b37f5d42237a30ff5d7474c09b87e8a254141bb7370fb39411a156','normal',1,1,1),(49,'taro','lautarogameryt27@gmail.com','pbkdf2:sha256:1000000$SbX6HBe1mdoEn2Hr$1ed1a800d881e7ff57b14c1d49bce8115b4244ae25e97ba264ccbfb6d610e241','moderador',1,0,0),(50,'Gabrieel02','ggabrielramirezz09@gmail.com','pbkdf2:sha256:1000000$djUzy1op2mW4Jk8y$c8a4c248e67a6119fb8ec7aa87e30b3543dc0cd2967eb0a1fe6264121b5d457c','admin',1,1,1),(51,'juprobando@gmail.com','julietaescuela2027@gmail.com','scrypt:32768:8:1$PsgMf8ZprzekiBqt$863e388bb98af1ef9bac6abd479c272c5172622055e62c02647741bf1db42774980b7ca9ab6f911899eed9ab5ab67aea7ae8dfa3e20b4c9c44a2104b2a65c458','normal',1,1,1),(54,'Ramirez02','rramirezgabriell09@gmail.com','scrypt:32768:8:1$qm4kzl7PhZByJfGk$e12dd701bf4d47c5a7f3a0fa8c030cbbb4af56d71c45acd6f8b779918368af7d8d7d327d08b3c9b064fbbf74a009b2966d2e51dec757fb9b57303fc5b07781bd','normal',1,1,1),(60,'Ramirez03','roriel62@gmail.com','scrypt:32768:8:1$hiKOkodoUv3vtvfZ$f41a77ac9abc5e743f95c868a6a642ca0f408e65aabf7e7d23f5fec36d2e89b5c4190c97d03d2ef104be7aa04e36339260a88534acbdd34fa14661d75b73994c','normal',1,1,1),(61,'Milanesa','lautaritog2239@gmail.com','scrypt:32768:8:1$CKfUMCqpshDEIkYy$8cf198589f661a889f79a34cbfcd05c99fadd01d811b4e0046c0d753ac290d70a16047da3e60f7e9c95bae7597dce320967a79bc52d26fb45e12c8a9f3d37559','normal',1,1,1);
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -255,15 +392,15 @@ UNLOCK TABLES;
 --
 
 DROP TABLE IF EXISTS `usumod`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `usumod` (
-  `id_usu` int NOT NULL,
-  `id_mod` int NOT NULL,
-  PRIMARY KEY (`id_usu`,`id_mod`),
-  KEY `fk_modalidad_usumod` (`id_mod`),
-  CONSTRAINT `fk_modalidad_usumod` FOREIGN KEY (`id_mod`) REFERENCES `modalidad` (`id_mod`),
-  CONSTRAINT `fk_usumod_usuario` FOREIGN KEY (`id_usu`) REFERENCES `usuario` (`id_usu`)
+  `id_usu` int NOT NULL,
+  `id_mod` int NOT NULL,
+  PRIMARY KEY (`id_usu`,`id_mod`),
+  KEY `fk_modalidad_usumod` (`id_mod`),
+  CONSTRAINT `fk_modalidad_usumod` FOREIGN KEY (`id_mod`) REFERENCES `modalidad` (`id_mod`),
+  CONSTRAINT `fk_usumod_usuario` FOREIGN KEY (`id_usu`) REFERENCES `usuario` (`id_usu`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -275,6 +412,10 @@ LOCK TABLES `usumod` WRITE;
 /*!40000 ALTER TABLE `usumod` DISABLE KEYS */;
 /*!40000 ALTER TABLE `usumod` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Dumping routines for database 'railway'
+--
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -285,4 +426,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-07-27 20:49:16
+-- Dump completed on 2025-08-17 13:07:44
