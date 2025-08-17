@@ -13,7 +13,9 @@ body {
     width: 100%;
     min-height: 100vh;
 }
-
+#toggle{
+    margin-top: -0.5em;
+}
 /* empieza la bARra de busqueda  */
 ::placeholder {
   color: #fff;
@@ -118,6 +120,7 @@ body {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    margin-top: 1em;
     gap: 20px;
     padding: 40px 20px;
 }
