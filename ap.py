@@ -667,25 +667,25 @@ def verificar_codigo():
 
     if 'email_para_configuracion' in session:
         email = session.get('email_para_configuracion')
-        tipo = 'config'
+        tipo = 7 #config
     elif 'email_para_rol_up_code' in session:
         email = session.get('email_para_rol_up_code')
-        tipo = 'ascender'
+        tipo = 4 #ascender
     elif 'email_para_rol_down_code' in session:
         email = session.get('email_para_rol_down_code')
-        tipo = 'degradar'
+        tipo = 5 #degradar
     elif 'email_para_eliminar_code' in session:
         email = session.get('email_para_eliminar_code')
-        tipo = 'eliminar'
+        tipo = 6 #eliminar
     elif 'email_para_verificacion_registro' in session:
         email = session.get('email_para_verificacion_registro')
-        tipo = 'registro'
+        tipo = 3 #registro
     elif 'email_del_usuario' in session:
         email = session.get('email_del_usuario')
-        tipo = 'login'
+        tipo = 2 #login
     elif 'email_para_verificacion' in session:
         email = session.get('email_para_verificacion')
-        tipo = 'recuperacion'
+        tipo = 1 #recuperacion
     else:
         return jsonify({'error': 'Sesión inválida o expirada. Por favor, inicia el proceso de nuevo.'}), 400
 
@@ -711,7 +711,7 @@ def verificar_codigo():
     session['otp_verificado'] = True
 
     # --- Lógica de redirección después de la verificación ---
-    if tipo == 'login':
+    if tipo == 2:
         contraseña = session.get('contra_del_usuario')
         cursor.execute("SELECT * FROM usuario WHERE email=%s", (email,))
         usuario_data = cursor.fetchone()
@@ -728,18 +728,18 @@ def verificar_codigo():
             conn.close()
             return jsonify({'error': 'La contraseña guardada es incorrecta.'}), 401
 
-    elif tipo == 'registro':
+    elif tipo == 3:
         session.pop('email_del_usuario', None)
         conn.close()
         return jsonify({'exito': True, 'redirigir': '/crearcuenta'})
 
-    elif tipo == 'recuperacion':
+    elif tipo == 1:
         session['email_para_cambio'] = email
         session.pop('email_del_usuario', None)
         conn.close()
         return jsonify({'exito': True, 'redirigir': '/actualizar'})
     
-    elif tipo == 'config':
+    elif tipo == 7:
         try:
             nueva_pass_hasheada = session['nueva_pass_hasheada_config']
             id_usuario_actual = current_user.id # Guardamos el ID antes de hacer logout
@@ -767,17 +767,17 @@ def verificar_codigo():
             conn.close()
             return jsonify({'error': f'No se pudo actualizar la contraseña: {e}'}), 500
 
-    elif tipo == 'ascender':
+    elif tipo == 4:
        email_usu = session.get('email_usuario_up')
        conn.close()
        return jsonify({'exito': True, 'redirigir': '/upgradear'})
     
-    elif tipo == 'degradar':
+    elif tipo == 5:
         email_usu= session.get('email_usuario_down')
         conn.close()
         return jsonify({'exito': True, 'redirigir': '/down'})
     
-    elif tipo == 'eliminar':
+    elif tipo == 6:
         conn.close()
         return jsonify({'exito': True, 'redirigir': '/eliminar_usuario'})
     
@@ -982,11 +982,11 @@ def otp_login():
         otp = ''.join(secrets.choice(string.digits) for _ in range(6))
         expiracion = datetime.now(timezone.utc) + timedelta(minutes=5)
         
-        cursor.execute("DELETE FROM codigos_verificacion WHERE email = %s AND tipo = 'login'", (email,))
+        cursor.execute("DELETE FROM codigos_verificacion WHERE email = %s AND tipo =2", (email,))
         cursor.execute("""
             INSERT INTO codigos_verificacion (email, codigo, tipo, expiracion)
             VALUES (%s, %s, %s, %s)
-        """, (email, otp, 'login', expiracion))
+        """, (email, otp, 2, expiracion))
         conn.commit()
 
         msg = Message("I-N-I-C-I-O--S-E-S-I-O-N--C-E-T",
@@ -1745,14 +1745,14 @@ def cambiar_roles_down():
         # --- CAMBIO IMPORTANTE ---
         # 1. BORRAMOS cualquier código de 'degradar' anterior para este email.
         # Esto garantiza que siempre trabajemos con el código más reciente.
-        cursor.execute("DELETE FROM codigos_verificacion WHERE email = %s AND tipo = 'degradar'", (email_mail,))
+        cursor.execute("DELETE FROM codigos_verificacion WHERE email = %s AND tipo = 5", (email_mail,))
 
         # 2. INSERTAMOS el nuevo código generado.
         # Ya no necesitamos ON DUPLICATE KEY UPDATE porque siempre empezamos de cero.
         cursor.execute("""
             INSERT INTO codigos_verificacion (email, codigo, tipo, expiracion)
             VALUES (%s, %s, %s, %s)
-        """, (email_mail, otp, 'degradar', expiracion))
+        """, (email_mail, otp, 5, expiracion))
 
         conn.commit()
 
