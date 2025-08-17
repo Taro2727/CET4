@@ -1,5 +1,5 @@
 # archivo: app.py
-from flask import Flask, request, jsonify, render_template, session, redirect, url_for, flash
+from flask import Flask, request, jsonify, render_template, session, redirect, url_for, flash,abort
 import mysql.connector # Conectar a MySQL
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -37,6 +37,9 @@ from flask_limiter.util import get_remote_address
 from pywebpush import webpush, WebPushException
 import json
 from flask import send_from_directory
+
+#para hacer funciones herramientosas (functools)
+from functools import wraps
 
 # from cryptography.hazmat.primitives.asymmetric import ec
 # from cryptography.hazmat.primitives import serialization
@@ -135,7 +138,25 @@ app.config.update(
 mail = Mail(app)
 
 #------------------------------------
+def check_ban(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if current_user.is_authenticated:
+            try:
+                conn = mysql.connector.connect(**DB_CONFIG)
+                cursor = conn.cursor(dictionary=True)
+                cursor.execute("SELECT id_ban FROM Baneo WHERE id_usu = %s AND activo = TRUE", (current_user.id,))
+                ban = cursor.fetchone()
+                cursor.close()
+                conn.close()
 
+                if ban:
+                    logout_user()  # 👈 Cierra la sesión
+                    return render_template("index/baneado.html")  # 👈 Muestra la página como invitado
+            except Exception as e:
+                print("Error al verificar baneo:", e)
+        return f(*args, **kwargs)
+    return decorated_function
 #----F-U-N-C-I-O-N-E-S--P-Y-O-T-P----
 #.....despues las podemos usar.......
 
@@ -221,6 +242,7 @@ def service_worker():
     return send_from_directory('.', 'sw.js', mimetype='application/javascript')
 
 @app.route('/') #ruta para la página de inicio
+@check_ban 
 def inicio():
     if current_user.is_authenticated:
         return redirect(url_for('indexhomeoinicio'))  # Redirige si ya está logueado
@@ -340,6 +362,7 @@ def guardar_notificacion(id_usu, tipo, mensaje):
 
 @app.route('/panelnotificaciones')
 @login_required
+@check_ban
 def panelnotificaciones():
     return render_template('index/panelnotificaciones.html')
 
@@ -424,11 +447,13 @@ def eliminar_suscripcion():
 # ruta para la tuerca barra lateral
 @app.route('/configuracion')
 @login_required
+@check_ban
 def configuracion():
     return render_template('index/tuercabarralateral.html')
 
 @app.route('/guardar-configuracion', methods=['POST'])
 @login_required
+@check_ban
 def guardar_configuracion():
     """
     Inicia el flujo de cambio de contraseña desde Configuración.
@@ -837,6 +862,7 @@ def iniciarsesion():
 #     return render_template('index/indexcrearcuenta.html')
 
 @app.route('/indexhomeoinicio')
+@check_ban 
 def indexhomeoinicio():
     if not current_user.is_authenticated and not session.get('guest'):
         return redirect(url_for('iniciarsesion'))
@@ -849,10 +875,12 @@ def entrar_como_invitado():
 
 #desde aca se elige la modalidad
 @app.route('/programacion') #ruta para la página de programación
+@check_ban
 def indexprogramacion():
     return render_template("index/dprogramacionindex.html")
 
 @app.route('/informatica') #ruta para la página de informática
+@check_ban
 def indexinformatica():
     return render_template("index/dinformaticaindex.html")
 #hasta aca se elige la modalidad
@@ -863,6 +891,7 @@ def indexinformatica():
 #a partir de aca son las materias de 4to Informatica
 #4
 @app.route('/informatica/4toinformatica')#el mio es el de nro (4to)
+@check_ban
 def cuarto4():
     return render_template("index/indexin4to.html")
 #-------------------------------------------------------
@@ -871,6 +900,7 @@ def cuarto4():
 
 #5
 @app.route('/informatica/5toinformatica')
+@check_ban
 def quinto5():
     return render_template("index/indexin5to.html")
 #-------------------------------------------------------
@@ -879,6 +909,7 @@ def quinto5():
 
 #6
 @app.route('/informatica/6toinformatica')#el mio es el de nro (6to)
+@check_ban
 def sexto6():
     return render_template("index/indexin6to.html")
 #-------------------------------------------------------
@@ -886,6 +917,7 @@ def sexto6():
 #a partir de aca son las materias de 7mo informatica
 #7
 @app.route('/informatica/7moinformatica')#el mio es el de nro (7mo)
+@check_ban
 def septimo7():
     return render_template("index/indexin7mo.html")
 
@@ -900,6 +932,7 @@ def septimo7():
 
 #8
 @app.route('/programacion/4toprogramacion') #ruta para la página de 4to de programación
+@check_ban
 def index4toprog():
     return render_template("index/indexdcuarto.html")
 #-------------------------------------------------------
@@ -908,6 +941,7 @@ def index4toprog():
 
 #9
 @app.route('/programacion/5toprogramacion') #ruta para la página de 5to de programación
+@check_ban
 def index5toprog():
     return render_template("index/indexdquinto.html")
 #-------------------------------------------------------
@@ -916,6 +950,7 @@ def index5toprog():
 
 #10
 @app.route('/programacion/6toprogramacion') #ruta para la página de 6to de programación
+@check_ban
 def index6toprog():
     return render_template("index/indexsexto.html")
 
@@ -925,6 +960,7 @@ def index6toprog():
 
 #11
 @app.route('/programacion/7moprogramacion') #ruta para la página de 7mo de programación
+@check_ban
 def index7moprog():
     return render_template("index/indexdseptimo.html")
 
@@ -1011,6 +1047,7 @@ def otp_login():
 #ACA ABAJO DE MI(? ESTABA LO DE /COMENTARIO/MATERIA/IDMAT Y /COMENTARIO METHOD=POST
 
 @app.route('/comentario/materias/<int:id_mat>')
+@check_ban
 def comentario_materia(id_mat):
     # CAMBIO: Eliminada la importación y conexión duplicada.
     try:
@@ -1421,6 +1458,8 @@ def eliminar_respuesta():
 #ACA PANEL ADMIIIIIIIIIIN 
 
 @app.route("/paneladmin")
+@check_ban
+@login_required
 def paneladmin():
     return render_template("index/paneladmin.html")
 

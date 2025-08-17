@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="usuario-id" content="{{ current_user.id or 'null' }}">
+    <meta name="usuario-rol" content="{{ current_user.rol or 'anonimo' }}">
+    <link rel="stylesheet" href="/static/css/ban.css">
+    <title></title>
+</head>
+<body>
+    <div id="container">
+        <p>Estas baneado 🚫</p>
+        <br>
+        <br>
+        <a href='/entrar_como_invitado'>Entrar como invitado</a>
+    </div>
+</body>
+</html>
