@@ -1,9 +1,8 @@
 /* Estilos generales del cuerpo */
 body {
     font-family: Arial, sans-serif;
-    /* FONDO: Aplicamos el degradado oscuro de tu archivo CSS */
     background: linear-gradient(135deg, #1c1c1c 0%, #0d0d0d 100%);
-    color: #ffffff; /* TEXTO: Cambiamos el color del texto a blanco para que se lea bien */
+    color: #ffffff;
     margin: 0;
     padding: 20px;
     text-align: center;
@@ -16,7 +15,6 @@ header {
 
 header h1 {
     font-size: 2.5em;
-    /* ACENTO: Usamos el degradado violeta para el título */
     background: linear-gradient(45deg, #8e2de2, #4a00e0);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -25,44 +23,27 @@ header h1 {
 }
 
 header p {
-    color: #a0a0a0; /* Un gris claro para el subtítulo */
+    color: #a0a0a0;
     font-size: 1.2em;
 }
 
 /* Contenedor principal de la grilla del equipo */
-/* Contenedor principal de la grilla del equipo */
 .team-grid {
     display: grid;
-    /* CAMBIO: Forzamos la grilla a tener 4 columnas iguales */
     grid-template-columns: repeat(4, 1fr);
-    gap: 30px; /* Espacio entre las tarjetas */
+    gap: 30px;
     max-width: 1200px;
-    margin: 0 auto; /* Centra la grilla */
-}
-
-/* Para que se vea bien en pantallas más pequeñas (tablets y móviles) */
-@media (max-width: 900px) {
-    .team-grid {
-        grid-template-columns: repeat(2, 1fr); /* 2 columnas en tablets */
-    }
-}
-
-@media (max-width: 500px) {
-    .team-grid {
-        grid-template-columns: 1fr; /* 1 columna en móviles */
-    }
+    margin: 0 auto;
 }
 
 /* Estilo para cada tarjeta de miembro */
 .team-member {
-    /* FONDO DE TARJETA: Usamos el fondo sutil de tu archivo */
     background-color: #1c1c1c;
     padding: 20px;
     border-radius: 10px;
-    /* SOMBRA: La hacemos más sutil para el tema oscuro */
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease;
-    border-top: 3px solid #4a00e0; /* Un borde superior con el color de acento */
+    border-top: 3px solid #4a00e0;
 }
 
 .team-member:hover {
@@ -75,7 +56,6 @@ header p {
     height: 150px;
     border-radius: 50%;
     object-fit: cover;
-    /* BORDE DE IMAGEN: Usamos el degradado violeta para el borde */
     border: 4px solid transparent;
     background-image: linear-gradient(white, white), linear-gradient(45deg, #8e2de2, #4a00e0);
     background-origin: border-box;
@@ -87,12 +67,51 @@ header p {
 .member-name {
     font-size: 1.4em;
     margin: 10px 0 5px;
-    color: #ffffff; /* Texto en blanco */
+    color: #ffffff;
 }
 
 /* Estilo para el rol del miembro */
 .member-role {
     font-size: 1em;
-    color: #a0a0a0; /* Un gris claro para el rol */
+    color: #a0a0a0;
     margin: 0;
+}
+
+/* --- Estilos para el botón de Instagram (con logo SVG) --- */
+.social-link {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 15px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    color: #ffffff;
+    background: linear-gradient(45deg, #8e2de2, #4a00e0);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    gap: 8px;
+}
+
+.social-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+.social-link svg {
+    width: 20px;
+    height: 20px;
+    fill: #ffffff;
+}
+
+/* Media queries para hacerlo responsive */
+@media (max-width: 900px) {
+    .team-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 500px) {
+    .team-grid {
+        grid-template-columns: 1fr;
+    }
 }
