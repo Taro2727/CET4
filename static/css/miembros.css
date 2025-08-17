@@ -25,7 +25,7 @@ header h1 {
     background-clip: text;
 }
 
-header p {
+header p { 
     margin-top: 1em;
     color: #ffffff; /* Un gris claro para el subtítulo */
     font-size: 1.2em;
