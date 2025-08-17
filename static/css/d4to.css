@@ -12,6 +12,11 @@ body {
     background: linear-gradient(to top, #020c25 0%, #082c54 50%);
     width: 100%;
     min-height: 100vh;
+    
+}
+
+#toggle{
+    margin-top: -0.5em;
 }
 
 /* empieza la bARra de busqueda  */
@@ -117,6 +122,7 @@ body {
 .cuerpo1 {
     display: flex;
     flex-wrap: wrap;
+    margin-top: 1em;
     justify-content: center;
     gap: 20px;
     padding: 40px 20px;

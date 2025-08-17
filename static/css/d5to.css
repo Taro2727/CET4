@@ -13,7 +13,9 @@ body {
     width: 100%;
     min-height: 100vh;
 }
-
+#toggle{
+    margin-top: -0.5em;
+}
 /* empieza la bARra de busqueda  */
 ::placeholder {
   color: #fff;
@@ -116,6 +118,7 @@ body {
 /* Contenedor principal */
 .cuerpo1 {
     display: flex;
+    margin-top: 1em;
     flex-wrap: wrap;
     justify-content: center;
     gap: 20px;

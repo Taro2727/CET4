@@ -36,6 +36,7 @@ body {
     font-size: 28px;
     cursor: pointer;
     color: white;
+    margin-top: 1em;
 }
 
 .buscador-logo {
