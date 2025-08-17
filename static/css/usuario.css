@@ -107,20 +107,23 @@ body {
     cursor: pointer;
 }
 
-.caja-comentarios1 {
+.caja-comentarios {
     width: 100%; 
     border-radius: 10px;
-    border: 0.2vh solid #ccc; 
     padding: 1em;
     min-height: 6em;
-    text-align: center;
+}
+.container-caja-comentario{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .perfil-comentario-item{
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: left;
     background-color: #0d2a52;
     border: 1px solid #345678;
     border-radius: 10px;
@@ -132,7 +135,6 @@ body {
     background-color:#131e2e;
     border: 1px solid #456;
     padding: 10px;
-
     width: 25%;
     border-radius: 10px;
     margin-bottom: 10px;
@@ -271,6 +273,9 @@ body {
     .perfil-comentario-header{
         width: 50%;
 }
+.container-caja-comentario{
+    width: 100%;
+}
 }
 
 /* --- Responsive móvil --- */
@@ -307,6 +312,9 @@ body {
         .perfil-comentario-header{
     width: 45%;
 }
+.container-caja-comentario{
+    width: 100%;
+}
 }
 
 /* --- Móviles muy pequeños --- */
@@ -340,6 +348,9 @@ body {
     .user-info-modal2{
         width: 100%;  
     }
+    .container-caja-comentario{
+    width: 100%;
+}
 }
 
 
