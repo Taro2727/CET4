@@ -2012,8 +2012,11 @@ def cambiar_nombre():
     except Exception as e:
         print(f"Error inesperado: {e}")
         return jsonify({"success": False, "error": f"Error inesperado: {e}"}), 500
-
-
+    
+@app.route('/miembros')
+@login_required
+def nosotros():
+    return render_template('index/miembros.html')
 
 if __name__ == "__main__":
     print("iniciando flask..")
