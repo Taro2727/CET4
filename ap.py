@@ -1,5 +1,5 @@
 # archivo: app.py
-from flask import Flask, request, jsonify, render_template, session, redirect, url_for, flash
+from flask import Flask, request, jsonify, render_template, session, redirect, url_for, flash,abort
 import mysql.connector # Conectar a MySQL
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -37,6 +37,9 @@ from flask_limiter.util import get_remote_address
 from pywebpush import webpush, WebPushException
 import json
 from flask import send_from_directory
+
+#para hacer funciones herramientosas (functools)
+from functools import wraps
 
 # from cryptography.hazmat.primitives.asymmetric import ec
 # from cryptography.hazmat.primitives import serialization
@@ -136,6 +139,41 @@ mail = Mail(app)
 
 #------------------------------------
 
+
+def check_ban(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if current_user.is_authenticated:
+            try:
+                conn = mysql.connector.connect(**DB_CONFIG)
+                cursor = conn.cursor(dictionary=True)
+                cursor.execute("""
+                    SELECT id_ban, fecha_fin 
+                    FROM Baneo 
+                    WHERE id_usu = %s AND activo = TRUE
+                """, (current_user.id,))
+                ban = cursor.fetchone()
+
+                if ban:
+                    hoy = datetime.now()
+                    if hoy < ban['fecha_fin']:
+                        # Baneo ==> activo
+                        cursor.close()
+                        conn.close()
+                        logout_user()
+                        return render_template("index/baneado.html")
+                    else:
+                        # Baneo vencido ==> borrar
+                        cursor.execute('DELETE FROM Baneo WHERE id_usu = %s', (current_user.id,))
+                        conn.commit()
+
+                cursor.close()
+                conn.close()
+            except Exception as e:
+                print("Error al verificar baneo:", e)
+        return f(*args, **kwargs)
+    return decorated_function
+
 #----F-U-N-C-I-O-N-E-S--P-Y-O-T-P----
 #.....despues las podemos usar.......
 
@@ -221,6 +259,7 @@ def service_worker():
     return send_from_directory('.', 'sw.js', mimetype='application/javascript')
 
 @app.route('/') #ruta para la página de inicio
+@check_ban 
 def inicio():
     if current_user.is_authenticated:
         return redirect(url_for('indexhomeoinicio'))  # Redirige si ya está logueado
@@ -340,6 +379,7 @@ def guardar_notificacion(id_usu, tipo, mensaje):
 
 @app.route('/panelnotificaciones')
 @login_required
+@check_ban
 def panelnotificaciones():
     return render_template('index/panelnotificaciones.html')
 
@@ -424,11 +464,13 @@ def eliminar_suscripcion():
 # ruta para la tuerca barra lateral
 @app.route('/configuracion')
 @login_required
+@check_ban
 def configuracion():
     return render_template('index/tuercabarralateral.html')
 
 @app.route('/guardar-configuracion', methods=['POST'])
 @login_required
+@check_ban
 def guardar_configuracion():
     """
     Inicia el flujo de cambio de contraseña desde Configuración.
@@ -467,7 +509,7 @@ def guardar_configuracion():
 
     try:
         email_usuario = current_user.email
-        tipo_otp = 'config'  
+        tipo_otp = 7 
         
         otp = ''.join(secrets.choice(string.digits) for _ in range(6))
         expiracion = datetime.now(timezone.utc) + timedelta(minutes=5)
@@ -626,12 +668,12 @@ def cambiar_contra():
     if not hay_usuario:
         session.pop('email_para_verificacion', None)
         session['email_para_verificacion_registro'] = email
-        tipo_otp = 'registro'
+        tipo_otp = 3
         asunto_mail = "R-E-G-I-S-T-R-O--C-E-T"
     else:
         session.pop('email_para_verificacion_registro', None)
         session['email_para_verificacion'] = email
-        tipo_otp = 'recuperacion'
+        tipo_otp = 1
         asunto_mail = "R-E-E-S-T-A-B-L-E-C-E-R--C-O-N-T-R-A-S-E-Ñ-A"
 
     otp = ''.join(secrets.choice(string.digits) for _ in range(6))
@@ -837,6 +879,7 @@ def iniciarsesion():
 #     return render_template('index/indexcrearcuenta.html')
 
 @app.route('/indexhomeoinicio')
+@check_ban 
 def indexhomeoinicio():
     if not current_user.is_authenticated and not session.get('guest'):
         return redirect(url_for('iniciarsesion'))
@@ -849,10 +892,12 @@ def entrar_como_invitado():
 
 #desde aca se elige la modalidad
 @app.route('/programacion') #ruta para la página de programación
+@check_ban
 def indexprogramacion():
     return render_template("index/dprogramacionindex.html")
 
 @app.route('/informatica') #ruta para la página de informática
+@check_ban
 def indexinformatica():
     return render_template("index/dinformaticaindex.html")
 #hasta aca se elige la modalidad
@@ -863,6 +908,7 @@ def indexinformatica():
 #a partir de aca son las materias de 4to Informatica
 #4
 @app.route('/informatica/4toinformatica')#el mio es el de nro (4to)
+@check_ban
 def cuarto4():
     return render_template("index/indexin4to.html")
 #-------------------------------------------------------
@@ -871,6 +917,7 @@ def cuarto4():
 
 #5
 @app.route('/informatica/5toinformatica')
+@check_ban
 def quinto5():
     return render_template("index/indexin5to.html")
 #-------------------------------------------------------
@@ -879,6 +926,7 @@ def quinto5():
 
 #6
 @app.route('/informatica/6toinformatica')#el mio es el de nro (6to)
+@check_ban
 def sexto6():
     return render_template("index/indexin6to.html")
 #-------------------------------------------------------
@@ -886,6 +934,7 @@ def sexto6():
 #a partir de aca son las materias de 7mo informatica
 #7
 @app.route('/informatica/7moinformatica')#el mio es el de nro (7mo)
+@check_ban
 def septimo7():
     return render_template("index/indexin7mo.html")
 
@@ -900,6 +949,7 @@ def septimo7():
 
 #8
 @app.route('/programacion/4toprogramacion') #ruta para la página de 4to de programación
+@check_ban
 def index4toprog():
     return render_template("index/indexdcuarto.html")
 #-------------------------------------------------------
@@ -908,6 +958,7 @@ def index4toprog():
 
 #9
 @app.route('/programacion/5toprogramacion') #ruta para la página de 5to de programación
+@check_ban
 def index5toprog():
     return render_template("index/indexdquinto.html")
 #-------------------------------------------------------
@@ -916,6 +967,7 @@ def index5toprog():
 
 #10
 @app.route('/programacion/6toprogramacion') #ruta para la página de 6to de programación
+@check_ban
 def index6toprog():
     return render_template("index/indexsexto.html")
 
@@ -925,6 +977,7 @@ def index6toprog():
 
 #11
 @app.route('/programacion/7moprogramacion') #ruta para la página de 7mo de programación
+@check_ban
 def index7moprog():
     return render_template("index/indexdseptimo.html")
 
@@ -1011,6 +1064,7 @@ def otp_login():
 #ACA ABAJO DE MI(? ESTABA LO DE /COMENTARIO/MATERIA/IDMAT Y /COMENTARIO METHOD=POST
 
 @app.route('/comentario/materias/<int:id_mat>')
+@check_ban
 def comentario_materia(id_mat):
     # CAMBIO: Eliminada la importación y conexión duplicada.
     try:
@@ -1153,7 +1207,7 @@ def responder():
                 }
                 suscripcion_dict = json.loads(sub['suscripcion_json'])
                 notif_push(suscripcion_dict, notif) # <-- CORREGIDO
-                guardar_notificacion(id_autor_post, "mensaje", f"{current_user.nom_usu} respondió tu pregunta.")
+                guardar_notificacion(id_autor_post, 1, f"{current_user.nom_usu} respondió tu pregunta.")
                 cursor.execute("SELECT email FROM usuario WHERE id_usu = %s", (id_autor_post,))
                 email_data = cursor.fetchone()
                 if email_data:
@@ -1252,7 +1306,7 @@ def like_comment():
                     }
                     suscripcion_dict = json.loads(sub['suscripcion_json'])
                     notif_push(suscripcion_dict, notif) # <-- CORREGIDO
-                    guardar_notificacion(id_autor_data, "mensaje", f"{current_user.nom_usu} dio like a tu comentario.")
+                    guardar_notificacion(id_autor_data, 1, f"{current_user.nom_usu} dio like a tu comentario.")
                     cursor.execute("SELECT email FROM usuario WHERE id_usu = %s", (id_autor_data,))
                     email_data = cursor.fetchone()
                     if email_data:
@@ -1314,7 +1368,7 @@ def like_rta():
                     }
                     suscripcion_dict = json.loads(sub['suscripcion_json'])
                     notif_push(suscripcion_dict, notificacion_payload) # <-- CORREGIDO
-                    guardar_notificacion(id_autor_post, "mensaje", f"{current_user.nom_usu} dio like a tu comentario.")
+                    guardar_notificacion(id_autor_post, 1, f"{current_user.nom_usu} dio like a tu comentario.")
                     cursor.execute("SELECT email FROM usuario WHERE id_usu = %s", (id_autor_post,))
                     email_data = cursor.fetchone()
                     if email_data:
@@ -1421,6 +1475,8 @@ def eliminar_respuesta():
 #ACA PANEL ADMIIIIIIIIIIN 
 
 @app.route("/paneladmin")
+@check_ban
+@login_required
 def paneladmin():
     return render_template("index/paneladmin.html")
 
@@ -1690,14 +1746,14 @@ def cambiar_roles_ascender():
         # --- CAMBIO IMPORTANTE ---
         # 1. BORRAMOS cualquier código de 'ascender' anterior para este email.
         # Esto garantiza que siempre trabajemos con el código más reciente.
-        cursor.execute("DELETE FROM codigos_verificacion WHERE email = %s AND tipo = 'ascender'", (email_mail,))
+        cursor.execute("DELETE FROM codigos_verificacion WHERE email = %s AND tipo = 4", (email_mail,))
 
         # 2. INSERTAMOS el nuevo código generado.
         # Ya no necesitamos ON DUPLICATE KEY UPDATE porque siempre empezamos de cero.
         cursor.execute("""
             INSERT INTO codigos_verificacion (email, codigo, tipo, expiracion)
             VALUES (%s, %s, %s, %s)
-        """, (email_mail, otp, 'ascender', expiracion))
+        """, (email_mail, otp, 4, expiracion))
 
         conn.commit()
 
@@ -1801,14 +1857,14 @@ def otp_eliminar():
         # --- CAMBIO IMPORTANTE ---
         # 1. BORRAMOS cualquier código de 'degradar' anterior para este email.
         # Esto garantiza que siempre trabajemos con el código más reciente.
-        cursor.execute("DELETE FROM codigos_verificacion WHERE email = %s AND tipo = 'eliminar'", (email_mail,))
+        cursor.execute("DELETE FROM codigos_verificacion WHERE email = %s AND tipo = 6", (email_mail,))
 
         # 2. INSERTAMOS el nuevo código generado.
         # Ya no necesitamos ON DUPLICATE KEY UPDATE porque siempre empezamos de cero.
         cursor.execute("""
             INSERT INTO codigos_verificacion (email, codigo, tipo, expiracion)
             VALUES (%s, %s, %s, %s)
-        """, (email_mail, otp, 'eliminar', expiracion))
+        """, (email_mail, otp, 6, expiracion))
 
         conn.commit()
 

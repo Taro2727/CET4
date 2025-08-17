@@ -80,13 +80,19 @@ a.separador3{
     margin: 0;
 }
 
+.cerrar-sesion6{
+    width: 35px;
+    height: auto;
+    margin: 0;
+}
+
 .usuario{
     width: 50px;
     height: auto;
     margin: 0;
 }
 
-.casa1:hover,.campana2:hover,.soporte3:hover,.grupo4:hover,.opcion5:hover,.usuario:hover {
+.casa1:hover,.campana2:hover,.soporte3:hover,.grupo4:hover,.opcion5:hover,.usuario:hover,.cerrar-sesion6:hover {
     transform: scale(1.2);
     filter: brightness(1.4);
     transition: transform 0.4s ease, filter 0.2s ease;
