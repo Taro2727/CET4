@@ -1801,14 +1801,14 @@ def otp_eliminar():
         # --- CAMBIO IMPORTANTE ---
         # 1. BORRAMOS cualquier código de 'degradar' anterior para este email.
         # Esto garantiza que siempre trabajemos con el código más reciente.
-        cursor.execute("DELETE FROM codigos_verificacion WHERE email = %s AND tipo = 'eliminar'", (email_mail,))
+        cursor.execute("DELETE FROM codigos_verificacion WHERE email = %s AND tipo = 6", (email_mail,))
 
         # 2. INSERTAMOS el nuevo código generado.
         # Ya no necesitamos ON DUPLICATE KEY UPDATE porque siempre empezamos de cero.
         cursor.execute("""
             INSERT INTO codigos_verificacion (email, codigo, tipo, expiracion)
             VALUES (%s, %s, %s, %s)
-        """, (email_mail, otp, 'eliminar', expiracion))
+        """, (email_mail, otp, 6, expiracion))
 
         conn.commit()
 
