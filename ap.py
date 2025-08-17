@@ -1925,11 +1925,6 @@ def unban():
             cursor.close()
         if conn and conn.is_connected():
             conn.close()
-app.route('/perfil')
-def perfil():
-    render_template('/index/indexusuario.html')
-    orden = request.args.get('orden', 'reciente')
-    
 
 
 @app.route('/get_mis_comentarios')
