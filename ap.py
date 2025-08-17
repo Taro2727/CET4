@@ -1153,7 +1153,7 @@ def responder():
                 }
                 suscripcion_dict = json.loads(sub['suscripcion_json'])
                 notif_push(suscripcion_dict, notif) # <-- CORREGIDO
-                guardar_notificacion(id_autor_post, "mensaje", f"{current_user.nom_usu} respondió tu pregunta.")
+                guardar_notificacion(id_autor_post, 1, f"{current_user.nom_usu} respondió tu pregunta.")
                 cursor.execute("SELECT email FROM usuario WHERE id_usu = %s", (id_autor_post,))
                 email_data = cursor.fetchone()
                 if email_data:
@@ -1252,7 +1252,7 @@ def like_comment():
                     }
                     suscripcion_dict = json.loads(sub['suscripcion_json'])
                     notif_push(suscripcion_dict, notif) # <-- CORREGIDO
-                    guardar_notificacion(id_autor_data, "mensaje", f"{current_user.nom_usu} dio like a tu comentario.")
+                    guardar_notificacion(id_autor_data, 1, f"{current_user.nom_usu} dio like a tu comentario.")
                     cursor.execute("SELECT email FROM usuario WHERE id_usu = %s", (id_autor_data,))
                     email_data = cursor.fetchone()
                     if email_data:
@@ -1314,7 +1314,7 @@ def like_rta():
                     }
                     suscripcion_dict = json.loads(sub['suscripcion_json'])
                     notif_push(suscripcion_dict, notificacion_payload) # <-- CORREGIDO
-                    guardar_notificacion(id_autor_post, "mensaje", f"{current_user.nom_usu} dio like a tu comentario.")
+                    guardar_notificacion(id_autor_post, 1, f"{current_user.nom_usu} dio like a tu comentario.")
                     cursor.execute("SELECT email FROM usuario WHERE id_usu = %s", (id_autor_post,))
                     email_data = cursor.fetchone()
                     if email_data:
