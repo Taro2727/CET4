@@ -51,7 +51,8 @@ async function MostrarAvatar() {
 
 
 //aca esta la funcion de cambiar nombre de usuario
-document.getElementById("init").addEventListener("submit", async function(event) {
+document.getElementById("loginForm").addEventListener("submit", async function(event) {
+
   event.preventDefault();
 
   const nombre = document.getElementById("new-name").value;
