@@ -1,5 +1,6 @@
 // Variable global para guardar el criterio de ordenación
 let criterioNotificaciones = 'reciente';
+const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
 // Cuando el documento HTML esté listo, ejecutamos todo
 document.addEventListener("DOMContentLoaded", function() {
@@ -49,7 +50,12 @@ document.addEventListener("DOMContentLoaded", function() {
                 try {
                     // Le mandamos la orden de borrado a nuestro app.py
                     const response = await fetch(`/eliminar_notificacion/${notifId}`, {
-                        method: 'DELETE'
+                        method: 'DELETE',
+                        headers: { 
+                        'Content-Type': 'application/json', 
+                        'X-CSRFToken': csrfToken 
+                    },
+
                     });
                     const result = await response.json();
                     
