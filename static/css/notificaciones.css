@@ -1,3 +1,24 @@
 #msj{
-    color: rgba(0, 0, 0, 0.589);
+    color: rgb(255, 255, 255);
+}
+.notificacion-item.leida{
+    margin-top: 1em;
+    background-color:#131e2e;
+    border-radius: 20px;
+    width: 40rem;
+}
+.btn-eliminar{
+    margin-top: -0.5em;
+}
+@media (max-width:730px ){
+    .notificacion-item.leida{
+        width: 30rem;
+    }
+
+}
+@media (max-width:600px ){
+    .notificacion-item.leida{
+        width: 100%;
+    }
+
 }

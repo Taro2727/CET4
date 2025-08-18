@@ -59,3 +59,21 @@ p.texto-baneado{
 .entrar-invitado:hover{
     background-color: #0a3c6c;
 }
+@media (max-width: 600px){
+    #container{
+        width: 100%;
+    }
+    p.texto-baneado{
+        font-size: 2rem;
+    }
+
+}
+@media (max-width: 450px){
+    #container{
+        width: 100%;
+    }
+    p.texto-baneado{
+        font-size: 1.5rem;
+    }
+
+}
