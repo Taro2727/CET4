@@ -23,14 +23,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const result = await res.json();
 
         if (res.ok) {
-          alert('cambiaste tu contraseña');
           window.location.href = '/';
         } else {
-          alert(result.error || 'Hubo un problema');
+          console.error('Error')
         }
       } catch (err) {
         console.error('Error en la petición:', err);
-        alert('Error de red');
       }
     });
   }
