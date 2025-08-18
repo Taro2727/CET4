@@ -200,3 +200,84 @@ function urlBase64ToUint8Array(base64String) {
     }
     return outputArray;
 }
+// boton para las notificaciones
+document.addEventListener('DOMContentLoaded', () => {
+    const toast = document.getElementById('toast-notificacion');
+    const btnPermitir = document.getElementById('btn-permitir');
+    const btnNoPermitir = document.getElementById('btn-no-permitir');
+    const vapidPublicKey = 'BPFRnskk36NpTs6rraQ9KZqwlK-7gmK3Dne6dt-khKt-Q-93tdgNwKc5SI3cDYxGUNyw4vJpMONIMV1Ws4m14zg';
+
+    // Función para mostrar la notificación
+    const mostrarToast = () => {
+        toast.classList.remove('oculto');
+        toast.classList.add('visible');
+    };
+
+    // Función para ocultar la notificación
+    const ocultarToast = () => {
+        toast.classList.remove('visible');
+        toast.classList.add('oculto');
+    };
+
+    // Decide si mostrar la notificación
+    if ('Notification' in window && Notification.permission === 'default') {
+        // Muestra la notificación después de 3 segundos para no ser tan invasivo
+        setTimeout(mostrarToast, 3000);
+    }
+
+    // Lógica de los botones
+    btnPermitir.addEventListener('click', async () => {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+            console.log('Permiso concedido.');
+            await registrarServiceWorkerYSuscribir();
+        } else {
+            console.log('Permiso denegado.');
+        }
+        ocultarToast();
+    });
+
+    btnNoPermitir.addEventListener('click', () => {
+        console.log('El usuario eligió no recibir notificaciones por ahora.');
+        ocultarToast();
+    });
+
+    async function registrarServiceWorkerYSuscribir() {
+        if ('serviceWorker' in navigator) {
+            try {
+                const registration = await navigator.serviceWorker.register('/sw.js');
+                console.log('Service Worker registrado:', registration);
+
+                const subscription = await registration.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: urlBase64ToUint8Array(vapidPublicKey)
+                });
+
+                console.log('Suscripción Push obtenida:', subscription);
+
+                // Enviar suscripción al backend
+                await fetch('/guardarsuscripcion', {
+                    method: 'POST',
+                    body: JSON.stringify(subscription),
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                console.log('Suscripción enviada al servidor.');
+            } catch (error) {
+                console.error('Error al registrar/suscribir:', error);
+            }
+        }
+    }
+
+    function urlBase64ToUint8Array(base64String) {
+        const padding = '='.repeat((4 - base64String.length % 4) % 4);
+        const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+        const rawData = window.atob(base64);
+        const outputArray = new Uint8Array(rawData.length);
+        for (let i = 0; i < rawData.length; ++i) {
+            outputArray[i] = rawData.charCodeAt(i);
+        }
+        return outputArray;
+    }
+});
