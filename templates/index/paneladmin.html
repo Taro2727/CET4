@@ -40,8 +40,15 @@
     </header>
     <!-- el section de abajo es para elegir entre las fuentes y los comentarios-->
     <section id="menues">
-      <button href="#" id="ordenar">&#11015; Ordenar por</button>
-    </section>
+    <div id="ordenar-btn">▾ Ordenar por</div>
+    <ul id="menu-ordenar" class="oculto">
+      <li data-orden="reciente">Más reciente</li>
+      <li data-orden="antiguo">Más antiguo</li>
+      <li data-orden="admin">Administrador</li>
+      <li data-orden="moderador">Moderador</li>
+      <li data-orden="normal">Normal</li>
+    </ul>
+</section>
 
 <section id="adminPanel" class="lista-usuarios">
       <form id="commentForm" autocomplete="off">

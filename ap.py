@@ -1496,7 +1496,7 @@ def get_users():
         # Consulta SQL corregida para usar el nombre de tabla 'Baneo'
         cursor.execute("""
             SELECT
-                u.id_usu, u.nom_usu, u.email, u.rol, 
+                u.id_usu, u.nom_usu, u.email, u.rol,
                 b.id_ban IS NOT NULL AS baneado
             FROM usuario u
             LEFT JOIN Baneo b ON u.id_usu = b.id_usu
