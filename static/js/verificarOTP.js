@@ -22,11 +22,11 @@ document.getElementById('otp').addEventListener('submit', async (e) => {
       const destino = result.redirigir;
 
       if (destino === '/crearcuenta') {
-        alert('¡Correo verificado! Ahora completa tu registro.');
+
         window.location.href = destino;
 
       } else if (destino === '/actualizar') {
-        alert('¡Código correcto! Ahora puedes cambiar tu contraseña.');
+        
         window.location.href = destino;
 
       } else if (destino === 'indexhomeoinicio') {
@@ -34,7 +34,7 @@ document.getElementById('otp').addEventListener('submit', async (e) => {
         // No es necesario un alert, simplemente redirigimos.
         window.location.href = '/indexhomeoinicio';
       } else if (destino === '/configuracion') {
-        alert('¡Contraseña actualizada con éxito!');
+        
         window.location.href = destino;
 
       } else if (destino === '/upgradear') {
@@ -51,13 +51,13 @@ document.getElementById('otp').addEventListener('submit', async (e) => {
         });
 
         if (!res2.ok) {
-          alert('Error en la petición para ascender el usuario.');
+          
           return;
         }
 
         const result2 = await res2.json();
         if (result2.success) {
-          alert('¡Usuario ascendido con éxito!');
+         
           window.location.href = '/paneladmin';
         } else {
           alert(result2.error || 'Hubo un problema al ascender el usuario');
@@ -78,16 +78,16 @@ document.getElementById('otp').addEventListener('submit', async (e) => {
         });
 
         if (!res2.ok) {
-          alert('Error en la petición para degradar el usuario.');
+          console.log("error degradando")
           return;
         }
 
         const result2 = await res2.json();
         if (result2.success) {
-          alert('¡Usuario degradado con éxito!');
+       
           window.location.href = '/paneladmin';
         } else {
-          alert(result2.error || 'Hubo un problema al degradar el usuario');
+          console.log("error degradando")
         }
 
       } else if (destino === '/eliminar_usuario'){
@@ -103,25 +103,23 @@ document.getElementById('otp').addEventListener('submit', async (e) => {
         });
 
         if (!res2.ok) {
-          alert('Error en la petición para degradar el usuario.');
           return;
         }
 
         const result2 = await res2.json();
         if (result2.success) {
-          alert('¡Usuario eliminado con éxito!');
           window.location.href = '/paneladmin';
         } else {
-          alert(result2.error || 'Hubo un problema al degradar el usuario');
+          console.log("error")
         }
       } else {
         // Si el servidor envía una redirección desconocida.
-        alert('Respuesta desconocida del servidor.');
+       console.log("error desconocido")
       }
 
     } else {
       // Si result.exito es false, mostramos el error del servidor.
-      alert(result.error || 'Hubo un problema con la verificación');
+     document.getElementById('textito').textContent= result.error || 'Hubo un problema con la verificación' ;
     }
 
   } catch (err) {

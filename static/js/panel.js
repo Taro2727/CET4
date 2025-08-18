@@ -190,14 +190,14 @@ async function formulariobaneo(event, userId) {
 
         const result = await response.json();
         if (result.exito) {
-            alert('Usuario baneado correctamente.');
+            
             toggleBanForm(userId); // Oculta el formulario
             await cargar_usuarios(); // Recarga la lista
         } else {
-            alert('Error al banear al usuario: ' + result.error);
+            console.log("error");
         }
     } catch (e) {
-        alert('Ocurrió un error en la comunicación con el servidor.');
+        console.log("error");
     }
 }
 
@@ -216,10 +216,9 @@ async function eliminarUsuario(id_usuario,rol_usuario) {
     });
     const result = await response.json();
     if (result.success) {
-        alert('Código OTP enviado al mail');
         window.location.href = '/IngresarCodigo';
     } else {
-        alert(result.error || "No se pudo eliminar.");
+       console.log("error");
 }
 }
 async function ascender(id_usuario,rol_usuario,mail_usuario) {
@@ -236,10 +235,9 @@ async function ascender(id_usuario,rol_usuario,mail_usuario) {
     });
     const result = await response.json();
     if (result.success) {
-        alert('Código OTP enviado al mail');
         window.location.href = '/IngresarCodigo';
     } else {
-        alert(result.error || "No se pudo upgradear.");
+       console.log("error");
 }
 }
 //falta agregar q le pase el rol para q dependiendo del rol haga una cosa o otra en el ap.py
@@ -255,10 +253,9 @@ async function down(id_usuario,rol_usuario,mail_usuario) {
     });
     const result = await response.json();
     if (result.success) {
-        alert('Código OTP enviado al mail');
         window.location.href = '/IngresarCodigo';
     } else {
-        alert(result.error || "No se pudo degradar.");
+        console.log("error");
 }
 }
 
@@ -278,10 +275,9 @@ async function desbanear(id_usuario) {
     });
     const result = await response.json();
     if (result.success) {
-        alert('desbaneado ');
         window.location.href = '/paneladmin';
     } else {
-        alert(result.error || "no se pudo desbanear.");
+        console.log("error");
 }
 }
 

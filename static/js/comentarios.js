@@ -262,11 +262,11 @@ document.getElementById('commentForm').addEventListener('submit', async function
     });
     const result = await response.json();
     if (result.success) {
-        alert("¡Pregunta enviada!");
+       
         document.getElementById('commentForm').reset();
         await cargarComentarios();
     } else {
-        alert("Error al enviar la pregunta");
+       console.log("error");
     }
 });
 
@@ -285,7 +285,7 @@ async function eliminarComentario(id_post) {
     if (result.success) {
         await cargarComentarios();
     } else {
-        alert(result.error || "No se pudo eliminar.");
+        console.log("error");
 }
 }
 
@@ -303,6 +303,6 @@ async function eliminarRespuesta(id_com) {
     if (result.success) {
         await cargarComentarios();
     } else {
-        alert("No se pudo eliminar.");
+        console.log("error");
     }
 }
