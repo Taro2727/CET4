@@ -39,11 +39,10 @@ async function MostrarAvatar() {
     });
     const result = await respuesta.json();
     if (result.success) {
-        alert('se cambio tu avatar');
 
         window.location.href = '/perfil';
     } else {
-        alert(result.error || "No se pudo cambiar");
+        console.log("error")
 }
 
   
