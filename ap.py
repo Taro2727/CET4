@@ -384,24 +384,42 @@ def panelnotificaciones():
 @app.route('/mis_notificaciones_data')
 @login_required
 def mis_notificaciones_data():
-    """Ruta que devuelve las notificaciones del usuario en formato JSON."""
+    """Ruta que devuelve las notificaciones del usuario en formato JSON, con opción de ordenarlas."""
     try:
+        # Obtenemos el criterio de orden desde la URL (ej: /mis_notificaciones_data?orden=antiguo)
+        orden = request.args.get('orden', 'reciente')
+        
         conn = mysql.connector.connect(**DB_CONFIG)
         cursor = conn.cursor(dictionary=True)
         id_usu = current_user.id
 
-        # Obtener notificaciones
-        query = "SELECT id_notif, tipo, mensaje, fecha, leida FROM notificaciones WHERE id_usu = %s ORDER BY fecha DESC"
-        cursor.execute(query, (id_usu,))
+        # Creamos la consulta SQL base
+        query_base = "SELECT id_notif, tipo, mensaje, fecha, leida FROM notificaciones WHERE id_usu = %s"
+
+        # Añadimos el orden a la consulta según el parámetro recibido
+        if orden == 'antiguo':
+            query_final = query_base + " ORDER BY fecha ASC"
+        else: # Por defecto y para 'reciente'
+            query_final = query_base + " ORDER BY fecha DESC"
+        
+        cursor.execute(query_final, (id_usu,))
         notificaciones = cursor.fetchall()
+        
+        # Marcamos las notificaciones como leídas (si hay alguna)
         if notificaciones:
-            notif_ids = [n['id_notif'] for n in notificaciones]
-            cursor.execute("UPDATE notificaciones SET leida = TRUE WHERE id_notif IN ({})".format(','.join(['%s'] * len(notif_ids))), tuple(notif_ids))
-            conn.commit()
+            # Creamos una lista solo con los IDs de las notificaciones no leídas
+            notif_ids_no_leidas = [n['id_notif'] for n in notificaciones if not n['leida']]
+            
+            if notif_ids_no_leidas:
+                # Usamos un formato seguro para la consulta IN (...)
+                placeholders = ','.join(['%s'] * len(notif_ids_no_leidas))
+                update_query = f"UPDATE notificaciones SET leida = TRUE WHERE id_notif IN ({placeholders})"
+                cursor.execute(update_query, tuple(notif_ids_no_leidas))
+                conn.commit()
+
         cursor.close()
         conn.close()
 
-        # Devuelve el JSON con la clave 'notificaciones', tal como lo espera tu JS
         return jsonify({'success': True, 'notificaciones': notificaciones})
 
     except mysql.connector.Error as err:
