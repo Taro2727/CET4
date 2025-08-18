@@ -33,10 +33,6 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     }
-
-    // 3. --- AQUÍ ESTÁ LA LÓGICA PARA ELIMINAR ---
-    // Usamos "delegación de eventos": un solo "vigilante" en el contenedor principal
-    // que se fija si hiciste clic en un botón de eliminar. Es más eficiente.
     const contenedorPrincipal = document.getElementById('contenedor-notificaciones');
 
     contenedorPrincipal.addEventListener('click', async function(event) {
@@ -114,12 +110,12 @@ function renderizarNotificaciones(notificaciones) {
                 ${labelLeida}
             </div>
             <div class="notificacion-contenido">
-                <p>${notificacion.mensaje}</p>
+                <p id="msj">${notificacion.mensaje}</p>
             </div>
+            <button class="btn-eliminar" data-id="${notificacion.id_notif}">🗑️</button>
             <div class="notificacion-fecha">
                 <span class="fecha">${new Date(notificacion.fecha).toLocaleString()}</span>
             </div>
-            <button class="btn-eliminar" data-id="${notificacion.id_notif}">🗑️</button>
         `;
         contenedor.appendChild(divNotificacion);
     });
