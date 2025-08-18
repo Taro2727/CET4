@@ -124,3 +124,9 @@ input:checked + .slider {
 input:checked + .slider:before {
     transform: translateX(26px);
 }
+
+.notif-item{
+    color: white;
+    margin-bottom: 3em;
+    margin-top: -2em;
+}
