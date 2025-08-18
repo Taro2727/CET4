@@ -24,10 +24,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const result = await res.json();
 
         if (res.ok) { //desde aca
-          alert('Código OTP enviado al mail');
           window.location.href = '/IngresarCodigo';
         } else {
-          alert(result.error || 'Hubo un problema');
+          console.error('error')
         }
       } catch (err) {
           console.error('Error en la petición:', err);
