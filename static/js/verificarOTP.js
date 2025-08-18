@@ -60,7 +60,7 @@ document.getElementById('otp').addEventListener('submit', async (e) => {
          
           window.location.href = '/paneladmin';
         } else {
-          alert(result2.error || 'Hubo un problema al ascender el usuario');
+          console.log("error");
         }
         
       }else if (destino === '/down') {
@@ -124,6 +124,5 @@ document.getElementById('otp').addEventListener('submit', async (e) => {
 
   } catch (err) {
     console.error('Error en la petición:', err);
-    alert('Error de red. Revisa la consola para más detalles.');
   }
 });
