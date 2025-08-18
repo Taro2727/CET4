@@ -397,6 +397,10 @@ def mis_notificaciones_data():
         query = "SELECT id_notif, tipo, mensaje, fecha, leida FROM notificaciones WHERE id_usu = %s ORDER BY fecha DESC"
         cursor.execute(query, (id_usu,))
         notificaciones = cursor.fetchall()
+        if notificaciones:
+            notif_ids = [n['id_notif'] for n in notificaciones]
+            cursor.execute("UPDATE notificaciones SET leida = TRUE WHERE id_notif IN ({})".format(','.join(['%s'] * len(notif_ids))), tuple(notif_ids))
+            conn.commit()
         cursor.close()
         conn.close()
 
