@@ -1,0 +1,32 @@
+document.addEventListener("DOMContentLoaded", function () {
+    fetch("/get_mis_likes")
+        .then(response => response.json())
+        .then(data => {
+            const container = document.getElementById("commentsSection");
+            container.innerHTML = "";
+
+            if (!data.success || data.posts.length === 0) {
+                container.innerHTML = "<p>No has dado like a ningún post.</p>";
+                return;
+            }
+
+            data.posts.forEach(post => {
+                const div = document.createElement("div");
+                div.classList.add("post-likeado");
+                div.innerHTML = `
+                    <div id="commentsSection" class="comentarios-anteriores">
+                    <h3>${post.titulo}</h3>
+                    <p>${post.cont}</p>
+                    <p><strong>Autor:</strong> ${post.nom_usu}</p>
+                    <p><strong>Materia:</strong> ${post.nom_mat}</p>
+                    <p><em>Fecha:</em> ${new Date(post.fecha).toLocaleString()}</p>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        })
+        .catch(err => {
+            console.error("Error al cargar posts con like:", err);
+            document.getElementById("mis-likes-container").innerHTML = "<p>Error al cargar los posts.</p>";
+        });
+});
