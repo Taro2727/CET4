@@ -1177,60 +1177,70 @@ def get_comentario():
 
 
 @app.route('/responder', methods=['POST'])
-@login_required # CAMBIO: Protege la capacidad de responder
+@login_required
 @limiter.limit(" 2 per  10 seconds ")
 def responder():
-    # CAMBIO: Eliminada la importación y conexión duplicada.
     data = request.get_json()
-    id_post = data.get('id_post') # Usar .get()
-    cont = censurar_con_corazones(data.get('respuesta')) # Usar .get()
+    id_post = data.get('id_post')
+    cont = censurar_con_corazones(data.get('respuesta'))
 
     if not all([id_post, cont]):
         return jsonify({"success": False, "error": "Faltan datos para la respuesta"}), 400
 
-    # CAMBIO: Obtiene el ID del usuario logueado usando current_user
     id_usu = current_user.id
 
     try:
-        conn = mysql.connector.connect(**DB_CONFIG) # Usar DB_CONFIG
+        conn = mysql.connector.connect(**DB_CONFIG)
         cursor = conn.cursor(dictionary=True)
+        
+        # 1. Obtenemos el ID del autor de la pregunta original
         cursor.execute("SELECT id_usu FROM preg WHERE id_post = %s", (id_post,))
         post_author_data = cursor.fetchone()
         id_autor_post = post_author_data['id_usu'] if post_author_data else None
-        query = "INSERT INTO rta (id_post, id_usu, cont) VALUES (%s, %s, %s)"
-        cursor.execute(query, (id_post, id_usu, cont))
+
+        # 2. Insertamos la nueva respuesta en la base de datos
+        cursor.execute("INSERT INTO rta (id_post, id_usu, cont) VALUES (%s, %s, %s)", (id_post, id_usu, cont))
+        conn.commit() # Guardamos la respuesta antes de notificar
+
+        # 3. Lógica de Notificación 
         if id_autor_post and id_autor_post != id_usu:
-            # 4. Buscar la suscripción del autor
-            cursor.execute("SELECT suscripcion_json FROM suscripcion_push WHERE id_usu = %s", (id_autor_post,))
-            subscriptions = cursor.fetchall()
-            for sub in subscriptions:
-                # 5. Enviar notificación
-                notif= {
-                    "title": "💬 ¡Nueva Respuesta!",
-                    "body": f"{current_user.nom_usu} ha respondido a tu pregunta."
-                }
-                suscripcion_dict = json.loads(sub['suscripcion_json'])
-                notif_push(suscripcion_dict, notif) # <-- CORREGIDO
-                guardar_notificacion(id_autor_post, 1, f"{current_user.nom_usu} respondió tu pregunta.")
-                cursor.execute("SELECT email FROM usuario WHERE id_usu = %s", (id_autor_post,))
-                email_data = cursor.fetchone()
-                if email_data:
+            
+            # --- INICIO DE LA CORRECCIÓN ---
+            # Verificamos las preferencias de notificación del autor ANTES de enviar nada
+            cursor.execute("SELECT notif_push, notif_email, email FROM usuario WHERE id_usu = %s", (id_autor_post,))
+            prefs = cursor.fetchone()
+
+            if prefs:
+                # Enviar Notificación PUSH (si están activadas)
+                if prefs['notif_push']:
+                    cursor.execute("SELECT suscripcion_json FROM suscripcion_push WHERE id_usu = %s", (id_autor_post,))
+                    subscriptions = cursor.fetchall()
+                    for sub in subscriptions:
+                        notif_payload = {
+                            "title": "💬 ¡Nueva Respuesta!",
+                            "body": f"{current_user.nom_usu} ha respondido a tu pregunta."
+                        }
+                        suscripcion_dict = json.loads(sub['suscripcion_json'])
+                        notif_push(suscripcion_dict, notif_payload)
+                
+                # Enviar Notificación por EMAIL (si están activadas)
+                if prefs['notif_email'] and prefs['email']:
                     notif_email(
-                        destinatario=email_data['email'],
+                        destinatario=prefs['email'],
                         asunto="💬 Nueva respuesta en tu post",
                         cuerpo=f"{current_user.nom_usu} respondió a tu pregunta en el foro CET."
                     )
-        conn.commit()
+
+            # Guardamos la notificación en la base de datos (esto siempre se hace)
+            guardar_notificacion(id_autor_post, 1, f"{current_user.nom_usu} respondió tu pregunta.")
+
         cursor.close()
         conn.close()
-        return jsonify({"success": True, "mensaje": "Respuesta agregada correctamente"}) # CAMBIO: Mensaje JSON
-    except mysql.connector.Error as err:
-        print(f"Error al responder: {err}")
-        return jsonify({"success": False, "error": f"Error al responder: {err}"}), 500
-    except Exception as e: # CAMBIO: Añadir manejo de excepción general
+        return jsonify({"success": True, "mensaje": "Respuesta agregada correctamente"})
+        
+    except Exception as e:
         print(f"Error inesperado al responder: {e}")
         return jsonify({"success": False, "error": f"Error inesperado: {e}"}), 500
-
 
 @app.route('/get_respuestas/<int:id_post>')
 def get_respuestas(id_post):
