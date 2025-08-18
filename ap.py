@@ -414,6 +414,35 @@ def mis_notificaciones_data():
         print(f"Error inesperado en mis_notificaciones_data: {e}")
         return jsonify({'success': False, 'error': 'Error inesperado'}), 500
     
+@app.route('/eliminar_notificacion/<int:notif_id>', methods=['DELETE'])
+@login_required
+def eliminar_notificacion(notif_id):
+    try:
+        id_usu = current_user.id
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor()
+
+        # Asegurarse de que el usuario es el dueño de la notificación
+        cursor.execute("SELECT id_notif FROM notificaciones WHERE id_notif = %s AND id_usu = %s", (notif_id, id_usu))
+        notificacion = cursor.fetchone()
+
+        if not notificacion:
+            return jsonify({"success": False, "error": "Notificación no encontrada o no pertenece al usuario"}), 404
+
+        # Eliminar la notificación de la base de datos
+        cursor.execute("DELETE FROM notificaciones WHERE id_notif = %s", (notif_id,))
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+
+        return jsonify({"success": True, "message": "Notificación eliminada correctamente"}), 200
+
+    except mysql.connector.Error as err:
+        return jsonify({"success": False, "error": f"Error de base de datos: {err}"}), 500
+    except Exception as e:
+        return jsonify({"success": False, "error": f"Error inesperado: {e}"}), 500
+    
 def notif_email(destinatario, asunto, cuerpo):
     try:
         # Verificar preferencia antes de enviar

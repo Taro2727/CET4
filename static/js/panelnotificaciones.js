@@ -26,6 +26,36 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     }
+    const listaNotificaciones = document.getElementById('contenedor-notificaciones');
+    listaNotificaciones.addEventListener('click', async function(event) {
+        if (event.target.closest('.btn-eliminar')) {
+            const botonEliminar = event.target.closest('.btn-eliminar');
+            const notifId = botonEliminar.dataset.id;
+            
+            if (confirm("¿Estás seguro de que quieres eliminar esta notificación?")) {
+                try {
+                    const response = await fetch(`/eliminar_notificacion/${notifId}`, {
+                        method: 'DELETE'
+                    });
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        // Eliminar el elemento del DOM
+                        const itemAEliminar = botonEliminar.closest('.notificacion-item');
+                        if (itemAEliminar) {
+                            itemAEliminar.remove();
+                        }
+                    } else {
+                        console.error('Error al eliminar la notificación:', result.error);
+                        alert('No se pudo eliminar la notificación: ' + result.error);
+                    }
+                } catch (error) {
+                    console.error('Error al conectar con el servidor:', error);
+                    alert('Hubo un problema al intentar eliminar la notificación.');
+                }
+            }
+        }
+    });
 });
 
 async function obtenerNotificaciones() {
@@ -101,8 +131,36 @@ function renderizarNotificaciones(notificaciones) {
             <div class="notificacion-fecha">
                 <span class="fecha">${new Date(notificacion.fecha).toLocaleString()}</span>
             </div>
+            <button class="btn-eliminar" data-id="${notificacion.id_notif}">
+            🗑️
+            </button>
         `;
-        
+        const btnEliminar = divNotificacion.querySelector('.btn-eliminar');
+        if (btnEliminar) {
+            btnEliminar.addEventListener('click', async function() {
+                const notifId = this.dataset.id;
+                
+                if (confirm("¿Estás seguro de que quieres eliminar esta notificación?")) {
+                    try {
+                        const response = await fetch(`/eliminar_notificacion/${notifId}`, {
+                            method: 'DELETE'
+                        });
+                        const result = await response.json();
+                        
+                        if (result.success) {
+                            // Eliminar el elemento del DOM
+                            this.closest('.notificacion-item').remove();
+                        } else {
+                            console.error('Error al eliminar la notificación:', result.error);
+                            alert('No se pudo eliminar la notificación: ' + result.error);
+                        }
+                    } catch (error) {
+                        console.error('Error al conectar con el servidor:', error);
+                        alert('Hubo un problema al intentar eliminar la notificación.');
+                    }
+                }
+            });
+        }
         contenedor.appendChild(divNotificacion);
     });
 }
