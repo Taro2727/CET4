@@ -30,7 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       } catch (err) {
           console.error('Error en la petición:', err);
-          alert('Error de red'); //hasta aca no me acuerdo perdon :_(
         }
     });
   }
