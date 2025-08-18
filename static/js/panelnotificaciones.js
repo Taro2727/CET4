@@ -1,5 +1,31 @@
+
+let criterioNotificaciones = 'reciente';
 document.addEventListener("DOMContentLoaded", function() {
     obtenerNotificaciones();
+    const menuOrdenarNotificaciones = document.getElementById('menu-ordenar');
+    const ordenarNotificacionesBtn = document.getElementById('ordenar-btn');
+
+    if (ordenarNotificacionesBtn && menuOrdenarNotificaciones) {
+        ordenarNotificacionesBtn.addEventListener('click', () => {
+            menuOrdenarNotificaciones.classList.toggle('oculto');
+        });
+    menuOrdenarNotificaciones.addEventListener('click', (e) => {
+            if (e.target.tagName === 'LI') {
+                const nuevoCriterio = e.target.dataset.orden;
+                if (nuevoCriterio !== criterioNotificaciones) {
+                    criterioNotificaciones = nuevoCriterio;
+                    obtenerNotificaciones(); // Volvemos a obtener y renderizar
+                }
+                menuOrdenarNotificaciones.classList.add('oculto');
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!ordenarNotificacionesBtn.contains(e.target) && !menuOrdenarNotificaciones.contains(e.target)) {
+                menuOrdenarNotificaciones.classList.add('oculto');
+            }
+        });
+    }
 });
 
 async function obtenerNotificaciones() {
@@ -13,12 +39,27 @@ async function obtenerNotificaciones() {
         }
 
         const data = await response.json();
-        renderizarNotificaciones(data.notificaciones);
+        const notificacionesOrdenadas = ordenarNotificaciones(data.notificaciones, criterioNotificaciones);
+        renderizarNotificaciones(notificacionesOrdenadas);
 
     } catch (error) {
         console.error('Error al obtener notificaciones:', error);
         mostrarMensajeError("Hubo un problema de conexión. Por favor, verifica tu conexión a internet.");
     }
+}
+
+
+function ordenarNotificaciones(notificaciones, criterio) {
+    // Creamos una copia del array para no modificar el original directamente.
+    const notificacionesOrdenadas = [...notificaciones];
+    if (criterio === 'reciente') {
+        // Ordenamos en orden descendente (más recientes primero)
+        notificacionesOrdenadas.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+    } else if (criterio === 'antiguo') {
+        // Ordenamos en orden ascendente (más antiguos primero)
+        notificacionesOrdenadas.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+    }
+    return notificacionesOrdenadas;
 }
 
 function renderizarNotificaciones(notificaciones) {
