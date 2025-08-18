@@ -19,15 +19,16 @@ document.addEventListener("DOMContentLoaded", function () {
                     <h3>${post.titulo}</h3>
                     </div>
                     <div class="contenido-texto">
+                    <div id="commentsSection" class="comentarios-anteriores">
+                    <h3>${post.titulo}:</h3>
                     <p>${post.cont}</p>
                     </div>
-
                     <div class="contenido-info">
                     <p><strong>Autor:</strong> ${post.nom_usu}</p>
                     <p><strong>Materia:</strong> ${post.nom_mat}</p>
                     <p><em>Fecha:</em> ${new Date(post.fecha).toLocaleString()}</p>
                     </div>
-                    
+
                     </div>
                 `;
                 container.appendChild(div);
