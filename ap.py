@@ -2118,9 +2118,6 @@ def mis_likes():
 
 
 
-@app.route('/prueba')
-def prueba():
-    return render_template('index/confirmacionceo.html')
 
 
 if __name__ == "__main__":
