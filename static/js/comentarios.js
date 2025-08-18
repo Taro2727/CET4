@@ -266,7 +266,7 @@ document.getElementById('commentForm').addEventListener('submit', async function
         document.getElementById('commentForm').reset();
         await cargarComentarios();
     } else {
-       console.log("error")
+       console.log("error");
     }
 });
 
@@ -285,7 +285,7 @@ async function eliminarComentario(id_post) {
     if (result.success) {
         await cargarComentarios();
     } else {
-        console.log("error")
+        console.log("error");
 }
 }
 
@@ -303,6 +303,6 @@ async function eliminarRespuesta(id_com) {
     if (result.success) {
         await cargarComentarios();
     } else {
-        console.log("error")
+        console.log("error");
     }
 }
