@@ -5,6 +5,7 @@
     border-radius: 10px;
     padding: 10px;
     width: 90%;
+    height: 100%;
     margin: 2em;
 
 }
@@ -17,25 +18,24 @@
     border-radius: 10px;
     margin-bottom: 10px;
     color: white;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
 }
 .contenido-texto{
     background-color:#131e2e;
     border: 1px solid #456;
     border-radius: 10px;
-    padding-bottom: 1em;
+    padding-bottom: 0.5em;
     padding: 10px;
     width: 100%;
+    font-size: 0.6rem;
 }
 
 .contenido-info{
     background-color:#131e2e;
     border: 1px solid #456;
     border-radius: 10px;
-    padding-bottom: 1em;
-    padding: 10px;
     width: 100%;
-    font-size: 1.2rem;
+    font-size: 0.6rem;
     margin-top: 1em;
     margin-bottom: 1em;
 }

@@ -19,13 +19,13 @@
         <div id="out">
             <span>&#9587;</span> <!--El simbolo de la X-->
         </div>
-        <a class="separador3" href="indexusuario.html"><img src="/static/utils/img/usuario.png" alt="Perfil" class="usuario"></a>
-        <a class="separador3" href='/indexhomeoinicio'><img src="/static/utils/img/casa-img1.png" alt="Inicio" class="casa1"></a>
+        <a class="separador3" href="/perfil"><img src="/static/utils/img/usuario.png" alt="Perfil" class="usuario"></a>
+        <a class="separador3" href="/indexhomeoinicio"><img src="/static/utils/img/casa-img1.png" alt="Inicio" class="casa1"></a>
         <a class="separador3" href="/panelnotificaciones"><img src="/static/utils/img/campana-img2.png" alt="Notificaciones" class="campana2"></a>
-        <a class="separador3" href="/templates/index/indexcentralayuda.html"><img src="/static/utils/img/pregunta-img3.png" alt="Soporte" class="soporte3"></a>
-        <a class="separador3" href="#"><img src="/static/utils/img/grupo-img4.png" alt="" class="grupo4"></a>
-        <a class="separador3" href="#"><img src="/static/utils/img/opciones-img5.png" alt="Configuracion" class="opcion5"></a>
-        <a class="separador3" href="/configuracion"><img src="/static/utils/img/hotultimointento.png" alt="salida" class="opcion6"></a>
+        <a class="separador3" href="/miembros"><img src="/static/utils/img/grupo-img4.png" alt="" class="grupo4"></a>
+        <a class="separador3" href="/mis_likes"><img src="/static/utils/img/corazon4.png" alt="Likes" class="soporte3"></a>
+        <a class="separador3" href="/configuracion"><img src="/static/utils/img/opciones-img5.png" alt="Configuracion" class="opcion5"></a>
+        <a class="separador3" href="/logout"><img src="/static/utils/img/cerrar-sesion.png" alt="cerrar-sesion" class="cerrar-sesion6"></a>
     </div> 
 
     <header>
@@ -35,19 +35,19 @@
 
     <main class="team-grid">
         <div class="team-member">
-            <img src="{{ url_for('static', filename='img/sonino.png') }}" alt="Foto de Catalina Guasch">
+            <img src="/static/utils/img/catfoto.jpg" alt="Foto de Catalina Guasch">
             <h3 class="member-name">Catalina Guasch</h3>
-            <p class="member-role">Back-End Developer</p>
-            <a href="https://www.instagram.com/usuario" class="social-link" target="_blank">
+            <p class="member-role">Desarolladora Back-End</p>
+            <a href="https://www.instagram.com/_baggiox/" class="social-link" target="_blank">
                 <svg viewBox="0 0 24 24"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z" /></svg>
                 Instagram
             </a>
         </div>
 
         <div class="team-member">
-            <img src="{{ url_for('static', filename='img/sonino.png') }}" alt="Foto de Lautaro Gavilan">
+            <img src="/static/utils/img/gavfoto.jpg" alt="Foto de Lautaro Gavilan">
             <h3 class="member-name">Lautaro Gavilan</h3>
-            <p class="member-role">Back-End Developer</p>
+            <p class="member-role">Desarollador Back-End</p>
             <a href="https://www.instagram.com/usuario" class="social-link" target="_blank">
                 <svg viewBox="0 0 24 24"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z" /></svg>
                 Instagram
@@ -55,60 +55,63 @@
         </div>
 
         <div class="team-member">
-            <img src="{{ url_for('static', filename='img/sonino.png') }}" alt="Foto de Lautaro Samudio">
+            <img src="/static/utils/img/tarfoto.jpg" alt="Foto de Lautaro Samudio">
             <h3 class="member-name">Lautaro Samudio</h3>
-            <p class="member-role">Back-end Developer</p>
-            <a href="https://www.instagram.com/usuario" class="social-link" target="_blank">
+            <p class="member-role">Desarollador Back-End</p>
+            <p class="member-role">Community Manager</p>
+            <a href="https://www.instagram.com/lautaro27_2/" class="social-link" target="_blank">
                 <svg viewBox="0 0 24 24"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z" /></svg>
                 Instagram
             </a>
         </div>
 
         <div class="team-member">
-            <img src="{{ url_for('static', filename='img/sonino.png') }}" alt="Foto de Carmen Figueroa">
+            <img src="/static/utils/img/carfot.jpg" alt="Foto de Carmen Figueroa">
             <h3 class="member-name">Carmen Figueroa</h3>
-            <p class="member-role">Front-End Developer</p>
-            <a href="https://www.instagram.com/usuario" class="social-link" target="_blank">
+            <p class="member-role">Desarolladora Front-End</p>
+            <a href="https://www.instagram.com/kuki__pui/" class="social-link" target="_blank">
                 <svg viewBox="0 0 24 24"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z" /></svg>
                 Instagram
             </a>
         </div>
 
         <div class="team-member">
-            <img src="{{ url_for('static', filename='img/sonino.png') }}" alt="Foto de Francisco Rodriguez">
+            <img src="/static/utils/img/frafot.jpg" alt="Foto de Francisco Rodriguez">
             <h3 class="member-name">Francisco Rodriguez</h3>
-            <p class="member-role">Front-End Developer</p>
-            <a href="https://www.instagram.com/usuario" class="social-link" target="_blank">
+            <p class="member-role">Desarollador Front-End</p>
+            <a href="https://www.instagram.com/c.e.t_4/" class="social-link" target="_blank">
                 <svg viewBox="0 0 24 24"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z" /></svg>
                 Instagram
             </a>
         </div>
 
         <div class="team-member">
-            <img src="{{ url_for('static', filename='img/sonino.png') }}" alt="Foto de Gabriel Ramirez">
+            <img src="/static/utils/img/gabfot.jpg" alt="Foto de Gabriel Ramirez">
             <h3 class="member-name">Gabriel Ramirez</h3>
-            <p class="member-role">Front-End Developer</p>
-            <a href="https://www.instagram.com/usuario" class="social-link" target="_blank">
+            <p class="member-role">Diseñador grafico</p>
+            <p class="member-role">Diseñador UX/UI</p>
+            <a href="https://www.instagram.com/c.e.t_4/" class="social-link" target="_blank">
                 <svg viewBox="0 0 24 24"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z" /></svg>
                 Instagram
             </a>
         </div>
 
         <div class="team-member">
-            <img src="{{ url_for('static', filename='img/sonino.png') }}" alt="Foto de Julieta Baez">
+            <img src="/static/utils/img/julfot.jpg" alt="Foto de Julieta Baez">
             <h3 class="member-name">Julieta Baez</h3>
-            <p class="member-role">Front-End Developer</p>
-            <a href="https://www.instagram.com/usuario" class="social-link" target="_blank">
+            <p class="member-role">Desarolladora Front-End</p>
+            <p class="member-role">Community Manager</p>
+            <a href="https://www.instagram.com/c.e.t_4/" class="social-link" target="_blank">
                 <svg viewBox="0 0 24 24"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z" /></svg>
                 Instagram
             </a>
         </div>
 
         <div class="team-member">
-            <img src="{{ url_for('static', filename='img/sonino.png') }}" alt="Foto de Martina Alvarin">
+            <img src="/static/utils/img/marfot.jpg" alt="Foto de Martina Alvarin">
             <h3 class="member-name">Martina Alvarin</h3>
             <p class="member-role">Front-End Developer</p>
-            <a href="https://www.instagram.com/usuario" class="social-link" target="_blank">
+            <a href="https://www.instagram.com/mar.alvarin/" class="social-link" target="_blank">
                 <svg viewBox="0 0 24 24"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z" /></svg>
                 Instagram
             </a>
@@ -118,17 +121,17 @@
             <img src="/static/utils/img/giafot.jpg" alt="Foto de Miembro 9">
             <h3 class="member-name">Gianella Sosa</h3>
             <p class="member-role">Documentacion</p>
-            <a href="https://www.instagram.com/usuario" class="social-link" target="_blank">
+            <a href="https://www.instagram.com/giaa.yg/" class="social-link" target="_blank">
                 <svg viewBox="0 0 24 24"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z" /></svg>
                 Instagram
             </a>
         </div>
 
         <div class="team-member">
-            <img src="{{ url_for('static', filename='img/sonino.png') }}" alt="Foto de Luis Molina">
+            <img src="/static/utils/img/luifoto.jpg " alt="Foto de Luis Molina">
             <h3 class="member-name">Luis Molina</h3>
             <p class="member-role">Documentacion</p>
-            <a href="https://www.instagram.com/usuario" class="social-link" target="_blank">
+            <a href="https://www.instagram.com/luxs_.58xzn/" class="social-link" target="_blank">
                 <svg viewBox="0 0 24 24"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z" /></svg>
                 Instagram
             </a>
@@ -138,7 +141,7 @@
             <img src="{{ url_for('static', filename='img/sonino.png') }}" alt="Foto de Ciro Saucedo">
             <h3 class="member-name">Ciro Saucedo</h3>
             <p class="member-role">Documentacion</p>
-            <a href="https://www.instagram.com/usuario" class="social-link" target="_blank">
+            <a href="https://www.instagram.com/cirocoroneell_" class="social-link" target="_blank">
                 <svg viewBox="0 0 24 24"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z" /></svg>
                 Instagram
             </a>
@@ -148,7 +151,7 @@
             <img src="{{ url_for('static', filename='utils/img/avatar2.jpg') }}" alt="Foto de Zettino">
             <h3 class="member-name">Zettino</h3>
             <p class="member-role">Content Creator</p>
-            <a href="https://www.instagram.com/usuario" class="social-link" target="_blank">
+            <a href="https://www.instagram.com/c.e.t_4/" class="social-link" target="_blank">
                 <svg viewBox="0 0 24 24"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z" /></svg>
                 Instagram
             </a>
