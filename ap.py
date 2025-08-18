@@ -275,15 +275,12 @@ def comnos():
 def regi():
     # Redirección si el usuario ya está autenticado
     # if current_user.is_authenticated:
-    #     flash('Ya has iniciado sesión.', 'info')
     #     return redirect(url_for('inicio'))
     
     if current_user.is_authenticated:
-        flash('Ya has iniciado sesión.', 'info')
         return redirect(url_for('inicio'))
     # Si NO verificó el OTP, lo manda a la página de ingresar código
     if not session.get('otp_verificado'):
-        flash('Primero debes verificar el código OTP.', 'warning')
         return redirect(url_for('inicio'))  
     return render_template('index/indexcrearcuenta.html')
 
@@ -518,7 +515,6 @@ def guardar_configuracion():
     pass_confirmar = request.form.get('pass_confirmar')
 
     if not all([pass_actual, pass_nueva, pass_confirmar]):
-        flash('Debes completar todos los campos de contraseña.', 'danger')
         return redirect(url_for('configuracion'))
 
     try:
@@ -530,14 +526,11 @@ def guardar_configuracion():
         conn.close()
 
         if not user_data or not check_password_hash(user_data['contraseña'], pass_actual):
-            flash('La contraseña actual es incorrecta.', 'danger')
             return redirect(url_for('configuracion'))
     except Exception as e:
-        flash(f'Error al verificar tu identidad: {e}', 'danger')
         return redirect(url_for('configuracion'))
 
     if pass_nueva != pass_confirmar:
-        flash('La nueva contraseña y su confirmación no coinciden.', 'danger')
         return redirect(url_for('configuracion'))
 
     try:
@@ -571,7 +564,6 @@ def guardar_configuracion():
         return redirect(url_for('otp'))
         
     except Exception as e:
-        flash(f'Error al enviar el código de verificación: {e}', 'danger')
         return redirect(url_for('configuracion'))
 
 @app.route('/toggle-email-notifications', methods=['POST'])
@@ -667,7 +659,6 @@ def perfil():
 @app.route("/actualizar")
 def actualizar():
     if not session.get('otp_verificado'):
-        flash('Primero debes verificar el codigo que se te a enviado al mail', 'warning')
         return redirect(url_for('inicio'))
     return render_template('index/1ProvisorioActuContra.html')
 
@@ -902,7 +893,6 @@ def ActualizarContra():
 @app.route("/iniciarsesion")
 def iniciarsesion():
     if current_user.is_authenticated:
-        flash('Ya has iniciado sesión.', 'info')
         return redirect(url_for('inicio')) # Redirige si ya está logueado
     return render_template("index/indexiniciarsesion.html")
 
@@ -1112,7 +1102,6 @@ def comentario_materia(id_mat):
         return render_template('index/ComentariosParaTodos.html', id_mat=id_mat, materias=materias, usuario_rol=usuario_rol, is_authenticated=current_user.is_authenticated )
     except mysql.connector.Error as err:
         print(f"Error al obtener materia: {err}")
-        flash("Error al cargar la materia.", 'danger')
         return redirect(url_for('inicio')) # O a una página de error
 
 @app.route('/comentario/materias', methods=['POST'])
