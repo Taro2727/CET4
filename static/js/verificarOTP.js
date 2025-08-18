@@ -22,7 +22,7 @@ document.getElementById('otp').addEventListener('submit', async (e) => {
       const destino = result.redirigir;
 
       if (destino === '/crearcuenta') {
-        alert('¡Correo verificado! Ahora completa tu registro.');
+
         window.location.href = destino;
 
       } else if (destino === '/actualizar') {
@@ -121,7 +121,7 @@ document.getElementById('otp').addEventListener('submit', async (e) => {
 
     } else {
       // Si result.exito es false, mostramos el error del servidor.
-      alert(result.error || 'Hubo un problema con la verificación');
+     document.getElementById('textito').textContent= result.error || 'Hubo un problema con la verificación' ;
     }
 
   } catch (err) {
