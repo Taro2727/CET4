@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 div.classList.add("post-likeado");
                 div.innerHTML = `
                     <div id="commentsSection" class="comentarios-anteriores">
-                    <h3>${post.titulo}</h3>
+                    <h3>${post.titulo}:</h3>
                     <p>${post.cont}</p>
                     <p><strong>Autor:</strong> ${post.nom_usu}</p>
                     <p><strong>Materia:</strong> ${post.nom_mat}</p>
