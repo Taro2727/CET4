@@ -111,13 +111,13 @@ async function subscribeUser() {
     }
 
     // 2. Obtener la clave pública VAPID del servidor
-    const response = await fetch('/vapid_key_publica');
+    const response = await fetch('/vapid_key_publica'); 
     const data = await response.json();
-    const vapidPublicKey = data.public_key;
+    const VAPID_PUBLIC_KEY = data.public_key;
 
     const options = {
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey)
+        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
     };
 
     // 3. Suscribir al usuario

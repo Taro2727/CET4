@@ -73,7 +73,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
     // Redirige a la página para ingresar el código OTP
     window.location.href = '/perfil';
   } else {
-    document.getElementById("mensaje").textContent = resultado.error || "No se pudo enviar el código OTP.";
+    document.getElementById("mensaje").textContent = resultado.error || "No se pudo enviar el código OTP";
   }
   
   

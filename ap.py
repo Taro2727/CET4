@@ -41,29 +41,29 @@ from flask import send_from_directory
 #para hacer funciones herramientosas (functools)
 from functools import wraps
 
-# from cryptography.hazmat.primitives.asymmetric import ec
-# from cryptography.hazmat.primitives import serialization
-# import base64
+# # from cryptography.hazmat.primitives.asymmetric import ec
+# # from cryptography.hazmat.primitives import serialization
+# # import base64
 
-# # Generar clave EC P-256
-# private_key = ec.generate_private_key(ec.SECP256R1())
-# public_key = private_key.public_key()
+# # # Generar clave EC P-256
+# # private_key = ec.generate_private_key(ec.SECP256R1())
+# # public_key = private_key.public_key()
 
-# # Clave privada en formato Base64 URL Safe (para el servidor)
-# priv_bytes = private_key.private_numbers().private_value.to_bytes(32, 'big')
-# VAPID_PRIVATE_KEY = base64.urlsafe_b64encode(priv_bytes).decode('utf-8').rstrip('=')
+# # # Clave privada en formato Base64 URL Safe (para el servidor)
+# # priv_bytes = private_key.private_numbers().private_value.to_bytes(32, 'big')
+# # VAPID_PRIVATE_KEY = base64.urlsafe_b64encode(priv_bytes).decode('utf-8').rstrip('=')
 
-# # Clave pública en formato Base64 URL Safe (para el navegador)
-# pub_bytes = public_key.public_bytes(
-#     encoding=serialization.Encoding.X962,
-#     format=serialization.PublicFormat.UncompressedPoint
-# )
+# # # Clave pública en formato Base64 URL Safe (para el navegador)
+# # pub_bytes = public_key.public_bytes(
+# #     encoding=serialization.Encoding.X962,
+# #     format=serialization.PublicFormat.UncompressedPoint
+# # )
 # VAPID_PUBLIC_KEY = base64.urlsafe_b64encode(pub_bytes).decode('utf-8').rstrip('=')
 
-# # Claims
-# VAPID_CLAIMS = {
-#     "sub": "mailto:soportes.zettinno.cet@gmail.com"
-# }
+# Claims
+VAPID_CLAIMS = {
+    "sub": "mailto:soportes.zettinno.cet@gmail.com"
+}
 
 # print("✅ VAPID_PUBLIC_KEY:", VAPID_PUBLIC_KEY)
 # print("✅ VAPID_PRIVATE_KEY:", VAPID_PRIVATE_KEY)
@@ -73,9 +73,9 @@ app = Flask(__name__)
 app.secret_key = 'mi_clave_secreta' # Clave secreta para sesiones, cookies, etc. 
 
 #configuracion pra notificaciones push
-VAPID_PUBLIC_KEY = """BLFlLPO2b42IUmClRKabKUcKGoewMZcudh8l30bIgZBOsLKUAqYFaVaLI1Fi3hSKlf4hnmEkcZCHFkTrvu0hM2w"""
+VAPID_PUBLIC_KEY = """BPFRnskk36NpTs6rraQ9KZqwlK-7gmK3Dne6dt-khKt-Q-93tdgNwKc5SI3cDYxGUNyw4vJpMONIMV1Ws4m14zg"""
 
-VAPID_PRIVATE_KEY = """zfdsyrUTUjzyrCjOdl-FDWtLRG9UczwLnkxJp2OtYfU"""
+VAPID_PRIVATE_KEY = """h40P9y69H-8sEGrsL-t94fC89vG2x5qryJas6nU1A7I"""
 
 VAPID_CLAIMS = {
     "sub": "mailto:soportes.zettinno.cet@gmail.com"
@@ -1496,7 +1496,7 @@ def get_users():
         # Consulta SQL corregida para usar el nombre de tabla 'Baneo'
         cursor.execute("""
             SELECT
-                u.id_usu, u.nom_usu, u.email, u.rol, 
+                u.id_usu, u.nom_usu, u.email, u.rol,
                 b.id_ban IS NOT NULL AS baneado
             FROM usuario u
             LEFT JOIN Baneo b ON u.id_usu = b.id_usu
@@ -2073,6 +2073,51 @@ def cambiar_nombre():
 @login_required
 def nosotros():
     return render_template('index/miembros.html')
+
+
+@app.route('/get_mis_likes')
+@login_required
+def get_mis_likes():
+    """
+    Obtiene los posts (preg) a los que el usuario logueado les dio like.
+    """
+    try:
+        id_usu = current_user.id
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor(dictionary=True)
+
+        query = """
+            SELECT p.id_post, p.titulo, p.cont, p.fecha, u.nom_usu, m.nom_mat
+            FROM likes_comentarios lc
+            JOIN preg p ON lc.id_post = p.id_post
+            JOIN usuario u ON p.id_usu = u.id_usu
+            JOIN materias m ON p.id_mat = m.id_mat
+            WHERE lc.id_usu = %s
+            ORDER BY p.fecha DESC
+        """
+        cursor.execute(query, (id_usu,))
+        posts_likeados = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+
+        return jsonify({"success": True, "posts": posts_likeados})
+
+    except mysql.connector.Error as err:
+        print(f"Error al obtener posts con like: {err}")
+        return jsonify({"success": False, "error": f"Error de base de datos: {err}"}), 500
+    except Exception as e:
+        print(f"Error inesperado: {e}")
+        return jsonify({"success": False, "error": f"Error inesperado: {e}"}), 500
+
+@app.route('/mis_likes')
+@login_required
+@check_ban
+def mis_likes():
+    return render_template('index/likes.html')
+
+
+
 
 if __name__ == "__main__":
     print("iniciando flask..")

@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Panel de Administrador</title>
+  <title>Mis Likeados</title>
   <link rel="stylesheet" href="/static/css/indexcajacomentario.css" />
   <link rel="stylesheet" href="/static/css/barralateral.css"/>
   <link rel="stylesheet" href="/static/css/ApartadoFuentes.css"/>
-  <link rel="stylesheet" href="/static/css/paneldeadmin.css"/>
+  <link rel="stylesheet" href="/static/css/likes.css"/>
   <meta name="csrf-token" content="{{ csrf_token() }}">
-  <!-- Seguridad CSP: pasar ID por meta -->
-  <meta name="usuario-id" content="{{ current_user.id or 'null' }}"> <!--NO BORRAR ESTA LINEA-->
+  <meta name="usuario-id" content="{{ current_user.id }}">
   <meta name="usuario-rol" content="{{ current_user.rol }}">
+
 </head>
 <body>
   <div id="toggle">
@@ -29,40 +29,25 @@
         <a class="separador3" href="/mis_likes"><img src="/static/utils/img/corazon4.png" alt="Likes" class="soporte3"></a>
         <a class="separador3" href="/configuracion"><img src="/static/utils/img/opciones-img5.png" alt="Configuracion" class="opcion5"></a>
         <a class="separador3" href="/logout"><img src="/static/utils/img/cerrar-sesion.png" alt="cerrar-sesion" class="cerrar-sesion6"></a>
+        
     </div>
     <!--Fin de la barra lateral-->
 
   <main class="comentarios">
     <header class="comentarios-header">
-      <span class="flechas" aria-hidden="true">★★★★★★★★★★★★★★★★★★★★★</span>
-      <h1>Lista de usuarios</h1>
-      <span class="flechas" aria-hidden="true">★★★★★★★★★★★★★★★★★★★★★</span>
+      <span class="flechas" aria-hidden="true">▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶</span>
+      <h1> Mis likeados </h1>
+      <span class="flechas" aria-hidden="true">◀◀◀◀◀◀◀◀◀◀◀◀◀◀◀◀◀◀◀◀</span>
     </header>
-    <!-- el section de abajo es para elegir entre las fuentes y los comentarios-->
-    <section id="menues">
-    <div id="ordenar-btn">▾ Ordenar por</div>
-    <ul id="menu-ordenar" class="oculto">
-      <li data-orden="reciente">Más reciente</li>
-      <li data-orden="antiguo">Más antiguo</li>
-      <li data-orden="admin">Administrador</li>
-      <li data-orden="moderador">Moderador</li>
-      <li data-orden="normal">Normal</li>
-    </ul>
-</section>
 
-<section id="adminPanel" class="lista-usuarios">
-      <form id="commentForm" autocomplete="off">
-        <input type="text" id="titulo" name="titulo" placeholder="Título de la pregunta" required>
-        <textarea id="comentario" name="comentario" placeholder="Escribe tu comentario..." required></textarea>
-        <input type="hidden" id="id_mat" name="id_mat" value="{{ id_mat }}">
-        <button type="submit">Enviar</button>
-      </form>
+      <!-- <a href="/templates/index/ComentariosParaTodos.html">Comentarios</a>
+      <a href="/fuentes/materias/1">Fuentes</a> -->
+</section>
       <div id="commentsSection"></div> 
   </main>
-
     
 <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.5/dist/purify.min.js"></script>
-<script src="/static/js/panel.js"></script>
+<script src="/static/js/likes.js"></script>
 <script src="/static/js/barralateral.js"></script>
 </body>
 </html>
