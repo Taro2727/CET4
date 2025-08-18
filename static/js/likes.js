@@ -16,11 +16,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 div.innerHTML = `
                     <div class="comentarios-anteriores">
                     <div class="contenido-titulo">
-                    <h3>${post.titulo}</h3>
+                    <h3>${post.titulo}:</h3>
                     </div>
                     <div class="contenido-texto">
-                    <div id="commentsSection" class="comentarios-anteriores">
-                    <h3>${post.titulo}:</h3>
                     <p>${post.cont}</p>
                     </div>
                     <div class="contenido-info">
@@ -28,7 +26,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     <p><strong>Materia:</strong> ${post.nom_mat}</p>
                     <p><em>Fecha:</em> ${new Date(post.fecha).toLocaleString()}</p>
                     </div>
-
                     </div>
                 `;
                 container.appendChild(div);
