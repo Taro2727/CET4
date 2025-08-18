@@ -2074,6 +2074,51 @@ def cambiar_nombre():
 def nosotros():
     return render_template('index/miembros.html')
 
+
+@app.route('/get_mis_likes')
+@login_required
+def get_mis_likes():
+    """
+    Obtiene los posts (preg) a los que el usuario logueado les dio like.
+    """
+    try:
+        id_usu = current_user.id
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor(dictionary=True)
+
+        query = """
+            SELECT p.id_post, p.titulo, p.cont, p.fecha, u.nom_usu, m.nom_mat
+            FROM likes_comentarios lc
+            JOIN preg p ON lc.id_post = p.id_post
+            JOIN usuario u ON p.id_usu = u.id_usu
+            JOIN materias m ON p.id_mat = m.id_mat
+            WHERE lc.id_usu = %s
+            ORDER BY p.fecha DESC
+        """
+        cursor.execute(query, (id_usu,))
+        posts_likeados = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+
+        return jsonify({"success": True, "posts": posts_likeados})
+
+    except mysql.connector.Error as err:
+        print(f"Error al obtener posts con like: {err}")
+        return jsonify({"success": False, "error": f"Error de base de datos: {err}"}), 500
+    except Exception as e:
+        print(f"Error inesperado: {e}")
+        return jsonify({"success": False, "error": f"Error inesperado: {e}"}), 500
+
+@app.route('/mis_likes')
+@login_required
+@check_ban
+def mis_likes():
+    return render_template('index/likes.html')
+
+
+
+
 if __name__ == "__main__":
     print("iniciando flask..")
     app.run(debug=True)
