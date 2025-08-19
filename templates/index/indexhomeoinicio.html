@@ -8,6 +8,7 @@
     <meta name="usuario-id" content="{{ current_user.id or 'null' }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="usuario-rol" content="{{ current_user.rol or 'anonimo' }}">
+    <link rel="icon" href="/static/utils/img/logo2.png">
     <title>Home</title>
 </head>
 <body>
@@ -36,15 +37,7 @@
         <a class="separador3" href="/logout"><img src="/static/utils/img/cerrar-sesion.png" alt="cerrar-sesion" class="cerrar-sesion6"></a>
     </div>
     <!--Fin de la barra lateral-->
-    <div class="cuerpo1">
-        <div id="notificacion-modal" class="modal">
-            <div class="modal-content">
-                <h3>🔔 ¿Querés recibir notificaciones?</h3>
-                <p>Te avisaremos cuando alguien responda tus preguntas o te dé like.</p>
-                <button id="btn-permitir">Permitir</button>
-                <button id="btn-no-permitir">No permitir</button>
-            </div>
-        </div>
+
 </div>
         <!-- <button id="probar-notificacion">Probar notificación push</button> -->
     <div class="bloque-superpuesto primero1">
@@ -52,6 +45,19 @@
     </div>
     <div class="bloque-superpuesto">
         <a href='/informatica' class="texto-superpuesto">informatica</a>
+    </div>
+    <div id="toast-notificacion" class="toast oculto">
+    <div class="toast-contenido">
+        <span class="toast-icono">🔔</span>
+        <div class="toast-texto">
+            <h3>¿Activar notificaciones?</h3>
+            <p>Te avisaremos cuando respondan tus preguntas o te den like.</p>
+        </div>
+    </div>
+    <div class="toast-botones">
+        <button id="btn-permitir" class="btn btn-permitir">Permitir</button>
+        <button id="btn-no-permitir" class="btn btn-rechazar">Ahora no</button>
+    </div>
     </div>
     <!-- <script src="/static/js/testnotificaciones.js"></script> es una prueba para ver si funcionan ! -->
     <script src="/static/js/notificaciones.js"></script>

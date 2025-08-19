@@ -2,51 +2,78 @@ body{
     background: linear-gradient(to top, #020c25 0%, #082c54 50%);
     width: 100%;
     min-height: 100vh;
-     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 #container{
-    width: 100%;
-    height: 100vh;
+    width: 40rem;
+    height: 40rem;
+    background:url('/static/utils/img/zettino_ban.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
-    background:url('/static/util/img/lobo_cartel_sin_fondo.png');
+    align-items: center;
+    margin-top: -1em;
+
 }
 
 .texto-baneado{
-    color: white;
+    color: rgb(0, 0, 0);
     text-align: center;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin-top: 5em;
+    font-family: 'Courier New', Courier, monospace;
 }
 p.texto-baneado{
-    font-size: 3.5rem;
+    font-size: 2.7rem;
     text-align: center;
     justify-content: center;
     display: flex;
     align-items: center;
 
-}
-.simbolo-baneado{
-    font-size: 6rem;
-    margin-left: 10px;
-    margin-top: 5px;
+
 }
 
 .entrar-invitado{
     color: white;
     text-decoration: none;
     font-size: 40px;
+    width: 22rem;
+    height: 4rem;
     background-color: #082c54;
     padding: 10px 20px;
     border-radius: 5px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     transition: background-color 0.3s ease;
     justify-content: center;
     display: flex;
     align-items: center;
+    margin-top: 1em;
+    margin-bottom: 1em;
 }
 
 .entrar-invitado:hover{
     background-color: #0a3c6c;
+}
+@media (max-width: 600px){
+    #container{
+        width: 100%;
+    }
+    p.texto-baneado{
+        font-size: 2rem;
+    }
+
+}
+@media (max-width: 450px){
+    #container{
+        width: 100%;
+    }
+    p.texto-baneado{
+        font-size: 1.5rem;
+    }
+
 }

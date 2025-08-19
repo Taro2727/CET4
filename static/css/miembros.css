@@ -1,63 +1,65 @@
+
 /* Estilos generales del cuerpo */
 body {
     font-family: Arial, sans-serif;
-    /* FONDO: Aplicamos el degradado oscuro de tu archivo CSS */
-    color: #ffffff; /* TEXTO: Cambiamos el color del texto a blanco para que se lea bien */
-    background: linear-gradient(135deg, #1c1c1c 0%, #0d0d0d 100%);
+    /* FONDO: Nuevo degradado animado para un look más dinámico y atractivo */
+    background: linear-gradient(-45deg, #020c25, #082c54, #1c3b57, #2a4a75);
+    background-size: 400% 400%;
+    animation: gradientAnimation 15s ease infinite;
     color: #ffffff;
     margin: 0;
     text-align: center;
-    background: linear-gradient(to top, #020c25 0%, #082c54 50%);
-    width: 100%;
     min-height: 120vh;
 }
 
 /* Estilo del encabezado */
 header {
     margin-bottom: 40px;
+    padding-top: 20px;
 }
 
 header h1 {
-    margin-top: 1em;
     font-size: 2.5em;
-    /* ACENTO: Usamos el degradado violeta para el título */
-    background: linear-gradient(45deg, #ffffff, #ffffff);
-    background: linear-gradient(45deg, #8e2de2, #4a00e0);
+    /* ACENTO: Cambiado a un degradado de azules vibrantes */
+    background: linear-gradient(45deg, #2196F3, #0D47A1);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    margin: 0.5em 0;
 }
 
-header p { 
-    margin-top: 1em;
-    color: #ffffff; /* Un gris claro para el subtítulo */
-    color: #a0a0a0;
+header p {
+    margin-top: 0.5em;
+    color: #c0c0c0;
     font-size: 1.2em;
 }
 
 /* Contenedor principal de la grilla del equipo */
 .team-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 30px;
     max-width: 1200px;
     margin: 0 auto;
+    padding: 0 20px;
 }
 
 /* Estilo para cada tarjeta de miembro */
 .team-member {
-    /* FONDO DE TARJETA: Usamos el fondo sutil de tu archivo */
-    background-color: #123;;
-    background-color: #1c1c1c;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease;
-    border-top: 3px solid #4a00e0;
+    /* FONDO DE TARJETA: Cambiado a un azul oscuro profundo */
+    background-color: #1c2b4a;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* BORDE: Se usa el nuevo color de acento azul */
+    border-top: 4px solid #2196F3;
 }
 
 .team-member:hover {
     transform: translateY(-10px);
+    /* SOMBRA: La sombra al pasar el cursor ahora es azul */
+    box-shadow: 0 12px 30px rgba(33, 150, 243, 0.4);
 }
 
 /* Estilo para la foto circular */
@@ -66,11 +68,12 @@ header p {
     height: 150px;
     border-radius: 50%;
     object-fit: cover;
+    /* BORDE FOTO: Actualizado al degradado azul */
     border: 4px solid transparent;
-    background-image: linear-gradient(white, white), linear-gradient(45deg, #8e2de2, #4a00e0);
+    background-image: linear-gradient(#1c2b4a, #1c2b4a), linear-gradient(45deg, #2196F3, #0D47A1);
     background-origin: border-box;
     background-clip: content-box, border-box;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 /* Estilo para el nombre del miembro */
@@ -85,26 +88,28 @@ header p {
     font-size: 1em;
     color: #a0a0a0;
     margin: 0;
+    min-height: 2.2em;
 }
 
-/* --- Estilos para el botón de Instagram (con logo SVG) --- */
+/* --- Estilos para el botón de Instagram --- */
 .social-link {
     display: inline-flex;
     align-items: center;
-    margin-top: 15px;
+    margin-top: 20px;
     padding: 10px 20px;
     border-radius: 8px;
     text-decoration: none;
     font-weight: bold;
     color: #ffffff;
-    background: linear-gradient(45deg, #8e2de2, #4a00e0);
+    /* BOTÓN: Actualizado al degradado azul */
+    background: linear-gradient(45deg, #2196F3, #0D47A1);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     gap: 8px;
 }
 
 .social-link:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
 }
 
 .social-link svg {
@@ -113,7 +118,7 @@ header p {
     fill: #ffffff;
 }
 
-/* Media queries para hacerlo responsive */
+/* Media queries para hacerlo responsive (sin cambios) */
 @media (max-width: 900px) {
     .team-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -123,5 +128,17 @@ header p {
 @media (max-width: 500px) {
     .team-grid {
         grid-template-columns: 1fr;
+    }
+}
+/* Animación para el degradado del fondo */
+@keyframes gradientAnimation {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
     }
 }

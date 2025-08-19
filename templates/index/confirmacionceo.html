@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Confirmacion de Correo Electronico</title>
     <link rel="stylesheet" href="/static/css/confirmacionceo.css">
+    <link rel="icon" href="/static/utils/img/logo2.png">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body>
@@ -20,7 +21,7 @@
     <br><br>
 
     <!-- Botón para verificar -->
-    <button type="submit">enviar</button>
+    <button class="boton-enviar" type="submit" id="otp">enviar</button>
   </form>
 <script src="/static/js/verificarOTP.js"></script>
 </body>

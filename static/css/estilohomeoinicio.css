@@ -219,3 +219,86 @@ body {
 .modal-content button {
   margin: 8px;
 }
+/* --- ESTILOS PARA LA NOTIFICACIÓN TOAST MODERNA --- */
+
+.toast {
+    position: fixed;
+    bottom: -100%; /* Empieza oculta abajo */
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 350px;
+    max-width: 90%;
+    background-color: #0d3d6e; /* Un azul que combina con tu fondo */
+    color: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 1001;
+    transition: bottom 0.5s ease-in-out; /* Animación suave de entrada/salida */
+}
+
+.toast.visible {
+    bottom: 20px; /* Posición final cuando es visible */
+}
+
+.toast.oculto {
+    bottom: -100%;
+}
+
+.toast-contenido {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.toast-icono {
+    font-size: 2rem;
+}
+
+.toast-texto h3 {
+    margin: 0 0 5px 0;
+    font-size: 1.1rem;
+}
+
+.toast-texto p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #c0c8d6;
+}
+
+.toast-botones {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.toast-botones .btn {
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
+
+.toast-botones .btn-permitir {
+    background-color: #3b82f6;
+    color: #fff;
+}
+
+.toast-botones .btn-permitir:hover {
+    background-color: #2563eb;
+}
+
+.toast-botones .btn-rechazar {
+    background-color: transparent;
+    color: #c0c8d6;
+    border: 1px solid #3e5a81;
+}
+
+.toast-botones .btn-rechazar:hover {
+    background-color: #1e293b;
+    color: #fff;
+}

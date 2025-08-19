@@ -60,11 +60,9 @@ document.addEventListener("DOMContentLoaded", function() {
                         botonEliminar.closest('.notificacion-item').remove();
                     } else {
                         console.error('Error al eliminar:', result.error);
-                        alert('No se pudo eliminar la notificación: ' + result.error);
                     }
                 } catch (error) {
                     console.error('Error de conexión:', error);
-                    alert('Hubo un problema al intentar eliminar la notificación.');
                 }
             }
         }
