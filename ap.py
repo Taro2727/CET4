@@ -111,11 +111,11 @@ csrf = CSRFProtect(app)
 
 # --- Configuración de la base de datos (centralizada para evitar repetición) ---
 DB_CONFIG = {
-    'host': "yamanote.proxy.rlwy.net",
-    'port': 33483,
-    'user': "root",
-    'password': "BNeAADHQCVLNkxkYTyLSjUqSPVxfrWvH",
-    'database': "railway"
+    'host': "localhost",
+    'port': 3306,
+    'user': "cet_user",
+    'password': "FeriaT4@2025*",
+    'database': "cet"
 }
 
 #para censurar con corazones
@@ -1503,13 +1503,7 @@ def eliminar_respuesta():
     rol_usuario = current_user.rol
     if not id_usu:
         return jsonify({'success': False, 'error': 'No autorizado'}), 401
-    conn = mysql.connector.connect(
-        host="yamanote.proxy.rlwy.net",
-        port=33483,
-        user="root",
-        password="BNeAADHQCVLNkxkYTyLSjUqSPVxfrWvH",
-        database="railway"
-    )
+    conn = mysql.connector.connect(**DB_CONFIG)
     cursor = conn.cursor()
     cursor.execute("DELETE FROM likes_rta WHERE id_com=%s",(id_com,))
     if (rol_usuario=='admin'):
