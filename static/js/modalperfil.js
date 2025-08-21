@@ -39,11 +39,10 @@ async function MostrarAvatar() {
     });
     const result = await respuesta.json();
     if (result.success) {
-        alert('se cambio tu avatar');
 
         window.location.href = '/perfil';
     } else {
-        alert(result.error || "No se pudo cambiar");
+        console.log("error")
 }
 
   
@@ -73,7 +72,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
     // Redirige a la página para ingresar el código OTP
     window.location.href = '/perfil';
   } else {
-    document.getElementById("mensaje").textContent = resultado.error || "No se pudo enviar el código OTP.";
+    document.getElementById("mensaje").textContent = resultado.error || "No se pudo enviar el código OTP";
   }
   
   

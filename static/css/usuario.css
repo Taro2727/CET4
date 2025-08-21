@@ -352,5 +352,83 @@ body {
     width: 100%;
 }
 }
+@media (min-width: 1025px) {
+    .cuerpo1 {
+        padding-top: 80px; /* separa del header fijo */
+    }
+}
+
+/* Tablets */
+@media (max-width: 1024px) {
+    .elcostado {
+        width: 60%;
+        left: -60%;
+    }
+    .primero1 {
+        margin-left: 5em;
+    }
+    .usuario, .ordenado img {
+        width: 40px;
+        height: 40px;
+        margin-top: 30px;
+    }
+    .logo {
+        width: 18px;
+        height: 18px;
+    }
+    .texto-superpuesto {
+        font-size: 28px;
+    }
+    .notificaciones-bloque{
+        margin-top: 5em;
+    }
+}
+
+/* Móviles */
+@media (max-width: 600px) {
+    .header {
+        flex-direction: row;
+        gap: 10px;
+        padding: 8px;
+    }
+    .elcostado {
+        width: 80%;
+        left: -80%;
+    }
+    .buscador-logo2 {
+        max-width: none;
+    }
+    .buscador {
+        height: 30px;
+        font-size: 14px;
+    }
+    .logo {
+        width: 16px;
+        height: 16px;
+    }
+    .usuario, .ordenado img {
+        width: 30px;
+        height: 30px;
+        margin-top: 20px;
+    }
+    .bloque-superpuesto {
+        height: 10rem;
+        width: 21rem;
+        margin-left: 1em;
+        margin-top: 2em;
+    }
+        .notificaciones-bloque{
+        margin-top: 5em;
+    }
+    .primero1 {
+        margin-left: 1em;
+    }
+    .texto-superpuesto {
+        font-size: 20px;
+    }
+    #toggle {
+        font-size: 26px;
+    }
+}
 
 

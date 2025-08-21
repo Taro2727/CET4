@@ -50,15 +50,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 if (response.ok) {
                     // Si el registro es exitoso
-                    alert(resultado.mensaje); // "Usuario registrado correctamente"
+                     // "Usuario registrado correctamente"
                     window.location.href = '/iniciarsesion'; // Redirige al login
                 } else {
                     // Si hay un error (ej: email ya existe, contraseñas no coinciden)
-                    alert("Error: " + resultado.error);
+                    console.log("error");
                 }
             } catch (error) {
-                console.error('Error en la petición fetch:', error);
-                alert('Ocurrió un error de red. Inténtalo de nuevo.');
+                console.error('Error en la petición fetch ex error de red:', error);
             }
         });
     }

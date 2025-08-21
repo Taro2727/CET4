@@ -1,18 +1,61 @@
+
+let criterioUsuarios = 'reciente';
 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
 const usuarioActual = document.querySelector('meta[name="usuario-id"]').content;
 const rolUsuarioActual = document.querySelector('meta[name="usuario-rol"]').content;
-window.onload = async function () {
-    // Se mantiene la carga inicial de comentarios
-    await cargar_usuarios();
-};
+
+function ordenarUsuarios(usuarios, criterio) {
+    const usuariosOrdenados = [...usuarios];
+    switch (criterio) {
+        case 'reciente':
+            // Ordena por ID de usuario (más grande primero para el más reciente).
+            usuariosOrdenados.sort((a, b) => b.id_usu - a.id_usu);
+            break;
+        case 'antiguo':
+            // Ordena por ID de usuario (más pequeño primero para el más antiguo).
+            usuariosOrdenados.sort((a, b) => a.id_usu - b.id_usu);
+            break;
+        case 'admin':
+            // Mueve a los administradores al principio de la lista.
+            usuariosOrdenados.sort((a, b) => {
+                if (a.rol === 'admin' && b.rol !== 'admin') return -1;
+                if (a.rol !== 'admin' && b.rol === 'admin') return 1;
+                return 0;
+            });
+            break;
+        case 'moderador':
+            // Mueve a los moderadores al principio de la lista.
+            usuariosOrdenados.sort((a, b) => {
+                if (a.rol === 'moderador' && b.rol !== 'moderador') return -1;
+                if (a.rol !== 'moderador' && b.rol === 'moderador') return 1;
+                return 0;
+            });
+            break;
+        case 'normal':
+            // Mueve a los usuarios normales al principio de la lista.
+            usuariosOrdenados.sort((a, b) => {
+                if (a.rol === 'normal' && b.rol !== 'normal') return -1;
+                if (a.rol !== 'normal' && b.rol === 'normal') return 1;
+                return 0;
+            });
+            break;
+        default:
+            // Por defecto, se usa el orden más reciente.
+            usuariosOrdenados.sort((a, b) => b.id_usu - a.id_usu);
+    }
+    return usuariosOrdenados;
+}
+
+
 //cargar_usuarios
 async function cargar_usuarios() {
     const response = await fetch('/api/users?t=' + Date.now());
-    const usuario = await response.json();
+    const usuarios = await response.json();
     const section = document.getElementById('adminPanel');
     section.innerHTML = ''; // Limpia la sección antes de recargar
 
-    usuario.forEach(u => {
+    const usuariosOrdenados = ordenarUsuarios(usuarios, criterioUsuarios);
+    usuariosOrdenados.forEach(u => {
         // Se mantiene la clase original del contenedor principal: "comment"
         const div = document.createElement('div');
         div.classList.add('comment');
@@ -84,6 +127,37 @@ async function cargar_usuarios() {
         section.appendChild(div);
     });
 }
+
+window.onload = async function () {
+    await cargar_usuarios();
+
+    const menuOrdenarUsuarios = document.getElementById('menu-ordenar');
+    const ordenarUsuariosBtn = document.getElementById('ordenar-btn');
+
+    if (ordenarUsuariosBtn && menuOrdenarUsuarios) {
+        ordenarUsuariosBtn.addEventListener('click', () => {
+            menuOrdenarUsuarios.classList.toggle('oculto');
+        });
+        
+        menuOrdenarUsuarios.addEventListener('click', (e) => {
+            if (e.target.tagName === 'LI') {
+                const nuevoCriterio = e.target.dataset.orden;
+                if (nuevoCriterio !== criterioUsuarios) {
+                    criterioUsuarios = nuevoCriterio;
+                    cargar_usuarios(); // Volvemos a cargar y renderizar
+                }
+                menuOrdenarUsuarios.classList.add('oculto');
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!ordenarUsuariosBtn.contains(e.target) && !menuOrdenarUsuarios.contains(e.target)) {
+                menuOrdenarUsuarios.classList.add('oculto');
+            }
+        });
+    }
+};
+
 function toggleBanForm(userId) {
     const form = document.getElementById(`banForm-${userId}`);
     // Si el formulario ya está visible, lo oculta. Si no, lo muestra.
@@ -116,14 +190,14 @@ async function formulariobaneo(event, userId) {
 
         const result = await response.json();
         if (result.exito) {
-            alert('Usuario baneado correctamente.');
+            
             toggleBanForm(userId); // Oculta el formulario
             await cargar_usuarios(); // Recarga la lista
         } else {
-            alert('Error al banear al usuario: ' + result.error);
+            console.log("error");
         }
     } catch (e) {
-        alert('Ocurrió un error en la comunicación con el servidor.');
+        console.log("error");
     }
 }
 
@@ -142,10 +216,9 @@ async function eliminarUsuario(id_usuario,rol_usuario) {
     });
     const result = await response.json();
     if (result.success) {
-        alert('Código OTP enviado al mail');
         window.location.href = '/IngresarCodigo';
     } else {
-        alert(result.error || "No se pudo eliminar.");
+       console.log("error");
 }
 }
 async function ascender(id_usuario,rol_usuario,mail_usuario) {
@@ -162,10 +235,9 @@ async function ascender(id_usuario,rol_usuario,mail_usuario) {
     });
     const result = await response.json();
     if (result.success) {
-        alert('Código OTP enviado al mail');
         window.location.href = '/IngresarCodigo';
     } else {
-        alert(result.error || "No se pudo upgradear.");
+       console.log("error");
 }
 }
 //falta agregar q le pase el rol para q dependiendo del rol haga una cosa o otra en el ap.py
@@ -181,10 +253,9 @@ async function down(id_usuario,rol_usuario,mail_usuario) {
     });
     const result = await response.json();
     if (result.success) {
-        alert('Código OTP enviado al mail');
         window.location.href = '/IngresarCodigo';
     } else {
-        alert(result.error || "No se pudo degradar.");
+        console.log("error");
 }
 }
 
@@ -204,10 +275,9 @@ async function desbanear(id_usuario) {
     });
     const result = await response.json();
     if (result.success) {
-        alert('desbaneado ');
         window.location.href = '/paneladmin';
     } else {
-        alert(result.error || "no se pudo desbanear.");
+        console.log("error");
 }
 }
 

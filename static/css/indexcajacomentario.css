@@ -9,6 +9,7 @@ body {
     width: 100%;
     min-height: 100vh;
 }
+
 h1 {
   font-family: Arial, Helvetica, sans-serif;
 }
@@ -107,7 +108,9 @@ h1 {
   align-items: center;
   color:#131e2e;
 }
-
+#menues{
+    border-radius: 40px;
+}
 .comentarios-header {
   margin-top: 20px;
   text-align: center;
@@ -1008,29 +1011,50 @@ input{
 }
 
 /* Estilo para el menú de ordenar */
+#ordenar-btn {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #080c34; /* Azul tipo Bootstrap */
+  color: white;
+  font-weight: bold;
+  border-radius:20px;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
 
-.oculto {
-    display: none;
+#ordenar-btn:hover {
+  background-color: #2180e691;
 }
 
 #menu-ordenar {
-    position: absolute; /* Para que aparezca como dropdown */
-    background-color: white;
-    border: 1px solid #ccc;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    z-index: 1000;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background-color: #2180e691;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  position: absolute;
+  z-index: 100;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  width: max-content;
 }
 
 #menu-ordenar li {
-    padding: 8px;
-    cursor: pointer;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 #menu-ordenar li:hover {
-    background-color: #f0f0f0;
+  background-color: #f0f0f0;
 }
+
+.oculto {
+  display: none;
+}
+
 
 /*ESTO LO AGREGÓ GAV (ES PARA ALGO DEL PANEL DE ADMINTRADOIR)*/
 .ban-form-oculto {

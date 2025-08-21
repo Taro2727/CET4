@@ -1,5 +1,5 @@
 # archivo: app.py
-from flask import Flask, request, jsonify, render_template, session, redirect, url_for, flash
+from flask import Flask, request, jsonify, render_template, session, redirect, url_for, flash,abort
 import mysql.connector # Conectar a MySQL
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -38,29 +38,32 @@ from pywebpush import webpush, WebPushException
 import json
 from flask import send_from_directory
 
-# from cryptography.hazmat.primitives.asymmetric import ec
-# from cryptography.hazmat.primitives import serialization
-# import base64
+#para hacer funciones herramientosas (functools)
+from functools import wraps
 
-# # Generar clave EC P-256
-# private_key = ec.generate_private_key(ec.SECP256R1())
-# public_key = private_key.public_key()
+# # from cryptography.hazmat.primitives.asymmetric import ec
+# # from cryptography.hazmat.primitives import serialization
+# # import base64
 
-# # Clave privada en formato Base64 URL Safe (para el servidor)
-# priv_bytes = private_key.private_numbers().private_value.to_bytes(32, 'big')
-# VAPID_PRIVATE_KEY = base64.urlsafe_b64encode(priv_bytes).decode('utf-8').rstrip('=')
+# # # Generar clave EC P-256
+# # private_key = ec.generate_private_key(ec.SECP256R1())
+# # public_key = private_key.public_key()
 
-# # Clave pública en formato Base64 URL Safe (para el navegador)
-# pub_bytes = public_key.public_bytes(
-#     encoding=serialization.Encoding.X962,
-#     format=serialization.PublicFormat.UncompressedPoint
-# )
+# # # Clave privada en formato Base64 URL Safe (para el servidor)
+# # priv_bytes = private_key.private_numbers().private_value.to_bytes(32, 'big')
+# # VAPID_PRIVATE_KEY = base64.urlsafe_b64encode(priv_bytes).decode('utf-8').rstrip('=')
+
+# # # Clave pública en formato Base64 URL Safe (para el navegador)
+# # pub_bytes = public_key.public_bytes(
+# #     encoding=serialization.Encoding.X962,
+# #     format=serialization.PublicFormat.UncompressedPoint
+# # )
 # VAPID_PUBLIC_KEY = base64.urlsafe_b64encode(pub_bytes).decode('utf-8').rstrip('=')
 
-# # Claims
-# VAPID_CLAIMS = {
-#     "sub": "mailto:soportes.zettinno.cet@gmail.com"
-# }
+# Claims
+VAPID_CLAIMS = {
+    "sub": "mailto:soportes.zettinno.cet@gmail.com"
+}
 
 # print("✅ VAPID_PUBLIC_KEY:", VAPID_PUBLIC_KEY)
 # print("✅ VAPID_PRIVATE_KEY:", VAPID_PRIVATE_KEY)
@@ -70,9 +73,9 @@ app = Flask(__name__)
 app.secret_key = 'mi_clave_secreta' # Clave secreta para sesiones, cookies, etc. 
 
 #configuracion pra notificaciones push
-VAPID_PUBLIC_KEY = """BLFlLPO2b42IUmClRKabKUcKGoewMZcudh8l30bIgZBOsLKUAqYFaVaLI1Fi3hSKlf4hnmEkcZCHFkTrvu0hM2w"""
+VAPID_PUBLIC_KEY = """BPFRnskk36NpTs6rraQ9KZqwlK-7gmK3Dne6dt-khKt-Q-93tdgNwKc5SI3cDYxGUNyw4vJpMONIMV1Ws4m14zg"""
 
-VAPID_PRIVATE_KEY = """zfdsyrUTUjzyrCjOdl-FDWtLRG9UczwLnkxJp2OtYfU"""
+VAPID_PRIVATE_KEY = """h40P9y69H-8sEGrsL-t94fC89vG2x5qryJas6nU1A7I"""
 
 VAPID_CLAIMS = {
     "sub": "mailto:soportes.zettinno.cet@gmail.com"
@@ -135,6 +138,41 @@ app.config.update(
 mail = Mail(app)
 
 #------------------------------------
+
+
+def check_ban(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if current_user.is_authenticated:
+            try:
+                conn = mysql.connector.connect(**DB_CONFIG)
+                cursor = conn.cursor(dictionary=True)
+                cursor.execute("""
+                    SELECT id_ban, fecha_fin 
+                    FROM Baneo 
+                    WHERE id_usu = %s AND activo = TRUE
+                """, (current_user.id,))
+                ban = cursor.fetchone()
+
+                if ban:
+                    hoy = datetime.now()
+                    if hoy < ban['fecha_fin']:
+                        # Baneo ==> activo
+                        cursor.close()
+                        conn.close()
+                        logout_user()
+                        return render_template("index/baneado.html")
+                    else:
+                        # Baneo vencido ==> borrar
+                        cursor.execute('DELETE FROM Baneo WHERE id_usu = %s', (current_user.id,))
+                        conn.commit()
+
+                cursor.close()
+                conn.close()
+            except Exception as e:
+                print("Error al verificar baneo:", e)
+        return f(*args, **kwargs)
+    return decorated_function
 
 #----F-U-N-C-I-O-N-E-S--P-Y-O-T-P----
 #.....despues las podemos usar.......
@@ -221,6 +259,7 @@ def service_worker():
     return send_from_directory('.', 'sw.js', mimetype='application/javascript')
 
 @app.route('/') #ruta para la página de inicio
+@check_ban 
 def inicio():
     if current_user.is_authenticated:
         return redirect(url_for('indexhomeoinicio'))  # Redirige si ya está logueado
@@ -236,15 +275,12 @@ def comnos():
 def regi():
     # Redirección si el usuario ya está autenticado
     # if current_user.is_authenticated:
-    #     flash('Ya has iniciado sesión.', 'info')
     #     return redirect(url_for('inicio'))
     
     if current_user.is_authenticated:
-        flash('Ya has iniciado sesión.', 'info')
         return redirect(url_for('inicio'))
     # Si NO verificó el OTP, lo manda a la página de ingresar código
     if not session.get('otp_verificado'):
-        flash('Primero debes verificar el código OTP.', 'warning')
         return redirect(url_for('inicio'))  
     return render_template('index/indexcrearcuenta.html')
 
@@ -340,6 +376,7 @@ def guardar_notificacion(id_usu, tipo, mensaje):
 
 @app.route('/panelnotificaciones')
 @login_required
+@check_ban
 def panelnotificaciones():
     return render_template('index/panelnotificaciones.html')
 
@@ -347,20 +384,42 @@ def panelnotificaciones():
 @app.route('/mis_notificaciones_data')
 @login_required
 def mis_notificaciones_data():
-    """Ruta que devuelve las notificaciones del usuario en formato JSON."""
+    """Ruta que devuelve las notificaciones del usuario en formato JSON, con opción de ordenarlas."""
     try:
+        # Obtenemos el criterio de orden desde la URL (ej: /mis_notificaciones_data?orden=antiguo)
+        orden = request.args.get('orden', 'reciente')
+        
         conn = mysql.connector.connect(**DB_CONFIG)
         cursor = conn.cursor(dictionary=True)
         id_usu = current_user.id
 
-        # Obtener notificaciones
-        query = "SELECT id_notif, tipo, mensaje, fecha, leida FROM notificaciones WHERE id_usu = %s ORDER BY fecha DESC"
-        cursor.execute(query, (id_usu,))
+        # Creamos la consulta SQL base
+        query_base = "SELECT id_notif, tipo, mensaje, fecha, leida FROM notificaciones WHERE id_usu = %s"
+
+        # Añadimos el orden a la consulta según el parámetro recibido
+        if orden == 'antiguo':
+            query_final = query_base + " ORDER BY fecha ASC"
+        else: # Por defecto y para 'reciente'
+            query_final = query_base + " ORDER BY fecha DESC"
+        
+        cursor.execute(query_final, (id_usu,))
         notificaciones = cursor.fetchall()
+        
+        # Marcamos las notificaciones como leídas (si hay alguna)
+        if notificaciones:
+            # Creamos una lista solo con los IDs de las notificaciones no leídas
+            notif_ids_no_leidas = [n['id_notif'] for n in notificaciones if not n['leida']]
+            
+            if notif_ids_no_leidas:
+                # Usamos un formato seguro para la consulta IN (...)
+                placeholders = ','.join(['%s'] * len(notif_ids_no_leidas))
+                update_query = f"UPDATE notificaciones SET leida = TRUE WHERE id_notif IN ({placeholders})"
+                cursor.execute(update_query, tuple(notif_ids_no_leidas))
+                conn.commit()
+
         cursor.close()
         conn.close()
 
-        # Devuelve el JSON con la clave 'notificaciones', tal como lo espera tu JS
         return jsonify({'success': True, 'notificaciones': notificaciones})
 
     except mysql.connector.Error as err:
@@ -369,6 +428,35 @@ def mis_notificaciones_data():
     except Exception as e:
         print(f"Error inesperado en mis_notificaciones_data: {e}")
         return jsonify({'success': False, 'error': 'Error inesperado'}), 500
+    
+@app.route('/eliminar_notificacion/<int:notif_id>', methods=['DELETE'])
+@login_required
+def eliminar_notificacion(notif_id):
+    try:
+        id_usu = current_user.id
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor()
+
+        # Asegurarse de que el usuario es el dueño de la notificación
+        cursor.execute("SELECT id_notif FROM notificaciones WHERE id_notif = %s AND id_usu = %s", (notif_id, id_usu))
+        notificacion = cursor.fetchone()
+
+        if not notificacion:
+            return jsonify({"success": False, "error": "Notificación no encontrada o no pertenece al usuario"}), 404
+
+        # Eliminar la notificación de la base de datos
+        cursor.execute("DELETE FROM notificaciones WHERE id_notif = %s", (notif_id,))
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+
+        return jsonify({"success": True, "message": "Notificación eliminada correctamente"}), 200
+
+    except mysql.connector.Error as err:
+        return jsonify({"success": False, "error": f"Error de base de datos: {err}"}), 500
+    except Exception as e:
+        return jsonify({"success": False, "error": f"Error inesperado: {e}"}), 500
     
 def notif_email(destinatario, asunto, cuerpo):
     try:
@@ -424,11 +512,13 @@ def eliminar_suscripcion():
 # ruta para la tuerca barra lateral
 @app.route('/configuracion')
 @login_required
+@check_ban
 def configuracion():
     return render_template('index/tuercabarralateral.html')
 
 @app.route('/guardar-configuracion', methods=['POST'])
 @login_required
+@check_ban
 def guardar_configuracion():
     """
     Inicia el flujo de cambio de contraseña desde Configuración.
@@ -443,7 +533,6 @@ def guardar_configuracion():
     pass_confirmar = request.form.get('pass_confirmar')
 
     if not all([pass_actual, pass_nueva, pass_confirmar]):
-        flash('Debes completar todos los campos de contraseña.', 'danger')
         return redirect(url_for('configuracion'))
 
     try:
@@ -455,14 +544,11 @@ def guardar_configuracion():
         conn.close()
 
         if not user_data or not check_password_hash(user_data['contraseña'], pass_actual):
-            flash('La contraseña actual es incorrecta.', 'danger')
             return redirect(url_for('configuracion'))
     except Exception as e:
-        flash(f'Error al verificar tu identidad: {e}', 'danger')
         return redirect(url_for('configuracion'))
 
     if pass_nueva != pass_confirmar:
-        flash('La nueva contraseña y su confirmación no coinciden.', 'danger')
         return redirect(url_for('configuracion'))
 
     try:
@@ -496,7 +582,6 @@ def guardar_configuracion():
         return redirect(url_for('otp'))
         
     except Exception as e:
-        flash(f'Error al enviar el código de verificación: {e}', 'danger')
         return redirect(url_for('configuracion'))
 
 @app.route('/toggle-email-notifications', methods=['POST'])
@@ -592,7 +677,6 @@ def perfil():
 @app.route("/actualizar")
 def actualizar():
     if not session.get('otp_verificado'):
-        flash('Primero debes verificar el codigo que se te a enviado al mail', 'warning')
         return redirect(url_for('inicio'))
     return render_template('index/1ProvisorioActuContra.html')
 
@@ -827,7 +911,6 @@ def ActualizarContra():
 @app.route("/iniciarsesion")
 def iniciarsesion():
     if current_user.is_authenticated:
-        flash('Ya has iniciado sesión.', 'info')
         return redirect(url_for('inicio')) # Redirige si ya está logueado
     return render_template("index/indexiniciarsesion.html")
 
@@ -837,6 +920,7 @@ def iniciarsesion():
 #     return render_template('index/indexcrearcuenta.html')
 
 @app.route('/indexhomeoinicio')
+@check_ban 
 def indexhomeoinicio():
     if not current_user.is_authenticated and not session.get('guest'):
         return redirect(url_for('iniciarsesion'))
@@ -849,10 +933,12 @@ def entrar_como_invitado():
 
 #desde aca se elige la modalidad
 @app.route('/programacion') #ruta para la página de programación
+@check_ban
 def indexprogramacion():
     return render_template("index/dprogramacionindex.html")
 
 @app.route('/informatica') #ruta para la página de informática
+@check_ban
 def indexinformatica():
     return render_template("index/dinformaticaindex.html")
 #hasta aca se elige la modalidad
@@ -863,6 +949,7 @@ def indexinformatica():
 #a partir de aca son las materias de 4to Informatica
 #4
 @app.route('/informatica/4toinformatica')#el mio es el de nro (4to)
+@check_ban
 def cuarto4():
     return render_template("index/indexin4to.html")
 #-------------------------------------------------------
@@ -871,6 +958,7 @@ def cuarto4():
 
 #5
 @app.route('/informatica/5toinformatica')
+@check_ban
 def quinto5():
     return render_template("index/indexin5to.html")
 #-------------------------------------------------------
@@ -879,6 +967,7 @@ def quinto5():
 
 #6
 @app.route('/informatica/6toinformatica')#el mio es el de nro (6to)
+@check_ban
 def sexto6():
     return render_template("index/indexin6to.html")
 #-------------------------------------------------------
@@ -886,6 +975,7 @@ def sexto6():
 #a partir de aca son las materias de 7mo informatica
 #7
 @app.route('/informatica/7moinformatica')#el mio es el de nro (7mo)
+@check_ban
 def septimo7():
     return render_template("index/indexin7mo.html")
 
@@ -900,6 +990,7 @@ def septimo7():
 
 #8
 @app.route('/programacion/4toprogramacion') #ruta para la página de 4to de programación
+@check_ban
 def index4toprog():
     return render_template("index/indexdcuarto.html")
 #-------------------------------------------------------
@@ -908,6 +999,7 @@ def index4toprog():
 
 #9
 @app.route('/programacion/5toprogramacion') #ruta para la página de 5to de programación
+@check_ban
 def index5toprog():
     return render_template("index/indexdquinto.html")
 #-------------------------------------------------------
@@ -916,6 +1008,7 @@ def index5toprog():
 
 #10
 @app.route('/programacion/6toprogramacion') #ruta para la página de 6to de programación
+@check_ban
 def index6toprog():
     return render_template("index/indexsexto.html")
 
@@ -925,6 +1018,7 @@ def index6toprog():
 
 #11
 @app.route('/programacion/7moprogramacion') #ruta para la página de 7mo de programación
+@check_ban
 def index7moprog():
     return render_template("index/indexdseptimo.html")
 
@@ -1011,6 +1105,7 @@ def otp_login():
 #ACA ABAJO DE MI(? ESTABA LO DE /COMENTARIO/MATERIA/IDMAT Y /COMENTARIO METHOD=POST
 
 @app.route('/comentario/materias/<int:id_mat>')
+@check_ban
 def comentario_materia(id_mat):
     # CAMBIO: Eliminada la importación y conexión duplicada.
     try:
@@ -1025,7 +1120,6 @@ def comentario_materia(id_mat):
         return render_template('index/ComentariosParaTodos.html', id_mat=id_mat, materias=materias, usuario_rol=usuario_rol, is_authenticated=current_user.is_authenticated )
     except mysql.connector.Error as err:
         print(f"Error al obtener materia: {err}")
-        flash("Error al cargar la materia.", 'danger')
         return redirect(url_for('inicio')) # O a una página de error
 
 @app.route('/comentario/materias', methods=['POST'])
@@ -1119,60 +1213,70 @@ def get_comentario():
 
 
 @app.route('/responder', methods=['POST'])
-@login_required # CAMBIO: Protege la capacidad de responder
+@login_required
 @limiter.limit(" 2 per  10 seconds ")
 def responder():
-    # CAMBIO: Eliminada la importación y conexión duplicada.
     data = request.get_json()
-    id_post = data.get('id_post') # Usar .get()
-    cont = censurar_con_corazones(data.get('respuesta')) # Usar .get()
+    id_post = data.get('id_post')
+    cont = censurar_con_corazones(data.get('respuesta'))
 
     if not all([id_post, cont]):
         return jsonify({"success": False, "error": "Faltan datos para la respuesta"}), 400
 
-    # CAMBIO: Obtiene el ID del usuario logueado usando current_user
     id_usu = current_user.id
 
     try:
-        conn = mysql.connector.connect(**DB_CONFIG) # Usar DB_CONFIG
+        conn = mysql.connector.connect(**DB_CONFIG)
         cursor = conn.cursor(dictionary=True)
+        
+        # 1. Obtenemos el ID del autor de la pregunta original
         cursor.execute("SELECT id_usu FROM preg WHERE id_post = %s", (id_post,))
         post_author_data = cursor.fetchone()
         id_autor_post = post_author_data['id_usu'] if post_author_data else None
-        query = "INSERT INTO rta (id_post, id_usu, cont) VALUES (%s, %s, %s)"
-        cursor.execute(query, (id_post, id_usu, cont))
+
+        # 2. Insertamos la nueva respuesta en la base de datos
+        cursor.execute("INSERT INTO rta (id_post, id_usu, cont) VALUES (%s, %s, %s)", (id_post, id_usu, cont))
+        conn.commit() # Guardamos la respuesta antes de notificar
+
+        # 3. Lógica de Notificación 
         if id_autor_post and id_autor_post != id_usu:
-            # 4. Buscar la suscripción del autor
-            cursor.execute("SELECT suscripcion_json FROM suscripcion_push WHERE id_usu = %s", (id_autor_post,))
-            subscriptions = cursor.fetchall()
-            for sub in subscriptions:
-                # 5. Enviar notificación
-                notif= {
-                    "title": "💬 ¡Nueva Respuesta!",
-                    "body": f"{current_user.nom_usu} ha respondido a tu pregunta."
-                }
-                suscripcion_dict = json.loads(sub['suscripcion_json'])
-                notif_push(suscripcion_dict, notif) # <-- CORREGIDO
-                guardar_notificacion(id_autor_post, "mensaje", f"{current_user.nom_usu} respondió tu pregunta.")
-                cursor.execute("SELECT email FROM usuario WHERE id_usu = %s", (id_autor_post,))
-                email_data = cursor.fetchone()
-                if email_data:
+            
+            # --- INICIO DE LA CORRECCIÓN ---
+            # Verificamos las preferencias de notificación del autor ANTES de enviar nada
+            cursor.execute("SELECT notif_push, notif_email, email FROM usuario WHERE id_usu = %s", (id_autor_post,))
+            prefs = cursor.fetchone()
+
+            if prefs:
+                # Enviar Notificación PUSH (si están activadas)
+                if prefs['notif_push']:
+                    cursor.execute("SELECT suscripcion_json FROM suscripcion_push WHERE id_usu = %s", (id_autor_post,))
+                    subscriptions = cursor.fetchall()
+                    for sub in subscriptions:
+                        notif_payload = {
+                            "title": "💬 ¡Nueva Respuesta!",
+                            "body": f"{current_user.nom_usu} ha respondido a tu pregunta."
+                        }
+                        suscripcion_dict = json.loads(sub['suscripcion_json'])
+                        notif_push(suscripcion_dict, notif_payload)
+                
+                # Enviar Notificación por EMAIL (si están activadas)
+                if prefs['notif_email'] and prefs['email']:
                     notif_email(
-                        destinatario=email_data['email'],
+                        destinatario=prefs['email'],
                         asunto="💬 Nueva respuesta en tu post",
                         cuerpo=f"{current_user.nom_usu} respondió a tu pregunta en el foro CET."
                     )
-        conn.commit()
+
+            # Guardamos la notificación en la base de datos (esto siempre se hace)
+            guardar_notificacion(id_autor_post, 1, f"{current_user.nom_usu} respondió tu pregunta.")
+
         cursor.close()
         conn.close()
-        return jsonify({"success": True, "mensaje": "Respuesta agregada correctamente"}) # CAMBIO: Mensaje JSON
-    except mysql.connector.Error as err:
-        print(f"Error al responder: {err}")
-        return jsonify({"success": False, "error": f"Error al responder: {err}"}), 500
-    except Exception as e: # CAMBIO: Añadir manejo de excepción general
+        return jsonify({"success": True, "mensaje": "Respuesta agregada correctamente"})
+        
+    except Exception as e:
         print(f"Error inesperado al responder: {e}")
         return jsonify({"success": False, "error": f"Error inesperado: {e}"}), 500
-
 
 @app.route('/get_respuestas/<int:id_post>')
 def get_respuestas(id_post):
@@ -1252,7 +1356,7 @@ def like_comment():
                     }
                     suscripcion_dict = json.loads(sub['suscripcion_json'])
                     notif_push(suscripcion_dict, notif) # <-- CORREGIDO
-                    guardar_notificacion(id_autor_data, "mensaje", f"{current_user.nom_usu} dio like a tu comentario.")
+                    guardar_notificacion(id_autor_data, 1, f"{current_user.nom_usu} dio like a tu comentario.")
                     cursor.execute("SELECT email FROM usuario WHERE id_usu = %s", (id_autor_data,))
                     email_data = cursor.fetchone()
                     if email_data:
@@ -1314,7 +1418,7 @@ def like_rta():
                     }
                     suscripcion_dict = json.loads(sub['suscripcion_json'])
                     notif_push(suscripcion_dict, notificacion_payload) # <-- CORREGIDO
-                    guardar_notificacion(id_autor_post, "mensaje", f"{current_user.nom_usu} dio like a tu comentario.")
+                    guardar_notificacion(id_autor_post, 1, f"{current_user.nom_usu} dio like a tu comentario.")
                     cursor.execute("SELECT email FROM usuario WHERE id_usu = %s", (id_autor_post,))
                     email_data = cursor.fetchone()
                     if email_data:
@@ -1421,6 +1525,8 @@ def eliminar_respuesta():
 #ACA PANEL ADMIIIIIIIIIIN 
 
 @app.route("/paneladmin")
+@check_ban
+@login_required
 def paneladmin():
     return render_template("index/paneladmin.html")
 
@@ -1440,7 +1546,7 @@ def get_users():
         # Consulta SQL corregida para usar el nombre de tabla 'Baneo'
         cursor.execute("""
             SELECT
-                u.id_usu, u.nom_usu, u.email, u.rol, 
+                u.id_usu, u.nom_usu, u.email, u.rol,
                 b.id_ban IS NOT NULL AS baneado
             FROM usuario u
             LEFT JOIN Baneo b ON u.id_usu = b.id_usu
@@ -2012,6 +2118,55 @@ def cambiar_nombre():
     except Exception as e:
         print(f"Error inesperado: {e}")
         return jsonify({"success": False, "error": f"Error inesperado: {e}"}), 500
+    
+@app.route('/miembros')
+@login_required
+def nosotros():
+    return render_template('index/miembros.html')
+
+
+@app.route('/get_mis_likes')
+@login_required
+def get_mis_likes():
+    """
+    Obtiene los posts (preg) a los que el usuario logueado les dio like.
+    """
+    try:
+        id_usu = current_user.id
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor(dictionary=True)
+
+        query = """
+            SELECT p.id_post, p.titulo, p.cont, p.fecha, u.nom_usu, m.nom_mat
+            FROM likes_comentarios lc
+            JOIN preg p ON lc.id_post = p.id_post
+            JOIN usuario u ON p.id_usu = u.id_usu
+            JOIN materias m ON p.id_mat = m.id_mat
+            WHERE lc.id_usu = %s
+            ORDER BY p.fecha DESC
+        """
+        cursor.execute(query, (id_usu,))
+        posts_likeados = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+
+        return jsonify({"success": True, "posts": posts_likeados})
+
+    except mysql.connector.Error as err:
+        print(f"Error al obtener posts con like: {err}")
+        return jsonify({"success": False, "error": f"Error de base de datos: {err}"}), 500
+    except Exception as e:
+        print(f"Error inesperado: {e}")
+        return jsonify({"success": False, "error": f"Error inesperado: {e}"}), 500
+
+@app.route('/mis_likes')
+@login_required
+@check_ban
+def mis_likes():
+    return render_template('index/likes.html')
+
+
 
 
 

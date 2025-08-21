@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/estilohomeoinicio.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/barralateral.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/configuracion.css') }}">
+    <link rel="icon" href="/static/utils/img/logo2.png">
     
     <meta name="usuario-rol" content="{{ current_user.rol or 'anonimo' }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -20,16 +21,19 @@
 
     <div class="elcostado ordenado">
         <div id="out">
-            <span>&#9587;</span>
+            <span>&#9587;</span> <!--El simbolo de la X-->
         </div>
-        <a class="separador3" href="{{ url_for('perfil') }}"><img src="/static/utils/img/usuario.png" alt="Perfil" class="usuario"></a>
-        <a class="separador3" href="{{ url_for('indexhomeoinicio') }}"><img src="/static/utils/img/casa-img1.png" alt="Inicio" class="casa1"></a>
-        <a class="separador3" href="{{ url_for('panelnotificaciones') }}"><img src="/static/utils/img/campana-img2.png" alt="Notificaciones" class="campana2"></a>
-        <a class="separador3" href="{{ url_for('comnos') }}"><img src="/static/utils/img/corazonlol.png" alt="Soporte" class="soporte3"></a>
-        <a class="separador3" href="#"><img src="/static/utils/img/grupo-img4.png" alt="Grupos" class="grupo4"></a>
-        <a class="separador3" href="{{ url_for('configuracion') }}"><img src="/static/utils/img/opciones-img5.png" alt="Configuracion" class="opcion5"></a>
-    </div>
+    
+        <a class="separador3" href="/perfil"><img src="/static/utils/img/usuario.png" alt="Perfil" class="usuario"></a>
+        <a class="separador3" href="/indexhomeoinicio"><img src="/static/utils/img/casa-img1.png" alt="Inicio" class="casa1"></a>
+        <a class="separador3" href="/panelnotificaciones"><img src="/static/utils/img/campana-img2.png" alt="Notificaciones" class="campana2"></a>
+        <a class="separador3" href="/miembros"><img src="/static/utils/img/grupo-img4.png" alt="" class="grupo4"></a>
+        <a class="separador3" href="/mis_likes"><img src="/static/utils/img/corazon4.png" alt="Likes" class="soporte3"></a>
+        <a class="separador3" href="/configuracion"><img src="/static/utils/img/opciones-img5.png" alt="Configuracion" class="opcion5"></a>
+        <a class="separador3" href="/logout"><img src="/static/utils/img/cerrar-sesion.png" alt="cerrar-sesion" class="cerrar-sesion6"></a>
+        </div>
     <div class="cuerpo1">
+    </div>
         <main class="contenido-principal">
             <div class="contenedor-configuracion">
                 <h1>Configuración de la Cuenta</h1>
