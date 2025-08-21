@@ -111,10 +111,10 @@ csrf = CSRFProtect(app)
 
 # --- Configuración de la base de datos (centralizada para evitar repetición) ---
 DB_CONFIG = {
-    'host': "yamanote.proxy.rlwy.net",
-    'port': 33483,
+    'host': "caboose.proxy.rlwy.net",
+    'port': 56710,
     'user': "root",
-    'password': "BNeAADHQCVLNkxkYTyLSjUqSPVxfrWvH",
+    'password': "GiXFLVlDVsEJlkdlDNIXMpJWVJqSErqm",
     'database': "railway"
 }
 
