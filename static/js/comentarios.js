@@ -270,39 +270,87 @@ document.getElementById('commentForm').addEventListener('submit', async function
     }
 });
 
+function showConfirmModal(message, onConfirm, onCancel) {
+    // Si ya existe, no crear otro
+    if (document.getElementById('confirm-overlay')) return;
+    const overlay = document.createElement('div');
+    overlay.id = 'confirm-overlay';
+    overlay.style = `
+        position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+        display:flex; align-items:center; justify-content:center; z-index:9999;
+    `;
+    const box = document.createElement('div');
+    box.style = 'background:#0f1724; color:#fff; padding:16px; border-radius:8px; max-width:90%; width:420px; text-align:left;';
+    box.innerHTML = `
+        <p style="margin:0 0 12px;">${message}</p>
+        <div style="display:flex; gap:8px; justify-content:flex-end;">
+            <button id="confirm-cancel" style="background:#444;color:#fff;border:none;padding:8px 12px;border-radius:6px;cursor:pointer;">Cancelar</button>
+            <button id="confirm-ok" style="background:#0ea5a4;color:#062; border:none;padding:8px 12px;border-radius:6px;cursor:pointer;">Confirmar</button>
+        </div>
+    `;
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+
+    const cleanup = () => { const el = document.getElementById('confirm-overlay'); if (el) el.remove(); };
+    document.getElementById('confirm-cancel').onclick = () => { cleanup(); if (onCancel) onCancel(); };
+    document.getElementById('confirm-ok').onclick = () => { cleanup(); if (onConfirm) onConfirm(); };
+}
+
 //---FUNCIONES DE ELIMINACIÓN DE COMENTARIOS Y RESPUESTAS---
 async function eliminarComentario(id_post) {
-    if (!confirm("¿Seguro que quieres eliminar esta pregunta?")) return;
-    const response = await fetch('/eliminar_comentario', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken
-        },
-        body: JSON.stringify({ id_post })
+    showConfirmModal('¿Seguro que quieres eliminar esta pregunta?', async () => {
+        try {
+            const response = await fetch('/eliminar_comentario', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({ id_post })
+            });
+            const result = await response.json();
+            if (result.success) {
+                await cargarComentarios();
+            } else {
+                console.log('Error al eliminar:', result.error || result);
+                // opcional: mostrar un pequeño aviso en pantalla
+            }
+        } catch (err) {
+            console.error('Fetch error eliminar_comentario:', err);
+        }
+    }, () => {
+        // cancel callback (opcional)
     });
-    const result = await response.json();
-    if (result.success) {
-        await cargarComentarios();
-    } else {
-        console.log("error");
-}
 }
 
 async function eliminarRespuesta(id_com) {
-    if (!confirm("¿Seguro que quieres eliminar esta respuesta?")) return;
-    const response = await fetch('/eliminar_respuesta', {
-        method: 'POST',
-        headers: { 
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken
-         },
-        body: JSON.stringify({ id_com })
+    showConfirmModal('¿Seguro que quieres eliminar esta respuesta?', async () => {
+        try {
+            const response = await fetch('/eliminar_respuesta', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({ id_com })
+            });
+
+            if (!response.ok) {
+                const text = await response.text();
+                console.error('Error eliminar_respuesta HTTP', response.status, text);
+                return;
+            }
+
+            const result = await response.json();
+            if (result && result.success) {
+                await cargarComentarios();
+            } else {
+                console.error('Error al eliminar respuesta:', result && result.error ? result.error : result);
+            }
+        } catch (err) {
+            console.error('Fetch error eliminar_respuesta:', err);
+        }
+    }, () => {
+        // cancel callback (opcional)
     });
-    const result = await response.json();
-    if (result.success) {
-        await cargarComentarios();
-    } else {
-        console.log("error");
-    }
 }

@@ -1496,30 +1496,51 @@ def eliminar_comentario():
 @app.route('/eliminar_respuesta', methods=['POST'])
 @login_required
 def eliminar_respuesta():
-    import mysql.connector
-    data = request.get_json()
-    id_com = data['id_com']
+    data = request.get_json(silent=True) or {}
+    id_com = data.get('id_com')
+    if not id_com:
+        return jsonify({'success': False, 'error': 'id_com missing'}), 400
+
     id_usu = current_user.id
-    rol_usuario = current_user.rol
-    if not id_usu:
-        return jsonify({'success': False, 'error': 'No autorizado'}), 401
-    conn = mysql.connector.connect(
-        host="yamanote.proxy.rlwy.net",
-        port=33483,
-        user="root",
-        password="BNeAADHQCVLNkxkYTyLSjUqSPVxfrWvH",
-        database="railway"
-    )
-    cursor = conn.cursor()
-    cursor.execute("DELETE FROM likes_rta WHERE id_com=%s",(id_com,))
-    if (rol_usuario=='admin'):
-        cursor.execute("DELETE FROM rta WHERE id_com=%s", (id_com,))
-    else:
-        cursor.execute("DELETE FROM rta WHERE id_com=%s AND id_usu=%s", (id_com, id_usu))
-    conn.commit()
-    cursor.close()
-    conn.close()
-    return jsonify({'success': True})
+    rol_usuario = getattr(current_user, 'rol', None)
+
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG, connection_timeout=10)
+        cursor = conn.cursor()
+
+        # verificar existencia y autor de la respuesta
+        cursor.execute("SELECT id_usu FROM rta WHERE id_com = %s", (id_com,))
+        row = cursor.fetchone()
+        if not row:
+            return jsonify({'success': False, 'error': 'Respuesta no encontrada'}), 404
+        autor_id = row[0]
+
+        # eliminar según permisos
+        if rol_usuario == 'admin':
+            cursor.execute("DELETE FROM rta WHERE id_com = %s", (id_com,))
+        else:
+            cursor.execute("DELETE FROM rta WHERE id_com = %s AND id_usu = %s", (id_com, id_usu))
+
+        if cursor.rowcount == 0:
+            conn.rollback()
+            return jsonify({'success': False, 'error': 'No autorizado o ya eliminado'}), 403
+
+        # borrar likes asociados
+        cursor.execute("DELETE FROM likes_rta WHERE id_com = %s", (id_com,))
+        conn.commit()
+        return jsonify({'success': True})
+    except mysql.connector.Error as err:
+        print('DB error eliminar_respuesta:', err)
+        return jsonify({'success': False, 'error': 'db', 'detail': str(err)}), 500
+    except Exception as e:
+        print('Error eliminar_respuesta:', e)
+        return jsonify({'success': False, 'error': 'server', 'detail': str(e)}), 500
+    finally:
+        try:
+            cursor.close()
+            conn.close()
+        except:
+            pass
 
 
 #ACA PANEL ADMIIIIIIIIIIN 
